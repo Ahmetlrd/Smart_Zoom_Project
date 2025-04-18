@@ -9,7 +9,7 @@ class Settings extends StatefulWidget {
 }
 
 String selectedLanguage = "English";
-var switchControl = false;
+var switchControl = true;
 
 class _SettingsState extends State<Settings> {
   List<String> languages = ['English', 'Türkçe', 'Français', 'Deutsch'];
