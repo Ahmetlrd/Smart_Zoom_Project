@@ -27,9 +27,13 @@ class _SettingsState extends State<Settings> {
                 SizedBox(width: 50),
 
                 Icon(Icons.language, size: 60),
-                SizedBox(width: 50),
+                SizedBox(width: 20),
+
+                Text("Language: ", style: TextStyle(fontSize: 20)),
+                SizedBox(width: 35),
+
                 SizedBox(
-                  width: 200,
+                  width: 100,
                   child: DropdownButton<String>(
                     value: selectedLanguage,
                     isExpanded: true,
@@ -56,7 +60,12 @@ class _SettingsState extends State<Settings> {
                 SizedBox(width: 50),
 
                 Icon(Icons.notifications, size: 60),
-                SizedBox(width: 100),
+                SizedBox(width: 20),
+
+                SizedBox(
+                  width: 180,
+                  child: Text("Notifications", style: TextStyle(fontSize: 20)),
+                ),
 
                 SizedBox(
                   width: 20,

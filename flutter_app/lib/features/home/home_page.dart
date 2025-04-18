@@ -21,12 +21,12 @@ class HomePage extends StatelessWidget {
               _buildCard(
                 icon: Icons.calendar_today,
                 label: "Meeting List",
-                onTap: () => context.push('/meetings'),
+                onTap: () => context.push('/meetinglist'),
               ),
               _buildCard(
                 icon: Icons.connect_without_contact,
                 label: "Meeting Details",
-                onTap: () => context.push('/saved'),
+                onTap: () => context.push('/meetingdetailpage'),
               ),
               _buildCard(
                 icon: Icons.auto_awesome,
@@ -35,8 +35,8 @@ class HomePage extends StatelessWidget {
               ),
               _buildCard(
                 icon: Icons.note,
-                label: "Notes",
-                onTap: () => context.push('/notes'),
+                label: "Saved Summaries",
+                onTap: () => context.push('/saved'),
               ),
             ],
           ),

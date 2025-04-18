@@ -48,8 +48,8 @@ class Login extends StatelessWidget {
                     ),
                   ),
                   child: const Text(
-                    "Login",
-                    style: TextStyle(fontSize: 16, color: Colors.white),
+                    "Login with zoom",
+                    style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
                 ),
               ),

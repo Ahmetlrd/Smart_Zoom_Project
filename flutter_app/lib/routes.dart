@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app/features/home/meetings.dart';
+import 'package:flutter_app/features/home/meetingdetailpage.dart';
 import 'package:flutter_app/features/home/nlp.dart';
-import 'package:flutter_app/features/home/notes.dart';
 import 'package:flutter_app/features/home/saved.dart';
+import 'package:flutter_app/features/home/meetinglist.dart';
 import 'package:flutter_app/features/home/settings.dart';
 import 'package:flutter_app/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,13 +32,18 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/login', builder: (context, state) => const Login()),
       GoRoute(path: '/home', builder: (context, state) => const HomePage()),
       GoRoute(path: '/settings', builder: (context, state) => const Settings()),
+      GoRoute(
+        path: '/meetinglist',
+        builder: (context, state) => const Meetinglist(),
+      ),
+
       GoRoute(path: '/saved', builder: (context, state) => const Saved()),
 
-      GoRoute(path: '/notes', builder: (context, state) => const Notes()),
-
       GoRoute(path: '/nlp', builder: (context, state) => const Nlp()),
-
-      GoRoute(path: '/meetings', builder: (context, state) => const Meetings()),
+      GoRoute(
+        path: '/meetingdetailpage',
+        builder: (context, state) => const MeetingDetailPage(),
+      ),
     ],
   );
 });

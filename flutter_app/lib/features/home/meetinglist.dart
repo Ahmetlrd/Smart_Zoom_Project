@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/features/home/utility.dart';
 
-class Notes extends StatelessWidget {
-  const Notes({super.key});
+class Meetinglist extends StatelessWidget {
+  const Meetinglist({super.key});
 
   @override
   Widget build(BuildContext context) {
