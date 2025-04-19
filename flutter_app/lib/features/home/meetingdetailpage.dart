@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 
 class MeetingDetailPage extends StatelessWidget {
-  const MeetingDetailPage({super.key});
-
+  MeetingDetailPage({super.key});
+  var number = 10;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Meeting Details"),
-      ),
+      appBar: AppBar(title: const Text("Meeting Details")),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildOption(context, "👥 Participants"),
+            _buildOption(context, "👥 Participants: $number"),
             _buildOption(context, "📄 Transcription"),
             _buildOption(context, "🧠 Summary (AI)"),
             _buildOption(context, "📝 Notes"),
@@ -30,9 +28,9 @@ class MeetingDetailPage extends StatelessWidget {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(50)),
         onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Clicked: $label")),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text("Clicked: $label")));
         },
         child: Text(label, style: const TextStyle(fontSize: 18)),
       ),

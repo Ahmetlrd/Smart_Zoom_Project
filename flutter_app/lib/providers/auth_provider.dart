@@ -1,20 +1,33 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-final authProvider =
-    StateNotifierProvider<AuthNotifier, bool>((ref) => AuthNotifier());
+final authProvider = StateNotifierProvider<AuthNotifier, bool>((ref) {
+  return AuthNotifier();
+});
 
 class AuthNotifier extends StateNotifier<bool> {
-  AuthNotifier() : super(false);
-
-  Stream<bool> get stream async* {
-    yield state;
+  AuthNotifier() : super(false) {
+    _loadLoginStatus();
   }
 
-  void login() {
+  Future<void> _loadLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    state = prefs.getBool('isLoggedIn') ?? false;
+  }
+
+  Future<void> login() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', true);
     state = true;
   }
 
-  void logout() {
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', false);
     state = false;
   }
+ void loginWithToken(String token) {
+  state = true;
+}
+
 }
