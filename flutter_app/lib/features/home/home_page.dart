@@ -13,48 +13,37 @@ class HomePage extends ConsumerWidget {
     return Scaffold(
       appBar: Utility.buildAppBar(context),
       body: Center(
-        child: Column(children: [
-          ElevatedButton(
-            onPressed: () async {
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.setBool('isLoggedIn', false);
-              ref.read(authProvider.notifier).state = false;
-              context.go('/login');
-            },
-            child: Text('LOGOUT'),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: GridView.count(
+            shrinkWrap: true,
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            children: [
+              _buildCard(
+                icon: Icons.calendar_today,
+                label: "Meeting List",
+                onTap: () => context.push('/meetinglist'),
+              ),
+              _buildCard(
+                icon: Icons.connect_without_contact,
+                label: "Meeting Details",
+                onTap: () => context.push('/meetingdetailpage'),
+              ),
+              _buildCard(
+                icon: Icons.auto_awesome,
+                label: "NLP Summary",
+                onTap: () => context.push('/nlp'),
+              ),
+              _buildCard(
+                icon: Icons.note,
+                label: "Saved Summaries",
+                onTap: () => context.push('/saved'),
+              ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: GridView.count(
-              shrinkWrap: true,
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              children: [
-                _buildCard(
-                  icon: Icons.calendar_today,
-                  label: "Meeting List",
-                  onTap: () => context.push('/meetinglist'),
-                ),
-                _buildCard(
-                  icon: Icons.connect_without_contact,
-                  label: "Meeting Details",
-                  onTap: () => context.push('/meetingdetailpage'),
-                ),
-                _buildCard(
-                  icon: Icons.auto_awesome,
-                  label: "NLP Summary",
-                  onTap: () => context.push('/nlp'),
-                ),
-                _buildCard(
-                  icon: Icons.note,
-                  label: "Saved Summaries",
-                  onTap: () => context.push('/saved'),
-                ),
-              ],
-            ),
-          ),
-        ]),
+        ),
       ),
     );
   }

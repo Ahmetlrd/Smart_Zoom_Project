@@ -26,8 +26,10 @@ class AuthNotifier extends StateNotifier<bool> {
     await prefs.setBool('isLoggedIn', false);
     state = false;
   }
- void loginWithToken(String token) {
-  state = true;
-}
 
+  void loginWithToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', true);
+    state = true;
+  }
 }

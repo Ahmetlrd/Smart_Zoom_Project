@@ -1,49 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/features/home/utility.dart';
+import 'package:flutter_app/providers/auth_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_app/providers/auth_provider.dart';
 
-class Settings extends StatefulWidget {
+class Settings extends ConsumerStatefulWidget {
   const Settings({super.key});
 
   @override
-  State<Settings> createState() => _SettingsState();
+  ConsumerState<Settings> createState() => _SettingsState();
 }
 
-String selectedLanguage = "English";
-var switchControl = true;
-
-class _SettingsState extends State<Settings> {
+class _SettingsState extends ConsumerState<Settings> {
   List<String> languages = ['English', 'Türkçe', 'Français', 'Deutsch'];
+  String selectedLanguage = "English";
+  bool switchControl = true;
 
   @override
   Widget build(BuildContext context) {
+    final isLoggedIn = ref.watch(authProvider);
+
     return Scaffold(
       appBar: Utility.buildAppBar(context),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            // Dil Seçimi
             Row(
               children: [
-                SizedBox(width: 50),
-
-                Icon(Icons.language, size: 60),
-                SizedBox(width: 20),
-
-                Text("Language: ", style: TextStyle(fontSize: 20)),
-                SizedBox(width: 35),
-
+                const SizedBox(width: 50),
+                const Icon(Icons.language, size: 60),
+                const SizedBox(width: 20),
+                const Text("Language: ", style: TextStyle(fontSize: 20)),
+                const SizedBox(width: 35),
                 SizedBox(
-                  width: 100,
+                  width: 120,
                   child: DropdownButton<String>(
                     value: selectedLanguage,
                     isExpanded: true,
-                    items:
-                        languages.map((lang) {
-                          return DropdownMenuItem(
-                            value: lang,
-                            child: Text(lang),
-                          );
-                        }).toList(),
+                    items: languages
+                        .map((lang) => DropdownMenuItem(
+                              value: lang,
+                              child: Text(lang),
+                            ))
+                        .toList(),
                     onChanged: (value) {
                       setState(() {
                         selectedLanguage = value!;
@@ -51,36 +54,41 @@ class _SettingsState extends State<Settings> {
                     },
                   ),
                 ),
-
-                SizedBox(width: 20),
               ],
             ),
+
+            // Bildirimler
             Row(
               children: [
-                SizedBox(width: 50),
-
-                Icon(Icons.notifications, size: 60),
-                SizedBox(width: 20),
-
-                SizedBox(
+                const SizedBox(width: 50),
+                const Icon(Icons.notifications, size: 60),
+                const SizedBox(width: 20),
+                const SizedBox(
                   width: 180,
                   child: Text("Notifications", style: TextStyle(fontSize: 20)),
                 ),
-
-                SizedBox(
-                  width: 20,
-                  child: SwitchListTile(
-                    controlAffinity: ListTileControlAffinity.leading,
-                    value: switchControl,
-                    onChanged: (a) {
-                      setState(() {
-                        switchControl = a;
-                      });
-                    },
-                  ),
+                Switch(
+                  value: switchControl,
+                  onChanged: (val) {
+                    setState(() {
+                      switchControl = val;
+                    });
+                  },
                 ),
               ],
             ),
+
+            // Logout Butonu
+            if (isLoggedIn)
+              ElevatedButton(
+                onPressed: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setBool('isLoggedIn', false);
+                  ref.read(authProvider.notifier).state = false;
+                  context.go('/login');
+                },
+                child: const Text('LOGOUT'),
+              ),
           ],
         ),
       ),
