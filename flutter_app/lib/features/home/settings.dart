@@ -1,11 +1,12 @@
+// Gerekli paketleri import ediyorum
 import 'package:flutter/material.dart';
 import 'package:flutter_app/features/home/utility.dart';
 import 'package:flutter_app/providers/auth_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_app/providers/auth_provider.dart';
 
+// Settings (Ayarlar) sayfası, kullanıcı giriş yaptıysa logout işlemi yapılabiliyor
 class Settings extends ConsumerStatefulWidget {
   const Settings({super.key});
 
@@ -14,21 +15,26 @@ class Settings extends ConsumerStatefulWidget {
 }
 
 class _SettingsState extends ConsumerState<Settings> {
+  // Dil seçenekleri listesi
   List<String> languages = ['English', 'Türkçe', 'Français', 'Deutsch'];
   String selectedLanguage = "English";
+
+  // Bildirimler için switch kontrolü
   bool switchControl = true;
 
   @override
   Widget build(BuildContext context) {
+    // Kullanıcının login olup olmadığını kontrol ediyorum
     final isLoggedIn = ref.watch(authProvider);
 
     return Scaffold(
-      appBar: Utility.buildAppBar(context),
+      appBar: Utility.buildAppBar(context), // Üst app bar'ı utility dosyasından alıyorum
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            // Dil Seçimi
+
+            // 🔤 Dil seçimi dropdown
             Row(
               children: [
                 const SizedBox(width: 50),
@@ -57,7 +63,7 @@ class _SettingsState extends ConsumerState<Settings> {
               ],
             ),
 
-            // Bildirimler
+            // 🔔 Bildirimler switch butonu
             Row(
               children: [
                 const SizedBox(width: 50),
@@ -78,13 +84,18 @@ class _SettingsState extends ConsumerState<Settings> {
               ],
             ),
 
-            // Logout Butonu
+            // 🚪 Kullanıcı giriş yaptıysa LOGOUT butonu
             if (isLoggedIn)
               ElevatedButton(
                 onPressed: () async {
+                  // local storage'dan isLoggedIn'i false yapıyorum
                   final prefs = await SharedPreferences.getInstance();
                   await prefs.setBool('isLoggedIn', false);
+
+                  // Riverpod state'i false yapıyorum (çıkış yapmış sayılıyor)
                   ref.read(authProvider.notifier).state = false;
+
+                  // Kullanıcıyı login ekranına yönlendiriyorum
                   context.go('/login');
                 },
                 child: const Text('LOGOUT'),
