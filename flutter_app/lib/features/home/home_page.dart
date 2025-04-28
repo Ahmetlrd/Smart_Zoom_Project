@@ -4,12 +4,15 @@ import 'package:flutter_app/providers/auth_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+        var d = AppLocalizations.of(context);
+
     return Scaffold(
       appBar: Utility.buildAppBar(context),
       body: Center(
@@ -23,22 +26,22 @@ class HomePage extends ConsumerWidget {
             children: [
               _buildCard(
                 icon: Icons.calendar_today,
-                label: "Meeting List",
+                label: d!.meetinglist,
                 onTap: () => context.push('/meetinglist'),
               ),
               _buildCard(
                 icon: Icons.connect_without_contact,
-                label: "Meeting Details",
+                label: d!.meetingdetails,
                 onTap: () => context.push('/meetingdetailpage'),
               ),
               _buildCard(
                 icon: Icons.auto_awesome,
-                label: "NLP Summary",
+                label: d!.nlpsummary,
                 onTap: () => context.push('/nlp'),
               ),
               _buildCard(
                 icon: Icons.note,
-                label: "Saved Summaries",
+                label: d!.saved,
                 onTap: () => context.push('/saved'),
               ),
             ],

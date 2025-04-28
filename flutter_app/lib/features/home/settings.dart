@@ -1,12 +1,12 @@
-// Gerekli paketleri import ediyorum
 import 'package:flutter/material.dart';
 import 'package:flutter_app/features/home/utility.dart';
 import 'package:flutter_app/providers/auth_provider.dart';
+import 'package:flutter_app/providers/locale_provider.dart'; // <-- bunu ekle
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-// Settings (Ayarlar) sayfası, kullanıcı giriş yaptıysa logout işlemi yapılabiliyor
 class Settings extends ConsumerStatefulWidget {
   const Settings({super.key});
 
@@ -15,48 +15,59 @@ class Settings extends ConsumerStatefulWidget {
 }
 
 class _SettingsState extends ConsumerState<Settings> {
-  // Dil seçenekleri listesi
-  List<String> languages = ['English', 'Türkçe', 'Français', 'Deutsch'];
+  List<String> languages = ['English', 'Türkçe','German','French'];
   String selectedLanguage = "English";
 
-  // Bildirimler için switch kontrolü
   bool switchControl = true;
 
   @override
   Widget build(BuildContext context) {
-    // Kullanıcının login olup olmadığını kontrol ediyorum
     final isLoggedIn = ref.watch(authProvider);
+    final d = AppLocalizations.of(context);
+    final locale = ref.watch(localeProvider); // şu anki aktif dil
+
+    // Eğer kullanıcının seçtiği dil değişmişse, dropdown seçimini ona göre güncelle
+    selectedLanguage = _selectedLanguageFromLocale(locale);
 
     return Scaffold(
-      appBar: Utility.buildAppBar(context), // Üst app bar'ı utility dosyasından alıyorum
+      appBar: Utility.buildAppBar(context),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-
-            // 🔤 Dil seçimi dropdown
+            // 🔤 Dil seçimi
             Row(
               children: [
                 const SizedBox(width: 50),
                 const Icon(Icons.language, size: 60),
                 const SizedBox(width: 20),
-                const Text("Language: ", style: TextStyle(fontSize: 20)),
+                Text(d!.language, style: const TextStyle(fontSize: 20)),
                 const SizedBox(width: 35),
                 SizedBox(
                   width: 120,
                   child: DropdownButton<String>(
                     value: selectedLanguage,
                     isExpanded: true,
-                    items: languages
-                        .map((lang) => DropdownMenuItem(
-                              value: lang,
-                              child: Text(lang),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
+                    items: languages.map((lang) => DropdownMenuItem(
+                          value: lang,
+                          child: Text(lang),
+                        )).toList(),
+                    onChanged: (value) async {
                       setState(() {
                         selectedLanguage = value!;
                       });
+
+                      // Seçilen dile göre localeProvider'ı güncelliyoruz
+                      if (value == "Türkçe") {
+                        await ref.read(localeProvider.notifier).setLocale(const Locale('tr'));
+                      } else if (value == "English") {
+                        await ref.read(localeProvider.notifier).setLocale(const Locale('en'));
+                      }else if (value == "German") {
+                        await ref.read(localeProvider.notifier).setLocale(const Locale('de'));
+                      }else if (value == "French") {
+                        await ref.read(localeProvider.notifier).setLocale(const Locale('fr'));
+                      }
+                      
                     },
                   ),
                 ),
@@ -69,9 +80,9 @@ class _SettingsState extends ConsumerState<Settings> {
                 const SizedBox(width: 50),
                 const Icon(Icons.notifications, size: 60),
                 const SizedBox(width: 20),
-                const SizedBox(
+                SizedBox(
                   width: 180,
-                  child: Text("Notifications", style: TextStyle(fontSize: 20)),
+                  child: Text(d.notifications, style: const TextStyle(fontSize: 20)),
                 ),
                 Switch(
                   value: switchControl,
@@ -88,21 +99,28 @@ class _SettingsState extends ConsumerState<Settings> {
             if (isLoggedIn)
               ElevatedButton(
                 onPressed: () async {
-                  // local storage'dan isLoggedIn'i false yapıyorum
                   final prefs = await SharedPreferences.getInstance();
                   await prefs.setBool('isLoggedIn', false);
-
-                  // Riverpod state'i false yapıyorum (çıkış yapmış sayılıyor)
                   ref.read(authProvider.notifier).state = false;
-
-                  // Kullanıcıyı login ekranına yönlendiriyorum
                   context.go('/login');
                 },
-                child: const Text('LOGOUT'),
+                child: Text(d.logout),
               ),
           ],
         ),
       ),
     );
+  }
+
+  // Locale bilgisinden seçili dili buluyoruz
+  String _selectedLanguageFromLocale(Locale? locale) {
+    if (locale == null) return 'English';
+    if (locale.languageCode == 'tr') return 'Türkçe';
+    if (locale.languageCode == 'en') return 'English';
+        if (locale.languageCode == 'de') return 'German';
+
+    if (locale.languageCode == 'fr') return 'French';
+
+    return 'English'; // fallback
   }
 }

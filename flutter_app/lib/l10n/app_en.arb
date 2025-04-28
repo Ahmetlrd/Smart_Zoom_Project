@@ -1,0 +1,16 @@
+{
+    "@@locale": "en",
+    "login":"Login with Zoom",
+    "welcometext":"WELCOME TO THE APPLICATION",
+    "language":"Language:",
+    "notifications":"Notifications:",
+    "meetinglist": "Meeting List",
+    "meetingdetails":"Meeting Details",
+    "nlpsummary":"NLP Summary",
+    "saved":"Saved Summaries",
+    "logout":"Logout",
+    "participants": " Participants: ",
+    "transcription":" Transcription",
+    "summary":" Summary (AI)",
+    "notes":" Notes"
+}

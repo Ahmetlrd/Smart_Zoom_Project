@@ -1,0 +1,16 @@
+{
+    "@@locale": "de",
+  "login": "Mit Zoom anmelden",
+  "welcometext": "WILLKOMMEN IN DER ANWENDUNG",
+  "language": "Sprache:",
+  "notifications": "Benachrichtigungen:",
+  "meetinglist": "Besprechungsliste",
+  "meetingdetails": "Besprechungsdetails",
+  "nlpsummary": "NLP Zusammenfassung",
+  "saved": "Gespeicherte Zusammenfassungen",
+  "logout": "Abmelden",
+  "participants": " Teilnehmer:",
+  "transcription": " Transkription",
+  "summary": " Zusammenfassung (KI)",
+  "notes": " Notizen"
+}

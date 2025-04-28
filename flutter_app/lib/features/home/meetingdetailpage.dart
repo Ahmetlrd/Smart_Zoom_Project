@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MeetingDetailPage extends StatelessWidget {
   MeetingDetailPage({super.key});
   var number = 10;
   @override
   Widget build(BuildContext context) {
+    var d = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(title: const Text("Meeting Details")),
       body: Padding(
@@ -12,10 +14,10 @@ class MeetingDetailPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildOption(context, "👥 Participants: $number"),
-            _buildOption(context, "📄 Transcription"),
-            _buildOption(context, "🧠 Summary (AI)"),
-            _buildOption(context, "📝 Notes"),
+            _buildOption(context, "👥 ${d!.participants}$number"),
+            _buildOption(context, "📄 ${d!.transcription}$number"),
+            _buildOption(context, "🧠 ${d!.summary}$number"),
+            _buildOption(context, "📝 ${d!.notes}$number"),
           ],
         ),
       ),

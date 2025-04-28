@@ -1,0 +1,16 @@
+{
+    "@@locale": "fr",
+  "login": "Se connecter avec Zoom",
+  "welcometext": "BIENVENUE DANS L'APPLICATION",
+  "language": "Langue :",
+  "notifications": "Notifications :",
+  "meetinglist": "Liste des réunions",
+  "meetingdetails": "Détails de la réunion",
+  "nlpsummary": "Résumé NLP",
+  "saved": "Résumés enregistrés",
+  "logout": "Déconnexion",
+  "participants": " Participants :",
+  "transcription": " Transcription",
+  "summary": " Résumé (IA)",
+  "notes": " Notes"
+}

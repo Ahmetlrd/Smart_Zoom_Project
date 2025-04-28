@@ -1,0 +1,16 @@
+{
+    "@@locale": "tr",
+    "login":"Zoom ile giriş yap",
+    "welcometext":"Uygulamaya Hoşgeldiniz",
+    "language":"Dil:",
+    "notifications":"Bildirimler:",
+    "meetinglist": "Toplantı Listesi",
+    "meetingdetails":"Toplantı detayları",
+    "nlpsummary":"NLP özeti",
+    "saved":"Kayıtlı özetler",
+    "logout":"Çıkış yap",
+    "participants": " Katılımcılar: ",
+    "transcription":" Kopya",
+    "summary":" Özet(AI)",
+    "notes":" Notlar"
+}

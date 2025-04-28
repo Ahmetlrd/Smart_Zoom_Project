@@ -7,6 +7,7 @@ import 'package:uni_links/uni_links.dart'; // Deep link yakalamak için
 import 'package:flutter_app/providers/auth_provider.dart'; // Giriş işlemi state yönetimi
 import 'package:url_launcher/url_launcher.dart';
 import 'utility.dart'; // App bar gibi yardımcı şeyleri buradan alıyorum
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // Login sayfası stateful widget olarak tanımlı, çünkü deep link stream'i dinleyeceğim
 class Login extends ConsumerStatefulWidget {
@@ -19,7 +20,6 @@ class Login extends ConsumerStatefulWidget {
 class _LoginState extends ConsumerState<Login> {
   // Zoom'dan geri dönüş URL'sini dinlemek için stream subscription
   StreamSubscription? _sub;
-
   @override
   void initState() {
     super.initState();
@@ -59,8 +59,10 @@ class _LoginState extends ConsumerState<Login> {
 
   @override
   Widget build(BuildContext context) {
+    var d = AppLocalizations.of(context);
     return Scaffold(
-      appBar: Utility.buildAppBar(context), // Üst bar'ı yardımcı dosyadan çekiyorum
+      appBar:
+          Utility.buildAppBar(context), // Üst bar'ı yardımcı dosyadan çekiyorum
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -72,8 +74,8 @@ class _LoginState extends ConsumerState<Login> {
                   size: 72, color: Colors.blueAccent),
               const SizedBox(height: 24),
               // Başlık
-              const Text(
-                "WELCOME TO THE APPLICATION",
+               Text(
+                d!.welcometext,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 24,
@@ -88,7 +90,7 @@ class _LoginState extends ConsumerState<Login> {
                   onPressed: () {
                     // Butona basıldığında Zoom login başlatılıyor
                     final zoomLoginUrl =
-                        'https://a1df-159-20-69-18.ngrok-free.app/auth/login';
+                        'https://018b-159-20-69-18.ngrok-free.app/auth/login';
                     launchUrl(Uri.parse(zoomLoginUrl),
                         mode: LaunchMode.externalApplication);
                   },
@@ -98,7 +100,7 @@ class _LoginState extends ConsumerState<Login> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: const Text("Login with Zoom",
+                  child:  Text(d!.login,
                       style: TextStyle(fontSize: 20, color: Colors.white)),
                 ),
               ),
