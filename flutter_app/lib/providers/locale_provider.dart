@@ -8,14 +8,19 @@ final localeProvider = StateNotifierProvider<LocaleNotifier, Locale?>((ref) {
 
 class LocaleNotifier extends StateNotifier<Locale?> {
   LocaleNotifier() : super(null) {
-    _loadLocale(); // Uygulama açıldığında seçili dili yükle
+    _loadLocale();
   }
 
   Future<void> _loadLocale() async {
     final prefs = await SharedPreferences.getInstance();
     final langCode = prefs.getString('languageCode');
+
     if (langCode != null) {
       state = Locale(langCode);
+    } else {
+      // Eğer kayıtlı bir şey yoksa cihaz dilini al
+      final deviceLocale = WidgetsBinding.instance.platformDispatcher.locale;
+      state = deviceLocale;
     }
   }
 

@@ -7,6 +7,7 @@ class Utility {
     final routeName = ModalRoute.of(context)?.settings.name;
 
     return AppBar(
+      centerTitle: true,
       title: Text(
         "Zoom Project",
         style: TextStyle(
@@ -21,12 +22,11 @@ class Utility {
             Icons.settings,
             color: routeName == '/settings' ? Colors.grey[400] : Colors.white,
           ),
-          onPressed:
-              routeName == '/settings'
-                  ? null
-                  : () {
-                    context.push('/settings');
-                  },
+          onPressed: routeName == '/settings'
+              ? null
+              : () {
+                  context.push('/settings');
+                },
         ),
       ],
       backgroundColor: Colors.blue,

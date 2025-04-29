@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:webview_flutter/webview_flutter.dart'; // sadece paketi değiştirdik
 
 // Zoom login işlemini webview üzerinden yapacağım sayfa
 class ZoomLoginWebView extends StatefulWidget {
@@ -10,47 +10,44 @@ class ZoomLoginWebView extends StatefulWidget {
 }
 
 class _ZoomLoginWebViewState extends State<ZoomLoginWebView> {
-  // Webview plugin objesini oluşturuyorum
-  final flutterWebViewPlugin = FlutterWebviewPlugin();
+  late final WebViewController _controller; // webview_flutter için controller gerekiyor
 
   @override
   void initState() {
     super.initState();
 
-    // Webview'deki URL değişimlerini dinliyorum
-    flutterWebViewPlugin.onUrlChanged.listen((String url) {
-      // Eğer URL Zoom'dan dönen callback URL'siyse
-      if (url.startsWith("http://localhost:8000/auth/callback")) {
-        // URL içinden code parametresini alıyorum
-        Uri uri = Uri.parse(url);
-        String? code = uri.queryParameters['code'];
+    // Controller'ı burada initialize ediyoruz
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted) // Zoom login için JS açık olmalı
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onNavigationRequest: (NavigationRequest request) {
+            final url = request.url;
 
-        if (code != null) {
-          // Webview'i kapat ve önceki sayfaya (login.dart) kodu geri döndür
-          flutterWebViewPlugin.close();
-          Navigator.pop(context, code); // Navigator ile geri dönerken kodu da yolluyorum
-        }
-      }
-    });
-  }
+            // Eğer URL Zoom callback ise
+            if (url.startsWith("http://localhost:8000/auth/callback")) {
+              Uri uri = Uri.parse(url);
+              String? code = uri.queryParameters['code'];
 
-  @override
-  void dispose() {
-    // Sayfa kapanırken webview'i düzgün şekilde dispose ediyorum
-    flutterWebViewPlugin.dispose();
-    super.dispose();
+              if (code != null) {
+                Navigator.pop(context, code); // Kodu geri döndür
+              }
+              return NavigationDecision.prevent; // Bu URL'yi açmaya gerek yok
+            }
+            return NavigationDecision.navigate; // Normalde devam etsin
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse(
+          'https://zoom.us/oauth/authorize?response_type=code&client_id=ec9zlOHpT2yQEg2JIrRkbw&redirect_uri=http://localhost:8000/auth/callback'));
   }
 
   @override
   Widget build(BuildContext context) {
-    // Zoom login ekranı URL'si (client_id ve redirect_uri dikkat!)
-    const zoomAuthUrl =
-        'https://zoom.us/oauth/authorize?response_type=code&client_id=ec9zlOHpT2yQEg2JIrRkbw&redirect_uri=http://localhost:8000/auth/callback';
-
     // Webview ekranı
-    return WebviewScaffold(
-      url: zoomAuthUrl,
+    return Scaffold(
       appBar: AppBar(title: const Text("Zoom Login")),
+      body: WebViewWidget(controller: _controller), // burada Scaffold + WebViewWidget kullanıyoruz
     );
   }
 }
