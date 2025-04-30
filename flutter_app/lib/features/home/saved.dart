@@ -1,14 +1,18 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_app/features/home/utility.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter/material.dart'; // Flutter's core UI toolkit
+import 'package:flutter_app/features/home/utility.dart'; // Utility class for shared UI components like AppBar
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Localization support for multi-language strings
 
+// A stateless widget representing the Saved Summaries page
 class Saved extends StatelessWidget {
-  const Saved({super.key});
+  const Saved({super.key}); // Constructor with optional key
 
   @override
   Widget build(BuildContext context) {
-            var d = AppLocalizations.of(context);
+    var d = AppLocalizations.of(context); // Access localized text for the current language
 
-    return Scaffold(appBar: Utility.buildAppBar(context));
+    // Returns a simple scaffold with a custom app bar (no body content yet)
+    return Scaffold(
+      appBar: Utility.buildAppBar(context), // App bar defined in Utility class
+    );
   }
 }

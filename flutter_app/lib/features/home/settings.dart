@@ -1,12 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_app/features/home/utility.dart';
-import 'package:flutter_app/providers/auth_provider.dart';
-import 'package:flutter_app/providers/locale_provider.dart'; // <-- bunu ekle
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter/material.dart'; // Flutter UI toolkit
+import 'package:flutter_app/features/home/utility.dart'; // Custom utility functions (e.g., AppBar)
+import 'package:flutter_app/providers/auth_provider.dart'; // Authentication state management
+import 'package:flutter_app/providers/locale_provider.dart'; // Language/locale management
+import 'package:flutter_riverpod/flutter_riverpod.dart'; // State management with Riverpod
+import 'package:go_router/go_router.dart'; // Navigation with GoRouter
+import 'package:shared_preferences/shared_preferences.dart'; // Persistent local storage
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Localization support
 
+// Settings page where users can change language, notification preferences, and log out
 class Settings extends ConsumerStatefulWidget {
   const Settings({super.key});
 
@@ -15,27 +16,29 @@ class Settings extends ConsumerStatefulWidget {
 }
 
 class _SettingsState extends ConsumerState<Settings> {
+  // Language options displayed in the dropdown
   List<String> languages = ['English', 'Türkçe','German','French'];
   String selectedLanguage = "English";
 
+  // State for notifications switch
   bool switchControl = true;
 
   @override
   Widget build(BuildContext context) {
-    final isLoggedIn = ref.watch(authProvider);
-    final d = AppLocalizations.of(context);
-    final locale = ref.watch(localeProvider); // şu anki aktif dil
+    final isLoggedIn = ref.watch(authProvider); // Check if user is logged in
+    final d = AppLocalizations.of(context); // Localized strings
+    final locale = ref.watch(localeProvider); // Currently selected locale
 
-    // Eğer kullanıcının seçtiği dil değişmişse, dropdown seçimini ona göre güncelle
+    // Update dropdown selection based on current locale
     selectedLanguage = _selectedLanguageFromLocale(locale);
 
     return Scaffold(
-      appBar: Utility.buildAppBar(context),
+      appBar: Utility.buildAppBar(context), // Custom AppBar
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            // 🔤 Dil seçimi
+            // Language dropdown
             Row(
               children: [
                 const SizedBox(width: 50),
@@ -57,24 +60,23 @@ class _SettingsState extends ConsumerState<Settings> {
                         selectedLanguage = value!;
                       });
 
-                      // Seçilen dile göre localeProvider'ı güncelliyoruz
+                      // Update the app locale using Riverpod
                       if (value == "Türkçe") {
                         await ref.read(localeProvider.notifier).setLocale(const Locale('tr'));
                       } else if (value == "English") {
                         await ref.read(localeProvider.notifier).setLocale(const Locale('en'));
-                      }else if (value == "German") {
+                      } else if (value == "German") {
                         await ref.read(localeProvider.notifier).setLocale(const Locale('de'));
-                      }else if (value == "French") {
+                      } else if (value == "French") {
                         await ref.read(localeProvider.notifier).setLocale(const Locale('fr'));
                       }
-                      
                     },
                   ),
                 ),
               ],
             ),
 
-            // 🔔 Bildirimler switch butonu
+            // Notifications toggle
             Row(
               children: [
                 const SizedBox(width: 50),
@@ -95,13 +97,18 @@ class _SettingsState extends ConsumerState<Settings> {
               ],
             ),
 
-            // 🚪 Kullanıcı giriş yaptıysa LOGOUT butonu
+            // Logout button if user is logged in
             if (isLoggedIn)
               ElevatedButton(
                 onPressed: () async {
+                  // Clear login status from shared preferences
                   final prefs = await SharedPreferences.getInstance();
                   await prefs.setBool('isLoggedIn', false);
+
+                  // Set Riverpod state to logged out
                   ref.read(authProvider.notifier).state = false;
+
+                  // Navigate to login screen
                   context.go('/login');
                 },
                 child: Text(d.logout),
@@ -112,15 +119,13 @@ class _SettingsState extends ConsumerState<Settings> {
     );
   }
 
-  // Locale bilgisinden seçili dili buluyoruz
+  // Convert Locale to a readable language string for dropdown
   String _selectedLanguageFromLocale(Locale? locale) {
     if (locale == null) return 'English';
     if (locale.languageCode == 'tr') return 'Türkçe';
     if (locale.languageCode == 'en') return 'English';
-        if (locale.languageCode == 'de') return 'German';
-
+    if (locale.languageCode == 'de') return 'German';
     if (locale.languageCode == 'fr') return 'French';
-
-    return 'English'; // fallback
+    return 'English'; // fallback if unknown
   }
 }
