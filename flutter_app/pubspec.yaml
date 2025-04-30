@@ -13,7 +13,7 @@ dependencies:
 
   # For loading environment variables from a .env file
   flutter_dotenv: ^5.1.0
-
+  http: ^0.13.6
   # For storing and retrieving persistent key-value pairs locally
   shared_preferences: ^2.2.2
 

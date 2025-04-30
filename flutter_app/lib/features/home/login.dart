@@ -1,9 +1,11 @@
 import 'dart:async'; // Used for managing asynchronous operations like listening to streams
 import 'package:flutter/material.dart'; // Core Flutter UI toolkit
+import 'package:flutter_app/services/auth_service.dart';
 import 'package:go_router/go_router.dart'; // Handles navigation and routing between screens
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Provides state management using Riverpod
 import 'package:app_links/app_links.dart'; // Used to listen for incoming deep links
 import 'package:flutter_app/providers/auth_provider.dart'; // Custom provider that holds authentication state
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart'; // Used to open external URLs or apps
 import 'utility.dart'; // Contains reusable utility functions, such as custom AppBar builder
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Automatically generated localization class
@@ -28,18 +30,39 @@ class _LoginState extends ConsumerState<Login> {
   @override
   void initState() {
     super.initState();
+    // Try to get and refresh token when app starts
+    Future.delayed(Duration.zero, () async {
+      final prefs = await SharedPreferences.getInstance();
+      final refreshToken = prefs.getString('refresh_token');
 
+      if (refreshToken != null) {
+        final token = await AuthService.refreshAccessToken(refreshToken);
+        if (token != null) {
+          // Save token in Riverpod state
+          ref.read(authProvider.notifier).loginWithToken(token);
+          context.go('/home'); // Go to homepage if successful
+          return; // refresh başarılıysa listener kurmaya gerek yok
+        }
+      }
+    });
     // Initializes AppLinks and listens for incoming links
     _appLinks = AppLinks();
-    _sub = _appLinks.uriLinkStream.listen((Uri? uri) {
+    _sub = _appLinks.uriLinkStream.listen((Uri? uri) async {
       // If the link has the custom scheme "zoomai", then it's a valid callback
       if (uri != null && uri.scheme == "zoomai") {
-        final token =
-            uri.queryParameters['token']; // Extract JWT token from query string
-        if (token != null) {
-          // Save the token in Riverpod state (user is considered logged in)
+        final token = uri.queryParameters['token']; // Extract JWT token
+        final refreshToken =
+            uri.queryParameters['refresh_token']; // Extract refresh token
+
+        if (token != null && refreshToken != null) {
+          // Save token in Riverpod state (user is considered logged in)
           ref.read(authProvider.notifier).loginWithToken(token);
-          // Navigate to the home page
+
+          // Save refresh token to persistent storage
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('refresh_token', refreshToken);
+
+          // Navigate to home page
           context.go('/home');
         }
       }
