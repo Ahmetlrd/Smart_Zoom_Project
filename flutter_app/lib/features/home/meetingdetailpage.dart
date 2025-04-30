@@ -33,9 +33,9 @@ class MeetingDetailPage extends StatelessWidget {
           children: [
             // Four buttons with localized labels and emoji
             _buildOption(context, "👥 ${d!.participants}$number", buttonHeight, fontSize, verticalSpacing),
-            _buildOption(context, "📄 ${d.transcription}$number", buttonHeight, fontSize, verticalSpacing),
-            _buildOption(context, "🧠 ${d.summary}$number", buttonHeight, fontSize, verticalSpacing),
-            _buildOption(context, "📝 ${d.notes}$number", buttonHeight, fontSize, verticalSpacing),
+            _buildOption(context, "📄 ${d.transcription}", buttonHeight, fontSize, verticalSpacing),
+            _buildOption(context, "🧠 ${d.summary}", buttonHeight, fontSize, verticalSpacing),
+            _buildOption(context, "📝 ${d.notes}", buttonHeight, fontSize, verticalSpacing),
           ],
         ),
       ),

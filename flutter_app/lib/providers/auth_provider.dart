@@ -1,4 +1,6 @@
 // Import necessary packages for state management (Riverpod) and persistent storage
+import 'package:flutter_app/services/secure_storage_service.dart'
+    as SecureStorageService;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,6 +34,8 @@ class AuthNotifier extends StateNotifier<bool> {
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isLoggedIn', false); // Clear login state
+    // Delete token from secure storage
+    await SecureStorageService.clearAllTokens();
     state = false; // Update the state to logged out
   }
 

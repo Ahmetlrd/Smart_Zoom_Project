@@ -1,6 +1,7 @@
 import 'dart:async'; // Used for managing asynchronous operations like listening to streams
 import 'package:flutter/material.dart'; // Core Flutter UI toolkit
 import 'package:flutter_app/services/auth_service.dart';
+import 'package:flutter_app/services/secure_storage_service.dart';
 import 'package:go_router/go_router.dart'; // Handles navigation and routing between screens
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Provides state management using Riverpod
 import 'package:app_links/app_links.dart'; // Used to listen for incoming deep links
@@ -30,39 +31,44 @@ class _LoginState extends ConsumerState<Login> {
   @override
   void initState() {
     super.initState();
-    // Try to get and refresh token when app starts
+    // Try to restore session using secure storage
     Future.delayed(Duration.zero, () async {
-      final prefs = await SharedPreferences.getInstance();
-      final refreshToken = prefs.getString('refresh_token');
-
+      // Step 1: Try refreshing access token using stored refresh token
+      final refreshToken = await readRefreshToken();
       if (refreshToken != null) {
-        final token = await AuthService.refreshAccessToken(refreshToken);
-        if (token != null) {
-          // Save token in Riverpod state
-          ref.read(authProvider.notifier).loginWithToken(token);
-          context.go('/home'); // Go to homepage if successful
-          return; // refresh başarılıysa listener kurmaya gerek yok
+        final newAccessToken =
+            await AuthService.refreshAccessToken(refreshToken);
+        if (newAccessToken != null) {
+          // Save new token to secure storage and login
+          await saveAccessToken(newAccessToken);
+          ref.read(authProvider.notifier).loginWithToken(newAccessToken);
+          context.go('/home');
+          return;
         }
       }
+
+      // Step 2: If refresh didn't work, try using previously saved access token directly
+      final savedToken = await readAccessToken();
+      if (savedToken != null) {
+        ref.read(authProvider.notifier).loginWithToken(savedToken);
+        context.go('/home');
+      }
     });
-    // Initializes AppLinks and listens for incoming links
+    // Step 3: Listen for OAuth callback with token info (from Zoom login redirect)
     _appLinks = AppLinks();
     _sub = _appLinks.uriLinkStream.listen((Uri? uri) async {
-      // If the link has the custom scheme "zoomai", then it's a valid callback
       if (uri != null && uri.scheme == "zoomai") {
-        final token = uri.queryParameters['token']; // Extract JWT token
+        final token = uri.queryParameters['token']; // JWT
         final refreshToken =
-            uri.queryParameters['refresh_token']; // Extract refresh token
+            uri.queryParameters['refresh_token']; // Refresh token
 
         if (token != null && refreshToken != null) {
-          // Save token in Riverpod state (user is considered logged in)
+          // Save tokens securely
+          await saveAccessToken(token);
+          await saveRefreshToken(refreshToken);
+
+          // Update login state and go to homepage
           ref.read(authProvider.notifier).loginWithToken(token);
-
-          // Save refresh token to persistent storage
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('refresh_token', refreshToken);
-
-          // Navigate to home page
           context.go('/home');
         }
       }
