@@ -11,18 +11,30 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Get localized strings for the current locale
     var d = AppLocalizations.of(context);
+    // Get screen dimensions for responsive design
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    // Adjust the number of columns based on screen width
+    final crossAxisCount = screenWidth < 600 ? 2 : 4;
 
     return Scaffold(
       // Use a custom app bar from Utility
       appBar: Utility.buildAppBar(context),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.05,
+            vertical: screenHeight * 0.02,
+          ),
           child: GridView.count(
             shrinkWrap: true, // Only take as much height as needed
-            crossAxisCount: 2, // 2 columns in the grid
+            crossAxisCount: crossAxisCount, // 2 columns in the grid
             crossAxisSpacing: 16, // Horizontal spacing between items
-            mainAxisSpacing: 16, // Vertical spacing between items
+            mainAxisSpacing: 16,
+            childAspectRatio: screenWidth / (screenHeight / 2),
+
+            // width:height ratio             // Vertical spacing between items
             children: [
               // Card for "Meeting List"
               _buildCard(
@@ -71,10 +83,13 @@ class HomePage extends ConsumerWidget {
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center, // Vertical centering
             children: [
               Icon(icon, size: 48, color: Colors.blue),
               const SizedBox(height: 12),
-              Text(label, style: const TextStyle(fontSize: 16)),
+              Text(label,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 16)),
             ],
           ),
         ),

@@ -69,31 +69,45 @@ class _LoginState extends ConsumerState<Login> {
     // Access localized strings (multi-language support)
     var d = AppLocalizations.of(context);
 
+    // Get screen dimensions for responsive layout
+    final size = MediaQuery.of(context).size;
+    final screenWidth = size.width;
+    final screenHeight = size.height;
+
+    // Calculate responsive values based on screen size
+    final iconSize = screenWidth * 0.15; // Icon takes 15% of screen width
+    final verticalSpacing = screenHeight * 0.03; // Spacing between elements
+    final buttonPadding = screenHeight * 0.02; // Button vertical padding
+    final fontSize = screenWidth * 0.045; // Text size relative to screen width
+
     return Scaffold(
       appBar: Utility.buildAppBar(context), // Adds a custom top app bar
       body: Center(
         child: Padding(
-          padding:
-              const EdgeInsets.symmetric(horizontal: 32), // Horizontal padding
+          padding: EdgeInsets.symmetric(
+              horizontal: screenWidth * 0.08), // Responsive horizontal padding
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center, // Center vertically
             children: [
               // Lock icon to indicate "authentication"
-              const Icon(Icons.lock_outline,
-                  size: 72, color: Colors.blueAccent),
-              const SizedBox(height: 24), // Vertical space
+              Icon(Icons.lock_outline,
+                  size: iconSize,
+                  color: Colors.blueAccent), // Responsive icon size
+              SizedBox(height: verticalSpacing), // Responsive vertical space
 
               // Welcome message using localization
               Text(
                 d!.welcometext,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 24,
+                style: TextStyle(
+                  fontSize: fontSize, // Responsive font size
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.2,
                 ),
               ),
-              const SizedBox(height: 40), // Vertical space before button
+              SizedBox(
+                  height: verticalSpacing *
+                      1.5), // Additional spacing before button
 
               // Login button
               SizedBox(
@@ -110,7 +124,8 @@ class _LoginState extends ConsumerState<Login> {
                         mode: LaunchMode.externalApplication);
                   },
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: EdgeInsets.symmetric(
+                        vertical: buttonPadding), // Responsive button padding
                     backgroundColor: Colors.blueAccent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -118,7 +133,9 @@ class _LoginState extends ConsumerState<Login> {
                   ),
                   child: Text(
                     d.login,
-                    style: const TextStyle(fontSize: 20, color: Colors.white),
+                    style: TextStyle(
+                        fontSize: fontSize,
+                        color: Colors.white), // Responsive button text
                   ),
                 ),
               ),

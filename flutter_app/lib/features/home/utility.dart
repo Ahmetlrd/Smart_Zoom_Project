@@ -9,12 +9,17 @@ class Utility {
     // Get the current route name to conditionally style the settings icon
     final routeName = ModalRoute.of(context)?.settings.name;
 
+    // Screen width is used to adjust font and icon size responsively
+    final screenWidth = MediaQuery.of(context).size.width;
+    final titleFontSize = screenWidth * 0.07; // Responsive font size (e.g., 40 at 570px)
+    final settingsIconSize = screenWidth * 0.07; // Icon size adjusts with screen width
+
     return AppBar(
       centerTitle: true, // Center the title text
       title: Text(
         "Zoom Project", // Fixed title text
         style: TextStyle(
-          fontSize: 40, // Large font size
+          fontSize: titleFontSize, // Dynamic font size based on screen width
           fontWeight: FontWeight.bold, // Bold text
           color: Colors.white, // White color text
         ),
@@ -24,6 +29,7 @@ class Utility {
         IconButton(
           icon: Icon(
             Icons.settings,
+            size: settingsIconSize, // Dynamic icon size
             // If the current route is /settings, show the icon in grey (disabled)
             color: routeName == '/settings' ? Colors.grey[400] : Colors.white,
           ),

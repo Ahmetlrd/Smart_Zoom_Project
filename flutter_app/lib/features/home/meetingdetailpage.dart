@@ -13,18 +13,29 @@ class MeetingDetailPage extends StatelessWidget {
     // Access the localization instance for the current context
     var d = AppLocalizations.of(context);
 
+    // Get screen dimensions for responsive layout
+    final size = MediaQuery.of(context).size;
+    final screenWidth = size.width;
+    final screenHeight = size.height;
+
+    // Calculate responsive padding, font size, button height, and spacing
+    final padding = screenWidth * 0.06;
+    final fontSize = screenWidth * 0.045;
+    final buttonHeight = screenHeight * 0.07;
+    final verticalSpacing = screenHeight * 0.025;
+
     return Scaffold(
       appBar: AppBar(title: const Text("Meeting Details")), // Top app bar with title
       body: Padding(
-        padding: const EdgeInsets.all(24.0), // Adds spacing around the content
+        padding: EdgeInsets.all(padding), // Responsive padding
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center, // Vertically centers the children
           children: [
             // Four buttons with localized labels and emoji
-            _buildOption(context, "👥 ${d!.participants}$number"),
-            _buildOption(context, "📄 ${d.transcription}$number"),
-            _buildOption(context, "🧠 ${d.summary}$number"),
-            _buildOption(context, "📝 ${d.notes}$number"),
+            _buildOption(context, "👥 ${d!.participants}$number", buttonHeight, fontSize, verticalSpacing),
+            _buildOption(context, "📄 ${d.transcription}$number", buttonHeight, fontSize, verticalSpacing),
+            _buildOption(context, "🧠 ${d.summary}$number", buttonHeight, fontSize, verticalSpacing),
+            _buildOption(context, "📝 ${d.notes}$number", buttonHeight, fontSize, verticalSpacing),
           ],
         ),
       ),
@@ -32,18 +43,18 @@ class MeetingDetailPage extends StatelessWidget {
   }
 
   // A reusable function that creates an elevated button with given label
-  Widget _buildOption(BuildContext context, String label) {
+  Widget _buildOption(BuildContext context, String label, double height, double fontSize, double spacing) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0), // Adds vertical spacing between buttons
+      padding: EdgeInsets.symmetric(vertical: spacing), // Responsive vertical spacing
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(50)), // Full-width button
+        style: ElevatedButton.styleFrom(minimumSize: Size.fromHeight(height)), // Responsive button height
         onPressed: () {
           // Shows a small notification at the bottom when button is clicked
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Clicked: $label")),
           );
         },
-        child: Text(label, style: const TextStyle(fontSize: 18)), // Button label style
+        child: Text(label, style: TextStyle(fontSize: fontSize)), // Responsive font size
       ),
     );
   }

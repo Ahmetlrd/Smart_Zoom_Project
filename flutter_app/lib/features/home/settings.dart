@@ -17,7 +17,7 @@ class Settings extends ConsumerStatefulWidget {
 
 class _SettingsState extends ConsumerState<Settings> {
   // Language options displayed in the dropdown
-  List<String> languages = ['English', 'Türkçe','German','French'];
+  List<String> languages = ['English', 'Türkçe', 'German', 'French'];
   String selectedLanguage = "English";
 
   // State for notifications switch
@@ -32,6 +32,18 @@ class _SettingsState extends ConsumerState<Settings> {
     // Update dropdown selection based on current locale
     selectedLanguage = _selectedLanguageFromLocale(locale);
 
+    // Responsive ölçüler hesaplanıyor
+    final size = MediaQuery.of(context).size;
+    final screenWidth = size.width;
+    final screenHeight = size.height;
+
+    final iconSize = screenWidth * 0.12;
+    final fontSize = screenWidth * 0.045;
+    final horizontalPadding = screenWidth * 0.1;
+    final dropdownWidth = screenWidth * 0.3;
+    final buttonWidth = screenWidth * 0.5;
+    final spacing = screenHeight * 0.02;
+
     return Scaffold(
       appBar: Utility.buildAppBar(context), // Custom AppBar
       body: Center(
@@ -41,20 +53,22 @@ class _SettingsState extends ConsumerState<Settings> {
             // Language dropdown
             Row(
               children: [
-                const SizedBox(width: 50),
-                const Icon(Icons.language, size: 60),
-                const SizedBox(width: 20),
-                Text(d!.language, style: const TextStyle(fontSize: 20)),
-                const SizedBox(width: 35),
+                SizedBox(width: horizontalPadding),
+                Icon(Icons.language, size: iconSize),
+                SizedBox(width: screenWidth * 0.05),
+                Text(d!.language, style: TextStyle(fontSize: fontSize)),
+                SizedBox(width: screenWidth * 0.05),
                 SizedBox(
-                  width: 120,
+                  width: dropdownWidth,
                   child: DropdownButton<String>(
                     value: selectedLanguage,
                     isExpanded: true,
-                    items: languages.map((lang) => DropdownMenuItem(
-                          value: lang,
-                          child: Text(lang),
-                        )).toList(),
+                    items: languages
+                        .map((lang) => DropdownMenuItem(
+                              value: lang,
+                              child: Text(lang),
+                            ))
+                        .toList(),
                     onChanged: (value) async {
                       setState(() {
                         selectedLanguage = value!;
@@ -62,13 +76,21 @@ class _SettingsState extends ConsumerState<Settings> {
 
                       // Update the app locale using Riverpod
                       if (value == "Türkçe") {
-                        await ref.read(localeProvider.notifier).setLocale(const Locale('tr'));
+                        await ref
+                            .read(localeProvider.notifier)
+                            .setLocale(const Locale('tr'));
                       } else if (value == "English") {
-                        await ref.read(localeProvider.notifier).setLocale(const Locale('en'));
+                        await ref
+                            .read(localeProvider.notifier)
+                            .setLocale(const Locale('en'));
                       } else if (value == "German") {
-                        await ref.read(localeProvider.notifier).setLocale(const Locale('de'));
+                        await ref
+                            .read(localeProvider.notifier)
+                            .setLocale(const Locale('de'));
                       } else if (value == "French") {
-                        await ref.read(localeProvider.notifier).setLocale(const Locale('fr'));
+                        await ref
+                            .read(localeProvider.notifier)
+                            .setLocale(const Locale('fr'));
                       }
                     },
                   ),
@@ -79,12 +101,13 @@ class _SettingsState extends ConsumerState<Settings> {
             // Notifications toggle
             Row(
               children: [
-                const SizedBox(width: 50),
-                const Icon(Icons.notifications, size: 60),
-                const SizedBox(width: 20),
+                SizedBox(width: horizontalPadding),
+                Icon(Icons.notifications, size: iconSize),
+                SizedBox(width: screenWidth * 0.05),
                 SizedBox(
-                  width: 180,
-                  child: Text(d.notifications, style: const TextStyle(fontSize: 20)),
+                  width: screenWidth * 0.5,
+                  child: Text(d.notifications,
+                      style: TextStyle(fontSize: fontSize)),
                 ),
                 Switch(
                   value: switchControl,
@@ -99,20 +122,25 @@ class _SettingsState extends ConsumerState<Settings> {
 
             // Logout button if user is logged in
             if (isLoggedIn)
-              ElevatedButton(
-                onPressed: () async {
-                  // Clear login status from shared preferences
-                  final prefs = await SharedPreferences.getInstance();
-                  await prefs.setBool('isLoggedIn', false);
+              SizedBox(
+                width: buttonWidth,
+                height: screenHeight * 0.07,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    // Clear login status from shared preferences
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.setBool('isLoggedIn', false);
 
-                  // Set Riverpod state to logged out
-                  ref.read(authProvider.notifier).state = false;
+                    // Set Riverpod state to logged out
+                    ref.read(authProvider.notifier).state = false;
 
-                  // Navigate to login screen
-                  context.go('/login');
-                },
-                child: Text(d.logout),
+                    // Navigate to login screen
+                    context.go('/login');
+                  },
+                  child: Text(d.logout, style: TextStyle(fontSize: fontSize)),
+                ),
               ),
+            SizedBox(height: spacing),
           ],
         ),
       ),
