@@ -14,38 +14,38 @@ import 'features/home/login.dart';
 import 'features/home/home_page.dart';
 import 'providers/auth_provider.dart';
 
-// Uygulamanın yönlendirmelerini (sayfa geçişlerini) tanımladığım GoRouter
+// This provider creates a GoRouter instance to handle app navigation
 final routerProvider = Provider<GoRouter>((ref) {
-  // Kullanıcı giriş yapmış mı, authProvider üzerinden kontrol ediyorum
+  // Check login status from the authProvider
   final isLoggedIn = ref.watch(authProvider);
 
   return GoRouter(
-    // Uygulama açıldığında ilk gidilecek yer
+    // Initial route when the app launches
     initialLocation: '/',
 
-    // authProvider state değişince router'a haber veriyorum
+    // Tells GoRouter to rebuild when auth state changes
     refreshListenable: GoRouterRefreshStream(
       ref.watch(authProvider.notifier).stream,
     ),
 
-    // Sayfa yönlendirme tanımları
+    // Define all the app routes
     routes: [
-      // Eğer giriş yapmışsa anasayfa, yoksa login ekranı
+      // If user is logged in, go to HomePage; otherwise go to Login screen
       GoRoute(
         path: '/',
         builder:
             (context, state) => isLoggedIn ? const HomePage() : const Login(),
       ),
 
-      // Diğer route'lar
+      // Define other static routes
       GoRoute(path: '/login', builder: (context, state) => const Login()),
       GoRoute(path: '/home', builder: (context, state) => const HomePage()),
       GoRoute(path: '/settings', builder: (context, state) => const Settings()),
-
       GoRoute(path: '/meetinglist', builder: (context, state) => const Meetinglist()),
       GoRoute(path: '/saved', builder: (context, state) => const Saved()),
       GoRoute(path: '/nlp', builder: (context, state) => const Nlp()),
 
+      // Meeting details page (dynamic or detailed content can be passed here)
       GoRoute(
         path: '/meetingdetailpage',
         builder: (context, state) => MeetingDetailPage(),
@@ -54,12 +54,12 @@ final routerProvider = Provider<GoRouter>((ref) {
   );
 });
 
-// Riverpod state stream'ini GoRouter'a haber vermek için özel sınıf
+// A class that listens to changes in the authProvider's stream and notifies GoRouter
 class GoRouterRefreshStream extends ChangeNotifier {
   GoRouterRefreshStream(Stream<dynamic> stream) {
-    notifyListeners(); // ilk durumda da dinleyicilere haber ver
+    notifyListeners(); // Notify listeners initially
     _subscription = stream.asBroadcastStream().listen((event) {
-      notifyListeners(); // her değişiklikte router'a haber ver
+      notifyListeners(); // Notify on every new event
     });
   }
 
@@ -67,7 +67,7 @@ class GoRouterRefreshStream extends ChangeNotifier {
 
   @override
   void dispose() {
-    _subscription.cancel(); // sayfa kapanırsa stream'i bırak
+    _subscription.cancel(); // Cancel the stream subscription when disposed
     super.dispose();
   }
 }

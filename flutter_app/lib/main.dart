@@ -25,6 +25,7 @@ import 'package:app_links/app_links.dart';
 // Generated localization class (via flutter gen-l10n)
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // This function listens for deep links like: zoomai://auth-callback?token=...
 Future<void> handleIncomingLinks(WidgetRef ref, BuildContext context) async {
@@ -53,6 +54,8 @@ Future<void> handleIncomingLinks(WidgetRef ref, BuildContext context) async {
 
 // Entry point of the Flutter application
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   runApp(const ProviderScope(child: MyApp())); // Wrap with Riverpod ProviderScope
 }
 

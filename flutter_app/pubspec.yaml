@@ -4,41 +4,55 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.3.0 # Flutter 3.19+ destekler (seninki 3.7.2 ise bu da olur)
+  sdk: ^3.3.0 # Specifies the required Dart SDK version (compatible with Flutter 3.19+)
 
 dependencies:
-  
-  flutter:
-    sdk: flutter
 
-  # 🧠 Durumu saklamak için
+  flutter:
+    sdk: flutter # Core Flutter SDK dependency
+
+  # For loading environment variables from a .env file
   flutter_dotenv: ^5.1.0
+
+  # For storing and retrieving persistent key-value pairs locally
   shared_preferences: ^2.2.2
+
+  # To open external URLs or deep links
   url_launcher: ^6.2.5
+
+  # To handle incoming app links (deep linking)
   app_links: ^4.0.0
 
-
+  # For localization and internationalization support
   flutter_localizations:
     sdk: flutter
-  intl: ^0.19.0 
 
-  # 🔀 Sayfa geçişleri için
+  # For formatting dates, numbers, etc.
+  intl: ^0.19.0
+
+  # For declarative navigation between screens
   go_router: ^13.0.1
 
-  # 🧪 State management
+  # For state management
   flutter_riverpod: ^2.4.5
+
+  # For displaying web content using WebView
   webview_flutter: ^4.4.1
 
-
-  # 🔤 iOS ikonları için
+  # Optional: Adds Cupertino-style icons (iOS look and feel)
   cupertino_icons: ^1.0.6
 
 dev_dependencies:
+  # For running Flutter widget tests
   flutter_test:
     sdk: flutter
+
+  # Linting rules and static analysis
   flutter_lints: ^2.0.0
 
 flutter:
-  generate: true
-  uses-material-design: true
-  
+  generate: true # Enables automatic code generation (e.g., localization)
+  uses-material-design: true # Enables usage of Material Design icons and themes
+
+  assets:
+    - .env # Include the .env file for environment variable loading

@@ -7,30 +7,35 @@ import 'package:flutter_app/providers/auth_provider.dart'; // Custom provider th
 import 'package:url_launcher/url_launcher.dart'; // Used to open external URLs or apps
 import 'utility.dart'; // Contains reusable utility functions, such as custom AppBar builder
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Automatically generated localization class
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // This is the login screen widget that uses Riverpod state management
 class Login extends ConsumerStatefulWidget {
   const Login({super.key});
 
   @override
-  ConsumerState<Login> createState() => _LoginState(); // Creates the mutable state for this widget
+  ConsumerState<Login> createState() =>
+      _LoginState(); // Creates the mutable state for this widget
 }
 
 // This class holds the logic and UI for the Login screen
 class _LoginState extends ConsumerState<Login> {
-  StreamSubscription? _sub; // Will hold the stream listener for incoming deep links
-  late final AppLinks _appLinks; // Handles link stream to detect redirects (e.g., Zoom callback)
+  StreamSubscription?
+      _sub; // Will hold the stream listener for incoming deep links
+  late final AppLinks
+      _appLinks; // Handles link stream to detect redirects (e.g., Zoom callback)
 
   @override
   void initState() {
     super.initState();
 
     // Initializes AppLinks and listens for incoming links
-    _appLinks = AppLinks(); 
+    _appLinks = AppLinks();
     _sub = _appLinks.uriLinkStream.listen((Uri? uri) {
       // If the link has the custom scheme "zoomai", then it's a valid callback
       if (uri != null && uri.scheme == "zoomai") {
-        final token = uri.queryParameters['token']; // Extract JWT token from query string
+        final token =
+            uri.queryParameters['token']; // Extract JWT token from query string
         if (token != null) {
           // Save the token in Riverpod state (user is considered logged in)
           ref.read(authProvider.notifier).loginWithToken(token);
@@ -50,9 +55,10 @@ class _LoginState extends ConsumerState<Login> {
 
   // Opens Zoom login page in the user's external browser (used in OAuth flow)
   void _launchZoomLogin() async {
-    const zoomLoginUrl = 'https://<NGROK_LINK>.ngrok-free.app/auth/login'; 
+    const zoomLoginUrl = 'https://<NGROK_LINK>.ngrok-free.app/auth/login';
     if (await canLaunchUrl(Uri.parse(zoomLoginUrl))) {
-      await launchUrl(Uri.parse(zoomLoginUrl), mode: LaunchMode.externalApplication);
+      await launchUrl(Uri.parse(zoomLoginUrl),
+          mode: LaunchMode.externalApplication);
     } else {
       print("URL could not open.");
     }
@@ -62,19 +68,21 @@ class _LoginState extends ConsumerState<Login> {
   Widget build(BuildContext context) {
     // Access localized strings (multi-language support)
     var d = AppLocalizations.of(context);
-    
+
     return Scaffold(
       appBar: Utility.buildAppBar(context), // Adds a custom top app bar
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32), // Horizontal padding
+          padding:
+              const EdgeInsets.symmetric(horizontal: 32), // Horizontal padding
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center, // Center vertically
             children: [
               // Lock icon to indicate "authentication"
-              const Icon(Icons.lock_outline, size: 72, color: Colors.blueAccent),
+              const Icon(Icons.lock_outline,
+                  size: 72, color: Colors.blueAccent),
               const SizedBox(height: 24), // Vertical space
-              
+
               // Welcome message using localization
               Text(
                 d!.welcometext,
@@ -86,14 +94,20 @@ class _LoginState extends ConsumerState<Login> {
                 ),
               ),
               const SizedBox(height: 40), // Vertical space before button
-              
+
               // Login button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    final zoomLoginUrl = 'https://b36b-159-20-69-18.ngrok-free.app/auth/login';
-                    launchUrl(Uri.parse(zoomLoginUrl), mode: LaunchMode.externalApplication);
+                    final zoomLoginUrl = dotenv.env['ZOOM_LOGIN_URL'] ?? '';
+                    if (zoomLoginUrl.isEmpty) {
+                      print("ZOOM_LOGIN_URL not found in .env");
+                      return;
+                    }
+
+                    launchUrl(Uri.parse(zoomLoginUrl),
+                        mode: LaunchMode.externalApplication);
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
