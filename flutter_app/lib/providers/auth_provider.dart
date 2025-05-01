@@ -40,9 +40,7 @@ class AuthNotifier extends StateNotifier<bool> {
   }
 
   // If we receive a token (e.g., from Zoom login), mark the user as logged in
-  void loginWithToken(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', true); // Save login state
-    state = true; // Update the state to logged in
-  }
+  void loginWithToken(String token) {
+  state = true;
+}
 }

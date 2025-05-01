@@ -26,7 +26,6 @@ import 'package:app_links/app_links.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 // This function listens for deep links like: zoomai://auth-callback?token=...
 Future<void> handleIncomingLinks(WidgetRef ref, BuildContext context) async {
   final appLinks = AppLinks();

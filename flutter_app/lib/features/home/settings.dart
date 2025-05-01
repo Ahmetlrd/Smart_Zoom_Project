@@ -127,15 +127,8 @@ class _SettingsState extends ConsumerState<Settings> {
                 height: screenHeight * 0.07,
                 child: ElevatedButton(
                   onPressed: () async {
-                    // Clear login status from shared preferences
-                    final prefs = await SharedPreferences.getInstance();
-                    await prefs.setBool('isLoggedIn', false);
-
-                    // Set Riverpod state to logged out
-                    ref.read(authProvider.notifier).state = false;
-
-                    // Navigate to login screen
-                    context.go('/login');
+                    await ref.read(authProvider.notifier).logout();
+                    context.go('/');
                   },
                   child: Text(d.logout, style: TextStyle(fontSize: fontSize)),
                 ),

@@ -13,6 +13,7 @@ import 'package:go_router/go_router.dart';
 import 'features/home/login.dart';
 import 'features/home/home_page.dart';
 import 'providers/auth_provider.dart';
+import 'package:flutter_app/splash.dart';
 
 // This provider creates a GoRouter instance to handle app navigation
 final routerProvider = Provider<GoRouter>((ref) {
@@ -33,11 +34,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       // If user is logged in, go to HomePage; otherwise go to Login screen
       GoRoute(
         path: '/',
-        builder:
-            (context, state) => isLoggedIn ? const HomePage() : const Login(),
+        builder: (context, state) => const SplashScreen(),
       ),
 
       // Define other static routes
+      
       GoRoute(path: '/login', builder: (context, state) => const Login()),
       GoRoute(path: '/home', builder: (context, state) => const HomePage()),
       GoRoute(path: '/settings', builder: (context, state) => const Settings()),

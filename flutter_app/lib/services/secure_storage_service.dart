@@ -26,5 +26,7 @@ Future<String?> readRefreshToken() async {
 
 /// Deletes all stored tokens (used on logout)
 Future<void> clearAllTokens() async {
-  await _secureStorage.deleteAll();
+  const storage = FlutterSecureStorage();
+  await storage.delete(key: 'access_token');
+  await storage.delete(key: 'refresh_token');
 }
