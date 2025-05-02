@@ -1,0 +1,12 @@
+Step,Details
+App Launches,User opens the app.
+Check Login Status,App checks if Zoom token exists.
+Zoom Login Screen,"If no token, user is prompted to log in via Zoom."
+Redirect to Zoom OAuth,User is redirected to Zoom for authentication.
+Receive & Store Tokens,Access and refresh tokens are received and stored securely.
+Meeting List Screen,User sees a list of upcoming and past meetings.
+Meeting Selected?,User taps on a specific meeting to view details.
+Meeting Detail Screen,"Display details like date, duration, participants, and recordings."
+Fetch Transcript & Summary,"Transcript is sent to backend, summary is generated using AI."
+Display & Edit Summary,User sees AI-generated summary and can edit it.
+Show History / Share,"User can view past summaries, tag them, or share as PDF/text."

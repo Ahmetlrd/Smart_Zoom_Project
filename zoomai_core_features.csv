@@ -1,0 +1,7 @@
+Feature,Details
+Zoom Login (OAuth2),User logs in with Zoom via OAuth 2.0. Access and refresh tokens are securely stored.
+Meeting List,Fetch and display user's upcoming and past Zoom meetings in chronological order.
+Meeting Detail View,"Show detailed meeting info including date, participants, recordings, and transcript."
+AI-Powered Turkish Summarization,"Send transcript to backend. Use OpenAI or Ollama to generate Turkish summaries, highlights, and action items."
+Notes & History,"Allow users to edit summaries, store them in backend or Firebase, and view searchable meeting history."
+Notifications,Send push notifications when summaries are ready after a meeting. Allow tagging or favoriting important meetings.
