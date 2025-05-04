@@ -50,6 +50,69 @@ class _SettingsState extends ConsumerState<Settings> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            //User info
+            InkWell(
+              onTap: () {
+                if (isLoggedIn) {
+                  context.push('/userinfo');
+                } else {
+                  context.go('/');
+                }
+              },
+              child: Row(
+                children: [
+                  const SizedBox(width: 24), // Left padding
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundColor: Colors.white10,
+                    backgroundImage: isLoggedIn &&
+                            ref
+                                    .read(authProvider.notifier)
+                                    .userInfo?['pic_url'] !=
+                                null
+                        ? NetworkImage(ref
+                            .read(authProvider.notifier)
+                            .userInfo!['pic_url'])
+                        : const AssetImage('pictures/avatar.png')
+                            as ImageProvider,
+                    child: !isLoggedIn ||
+                            ref
+                                    .read(authProvider.notifier)
+                                    .userInfo?['pic_url'] ==
+                                null
+                        ? null
+                        : null,
+                  ),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          isLoggedIn
+                              ? "${ref.read(authProvider.notifier).userInfo?['first_name'] ?? ''} ${ref.read(authProvider.notifier).userInfo?['last_name'] ?? ''}"
+                              : "Please login",
+                          style: const TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "(More info)",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: isLoggedIn ? Colors.blue : Colors.grey,
+                            decoration: isLoggedIn
+                                ? TextDecoration.underline
+                                : TextDecoration.none,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+
             // Language dropdown
             Row(
               children: [

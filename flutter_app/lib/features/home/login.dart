@@ -13,15 +13,14 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Automatically g
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // This is the login screen widget that uses Riverpod state management
+
 class Login extends ConsumerStatefulWidget {
   const Login({super.key});
 
   @override
-  ConsumerState<Login> createState() =>
-      _LoginState(); // Creates the mutable state for this widget
+  ConsumerState<Login> createState() => _LoginState();
 }
 
-// This class holds the logic and UI for the Login screen
 class _LoginState extends ConsumerState<Login> {
   StreamSubscription?
       _sub; // Will hold the stream listener for incoming deep links
@@ -54,21 +53,27 @@ class _LoginState extends ConsumerState<Login> {
         context.go('/home');
       }
     });
+
     // Step 3: Listen for OAuth callback with token info (from Zoom login redirect)
     _appLinks = AppLinks();
-    _sub = _appLinks.uriLinkStream.listen((Uri? uri) async {
+    _appLinks.uriLinkStream.listen((Uri? uri) async {
       if (uri != null && uri.scheme == "zoomai") {
-        final token = uri.queryParameters['token']; // JWT
-        final refreshToken =
-            uri.queryParameters['refresh_token']; // Refresh token
+        final jwtToken = uri.queryParameters['token'];
+        final zoomAccessToken = uri.queryParameters['access_token'];
+        final zoomRefreshToken = uri.queryParameters['refresh_token'];
 
-        if (token != null && refreshToken != null) {
-          // Save tokens securely
-          await saveAccessToken(token);
-          await saveRefreshToken(refreshToken);
+        print("✅ JWT: $jwtToken");
+        print("✅ Zoom Access Token: $zoomAccessToken");
+        print("✅ Zoom Refresh Token: $zoomRefreshToken");
 
-          // Update login state and go to homepage
-          ref.read(authProvider.notifier).loginWithToken(token);
+        if (jwtToken != null &&
+            zoomAccessToken != null &&
+            zoomRefreshToken != null) {
+          await saveJwtToken(jwtToken);
+          await saveAccessToken(zoomAccessToken);
+          await saveRefreshToken(zoomRefreshToken);
+
+          await ref.read(authProvider.notifier).loginWithToken(zoomAccessToken);
           context.go('/home');
         }
       }

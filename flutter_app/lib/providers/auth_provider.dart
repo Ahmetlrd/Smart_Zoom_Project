@@ -1,6 +1,7 @@
 // Import necessary packages for state management (Riverpod) and persistent storage
 import 'package:flutter_app/services/secure_storage_service.dart'
     as SecureStorageService;
+import 'package:flutter_app/services/zoom_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -15,7 +16,8 @@ class AuthNotifier extends StateNotifier<bool> {
   AuthNotifier() : super(false) {
     _loadLoginStatus(); // Load saved login state when app starts
   }
-
+ Map<String, dynamic>? _userInfo;
+  Map<String, dynamic>? get userInfo => _userInfo;
   // Loads login status from local storage (SharedPreferences) during app startup
   Future<void> _loadLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
@@ -40,7 +42,10 @@ class AuthNotifier extends StateNotifier<bool> {
   }
 
   // If we receive a token (e.g., from Zoom login), mark the user as logged in
-  void loginWithToken(String token) {
+  Future<void> loginWithToken(String token) async {
   state = true;
+  final info = await ZoomService.fetchUserInfo();
+  _userInfo = info;
 }
+
 }

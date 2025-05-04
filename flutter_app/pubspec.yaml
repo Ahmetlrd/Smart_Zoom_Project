@@ -58,3 +58,4 @@ flutter:
 
   assets:
     - .env # Include the .env file for environment variable loading
+    - pictures/

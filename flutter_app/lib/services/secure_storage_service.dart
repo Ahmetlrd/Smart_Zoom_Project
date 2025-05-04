@@ -30,3 +30,7 @@ Future<void> clearAllTokens() async {
   await storage.delete(key: 'access_token');
   await storage.delete(key: 'refresh_token');
 }
+Future<void> saveJwtToken(String token) async {
+  final storage = FlutterSecureStorage();
+  await storage.write(key: 'jwt_token', value: token);
+}
