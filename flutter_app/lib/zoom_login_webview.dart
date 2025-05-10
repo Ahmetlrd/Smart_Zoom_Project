@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart'; // WebView package for rendering web content
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // For loading environment variables
 
 // This widget displays the Zoom login screen inside a WebView
 class ZoomLoginWebView extends StatefulWidget {
@@ -17,6 +18,12 @@ class _ZoomLoginWebViewState extends State<ZoomLoginWebView> {
   void initState() {
     super.initState();
 
+    final clientId = dotenv.env['CLIENT_ID'];
+    final redirectUri = dotenv.env['REDIRECT_URI'];
+
+    final zoomAuthUrl =
+        'https://zoom.us/oauth/authorize?response_type=code&client_id=$clientId&redirect_uri=$redirectUri';
+
     // Initialize the WebView controller and configure its behavior
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted) // Enable JavaScript (required for Zoom OAuth)
@@ -26,7 +33,7 @@ class _ZoomLoginWebViewState extends State<ZoomLoginWebView> {
             final url = request.url;
 
             // When the user is redirected back from Zoom to your callback URL
-            if (url.startsWith("http://localhost:8000/auth/callback")) {
+            if (url.startsWith(redirectUri!)) {
               Uri uri = Uri.parse(url);
               String? code = uri.queryParameters['code']; // Get the authorization code from URL
 
@@ -41,13 +48,12 @@ class _ZoomLoginWebViewState extends State<ZoomLoginWebView> {
           },
         ),
       )
-      ..loadRequest(Uri.parse(
-          'https://zoom.us/oauth/authorize?response_type=code&client_id=ec9zlOHpT2yQEg2JIrRkbw&redirect_uri=http://localhost:8000/auth/callback')); // Start OAuth flow
+      ..loadRequest(Uri.parse(zoomAuthUrl)); // Start OAuth flow
   }
 
   @override
   Widget build(BuildContext context) {
-    // Scaffold with WebView as the main content
+    // Scaffold with WebView as the main clientid content
     return Scaffold(
       appBar: AppBar(title: const Text("Zoom Login")), // AppBar with title
       body: WebViewWidget(controller: _controller), // Embed the WebView using the controller

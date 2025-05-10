@@ -89,7 +89,7 @@ class _LoginState extends ConsumerState<Login> {
 
   // Opens Zoom login page in the user's external browser (used in OAuth flow)
   void _launchZoomLogin() async {
-    const zoomLoginUrl = 'https://<NGROK_LINK>.ngrok-free.app/auth/login';
+    const zoomLoginUrl = 'http://54.204.65.114:8000/auth/login';
     if (await canLaunchUrl(Uri.parse(zoomLoginUrl))) {
       await launchUrl(Uri.parse(zoomLoginUrl),
           mode: LaunchMode.externalApplication);
