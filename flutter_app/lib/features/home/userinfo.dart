@@ -13,7 +13,6 @@ class Userinfo extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoggedIn = ref.watch(authProvider);
     final userInfo = ref.read(authProvider.notifier).userInfo;
-
     // Update dropdown selection based on current locale
 
     // Responsive ölçüler hesaplanıyor
@@ -59,7 +58,7 @@ class Userinfo extends ConsumerWidget {
             ),
             Divider(),
             Text(
-              "Email",
+              d!.email,
               style: TextStyle(
                   color: Colors.blue,
                   fontSize: 30,
@@ -79,7 +78,7 @@ class Userinfo extends ConsumerWidget {
               TextSpan(
                 children: [
                   TextSpan(
-                    text: "Account Type: ",
+                    text: d!.accounttype,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color: Colors.blue),
                   ),
                   TextSpan(

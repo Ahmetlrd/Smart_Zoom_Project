@@ -97,7 +97,7 @@ class _SettingsState extends ConsumerState<Settings> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          "(More info)",
+                          d!.moreinfo,
                           style: TextStyle(
                             fontSize: 16,
                             color: isLoggedIn ? const Color.fromARGB(255, 4, 124, 223) : Colors.grey,

@@ -12,5 +12,8 @@
     "participants": " Katılımcılar: ",
     "transcription":" Kopya",
     "summary":" Özet(AI)",
-    "notes":" Notlar"
+    "notes":" Notlar",
+    "moreinfo":"Daha fazla bilgi",
+    "email":"E-posta",
+    "accounttype":"Hesap türü: "
 }

@@ -2,6 +2,7 @@ import 'dart:async'; // Used for managing asynchronous operations like listening
 import 'package:flutter/material.dart'; // Core Flutter UI toolkit
 import 'package:flutter_app/services/auth_service.dart';
 import 'package:flutter_app/services/secure_storage_service.dart';
+import 'package:flutter_app/services/zoom_service.dart';
 import 'package:go_router/go_router.dart'; // Handles navigation and routing between screens
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Provides state management using Riverpod
 import 'package:app_links/app_links.dart'; // Used to listen for incoming deep links
@@ -34,11 +35,22 @@ class _LoginState extends ConsumerState<Login> {
     Future.delayed(Duration.zero, () async {
       // Step 1: Try refreshing access token using stored refresh token
       final refreshToken = await readRefreshToken();
+      final savedToken = await readAccessToken();
+
+      if (savedToken != null) {
+        final isValid = await ZoomService.isAccessTokenValid(savedToken);
+
+        if (isValid) {
+          ref.read(authProvider.notifier).loginWithToken(savedToken);
+          context.go('/home');
+          return;
+        }
+      }
+
       if (refreshToken != null) {
         final newAccessToken =
             await AuthService.refreshAccessToken(refreshToken);
         if (newAccessToken != null) {
-          // Save new token to secure storage and login
           await saveAccessToken(newAccessToken);
           ref.read(authProvider.notifier).loginWithToken(newAccessToken);
           context.go('/home');
@@ -46,17 +58,12 @@ class _LoginState extends ConsumerState<Login> {
         }
       }
 
-      // Step 2: If refresh didn't work, try using previously saved access token directly
-      final savedToken = await readAccessToken();
-      if (savedToken != null) {
-        ref.read(authProvider.notifier).loginWithToken(savedToken);
-        context.go('/home');
-      }
+      // Step 2: If both access and refresh failed, do nothing, stay on login page
     });
 
     // Step 3: Listen for OAuth callback with token info (from Zoom login redirect)
     _appLinks = AppLinks();
-    _appLinks.uriLinkStream.listen((Uri? uri) async {
+    _sub = _appLinks.uriLinkStream.listen((Uri? uri) async {
       if (uri != null && uri.scheme == "zoomai") {
         final jwtToken = uri.queryParameters['token'];
         final zoomAccessToken = uri.queryParameters['access_token'];

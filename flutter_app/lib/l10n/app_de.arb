@@ -12,5 +12,9 @@
   "participants": " Teilnehmer:",
   "transcription": " Transkription",
   "summary": " Zusammenfassung (KI)",
-  "notes": " Notizen"
+  "notes": " Notizen",
+  "moreinfo":"Weitere Informationen: ",
+  "email":"Email",
+  "accounttype":"Kontotyp: "
+
 }

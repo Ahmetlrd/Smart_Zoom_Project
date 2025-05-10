@@ -12,5 +12,8 @@
     "participants": " Participants: ",
     "transcription":" Transcription",
     "summary":" Summary (AI)",
-    "notes":" Notes"
+    "notes":" Notes",
+    "moreinfo":"More info",
+    "email":"Email",
+    "accounttype":"Account Type: "
 }
