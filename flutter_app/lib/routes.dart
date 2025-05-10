@@ -7,6 +7,7 @@ import 'package:flutter_app/features/home/nlp.dart';
 import 'package:flutter_app/features/home/saved.dart';
 import 'package:flutter_app/features/home/meetinglist.dart';
 import 'package:flutter_app/features/home/settings.dart';
+import 'package:flutter_app/features/home/userinfo.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -45,6 +46,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/meetinglist', builder: (context, state) => const Meetinglist()),
       GoRoute(path: '/saved', builder: (context, state) => const Saved()),
       GoRoute(path: '/nlp', builder: (context, state) => const Nlp()),
+      GoRoute(path: '/userinfo', builder: (context, state) => const Userinfo()),
 
       // Meeting details page (dynamic or detailed content can be passed here)
       GoRoute(

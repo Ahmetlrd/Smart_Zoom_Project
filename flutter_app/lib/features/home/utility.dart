@@ -11,8 +11,10 @@ class Utility {
 
     // Screen width is used to adjust font and icon size responsively
     final screenWidth = MediaQuery.of(context).size.width;
-    final titleFontSize = screenWidth * 0.07; // Responsive font size (e.g., 40 at 570px)
-    final settingsIconSize = screenWidth * 0.07; // Icon size adjusts with screen width
+    final titleFontSize =
+        screenWidth * 0.07; // Responsive font size (e.g., 40 at 570px)
+    final settingsIconSize =
+        screenWidth * 0.07; // Icon size adjusts with screen width
 
     return AppBar(
       centerTitle: true, // Center the title text
@@ -31,12 +33,12 @@ class Utility {
             Icons.settings,
             size: settingsIconSize, // Dynamic icon size
             // If the current route is /settings, show the icon in grey (disabled)
-            color: routeName == '/settings' ? Colors.grey[400] : Colors.white,
+            color: (routeName == '/settings' || routeName == '/userinfo') ? Colors.grey[400] : Colors.white,
           ),
-          onPressed: routeName == '/settings'
-              ? null // Disable if already on settings page
+          onPressed: (routeName == '/settings' || routeName == '/userinfo')
+              ? null
               : () {
-                  context.push('/settings'); // Navigate to settings page
+                  context.push('/settings');
                 },
         ),
       ],

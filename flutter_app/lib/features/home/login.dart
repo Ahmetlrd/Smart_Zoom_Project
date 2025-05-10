@@ -62,9 +62,9 @@ class _LoginState extends ConsumerState<Login> {
         final zoomAccessToken = uri.queryParameters['access_token'];
         final zoomRefreshToken = uri.queryParameters['refresh_token'];
 
-        print("✅ JWT: $jwtToken");
-        print("✅ Zoom Access Token: $zoomAccessToken");
-        print("✅ Zoom Refresh Token: $zoomRefreshToken");
+        print("JWT: $jwtToken");
+        print("Zoom Access Token: $zoomAccessToken");
+        print("Zoom Refresh Token: $zoomRefreshToken");
 
         if (jwtToken != null &&
             zoomAccessToken != null &&

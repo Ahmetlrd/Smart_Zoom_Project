@@ -100,7 +100,7 @@ class _SettingsState extends ConsumerState<Settings> {
                           "(More info)",
                           style: TextStyle(
                             fontSize: 16,
-                            color: isLoggedIn ? Colors.blue : Colors.grey,
+                            color: isLoggedIn ? const Color.fromARGB(255, 4, 124, 223) : Colors.grey,
                             decoration: isLoggedIn
                                 ? TextDecoration.underline
                                 : TextDecoration.none,
@@ -119,7 +119,7 @@ class _SettingsState extends ConsumerState<Settings> {
                 SizedBox(width: horizontalPadding),
                 Icon(Icons.language, size: iconSize),
                 SizedBox(width: screenWidth * 0.05),
-                Text(d!.language, style: TextStyle(fontSize: fontSize)),
+                Text(d!.language, style: TextStyle(fontSize: fontSize,fontWeight: FontWeight.bold)),
                 SizedBox(width: screenWidth * 0.05),
                 SizedBox(
                   width: dropdownWidth,
@@ -170,7 +170,7 @@ class _SettingsState extends ConsumerState<Settings> {
                 SizedBox(
                   width: screenWidth * 0.5,
                   child: Text(d.notifications,
-                      style: TextStyle(fontSize: fontSize)),
+                      style: TextStyle(fontSize: fontSize,fontWeight: FontWeight.bold)),
                 ),
                 Switch(
                   value: switchControl,
@@ -189,11 +189,18 @@ class _SettingsState extends ConsumerState<Settings> {
                 width: buttonWidth,
                 height: screenHeight * 0.07,
                 child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white10,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                   onPressed: () async {
                     await ref.read(authProvider.notifier).logout();
                     context.go('/');
                   },
-                  child: Text(d.logout, style: TextStyle(fontSize: fontSize)),
+                  child: Text(d.logout, style: TextStyle(fontSize: 20,color: Colors.white,fontWeight: FontWeight.bold)),
                 ),
               ),
             SizedBox(height: spacing),
