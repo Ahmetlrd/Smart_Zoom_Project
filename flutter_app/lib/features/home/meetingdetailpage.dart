@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart'; // Core Flutter UI library
+import 'package:flutter_app/features/home/utility.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Localization helper (auto-generated from .arb files)
 
 // A stateless widget to display meeting details
@@ -25,12 +26,17 @@ class MeetingDetailPage extends StatelessWidget {
     final verticalSpacing = screenHeight * 0.025;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Meeting Details")), // Top app bar with title
+      appBar: Utility.buildAppBar(context), // Top app bar with title
       body: Padding(
         padding: EdgeInsets.all(padding), // Responsive padding
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center, // Vertically centers the children
           children: [
+            Divider(),
+            SizedBox(height: 50,),
+            Text(d!.meetingdetails,style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),)  ,
+            SizedBox(height: 50,),
+            Divider(),
             // Four buttons with localized labels and emoji
             _buildOption(context, "👥 ${d!.participants}$number", buttonHeight, fontSize, verticalSpacing),
             _buildOption(context, "📄 ${d.transcription}", buttonHeight, fontSize, verticalSpacing),
