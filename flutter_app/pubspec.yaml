@@ -51,6 +51,7 @@ dev_dependencies:
 
   # Linting rules and static analysis
   flutter_lints: ^2.0.0
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   generate: true # Enables automatic code generation (e.g., localization)
@@ -59,3 +60,7 @@ flutter:
   assets:
     - .env # Include the .env file for environment variable loading
     - pictures/
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "pictures/appicon.jpeg"

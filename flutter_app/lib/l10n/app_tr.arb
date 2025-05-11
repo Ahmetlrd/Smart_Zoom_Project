@@ -15,5 +15,6 @@
     "notes":" Notlar",
     "moreinfo":"Daha fazla bilgi",
     "email":"E-posta",
-    "accounttype":"Hesap türü: "
+    "accounttype":"Hesap türü: ",
+    "pleaselogin":"Lütfen giriş yapınız"
 }

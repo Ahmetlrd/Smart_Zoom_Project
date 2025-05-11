@@ -91,7 +91,7 @@ class _SettingsState extends ConsumerState<Settings> {
                         Text(
                           isLoggedIn
                               ? "${ref.read(authProvider.notifier).userInfo?['first_name'] ?? ''} ${ref.read(authProvider.notifier).userInfo?['last_name'] ?? ''}"
-                              : "Please login",
+                              : d!.pleaselogin,
                           style: const TextStyle(
                               fontSize: 24, fontWeight: FontWeight.bold),
                         ),

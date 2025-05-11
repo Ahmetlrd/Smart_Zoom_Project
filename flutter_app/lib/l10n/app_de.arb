@@ -15,6 +15,7 @@
   "notes": " Notizen",
   "moreinfo":"Weitere Informationen: ",
   "email":"Email",
-  "accounttype":"Kontotyp: "
+  "accounttype":"Kontotyp: ",
+  "pleaselogin":"Bitte einloggen"
 
 }

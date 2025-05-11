@@ -13,6 +13,13 @@ class Userinfo extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoggedIn = ref.watch(authProvider);
     final userInfo = ref.read(authProvider.notifier).userInfo;
+    // If userInfo is null (e.g. token expired), redirect to login page
+    if (userInfo == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.go('/login');
+      });
+      return const SizedBox.shrink();
+    }
     // Update dropdown selection based on current locale
 
     // Responsive ölçüler hesaplanıyor
@@ -79,12 +86,14 @@ class Userinfo extends ConsumerWidget {
                 children: [
                   TextSpan(
                     text: d!.accounttype,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color: Colors.blue),
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue),
                   ),
                   TextSpan(
                     text: userTypeText,
-                    style:
-                        TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
                   ),
                 ],
               ),

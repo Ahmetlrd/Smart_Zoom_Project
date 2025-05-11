@@ -26,14 +26,16 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       ref.read(authProvider.notifier).loginWithToken(token!);
       context.go('/home');
     } else {
-      context.go('/login');
+      Future.microtask(() => context.go('/login'));
+
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
+      backgroundColor: Colors.white10,
+      
     );
   }
 }

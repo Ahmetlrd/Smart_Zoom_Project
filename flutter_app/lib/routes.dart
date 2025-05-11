@@ -39,19 +39,136 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
 
       // Define other static routes
-      
-      GoRoute(path: '/login', builder: (context, state) => const Login()),
-      GoRoute(path: '/home', builder: (context, state) => const HomePage()),
+
+      GoRoute(
+        path: '/home',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          child: const HomePage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return ScaleTransition(
+              scale: Tween<double>(begin: 0.95, end: 1.0).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+              ),
+              child: FadeTransition(
+                opacity: animation,
+                child: child,
+              ),
+            );
+          },
+          transitionDuration: const Duration(milliseconds: 400),
+        ),
+      ),
+      GoRoute(
+        path: '/login',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          child: const Login(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return ScaleTransition(
+              scale: Tween<double>(begin: 0.95, end: 1.0).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+              ),
+              child: FadeTransition(
+                opacity: animation,
+                child: child,
+              ),
+            );
+          },
+          transitionDuration: const Duration(milliseconds: 400),
+        ),
+      ),
+
       GoRoute(path: '/settings', builder: (context, state) => const Settings()),
-      GoRoute(path: '/meetinglist', builder: (context, state) => const Meetinglist()),
-      GoRoute(path: '/saved', builder: (context, state) => const Saved()),
-      GoRoute(path: '/nlp', builder: (context, state) => const Nlp()),
-      GoRoute(path: '/userinfo', builder: (context, state) => const Userinfo()),
+      GoRoute(
+        path: '/meetinglist',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          child: const Meetinglist(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return ScaleTransition(
+              scale: Tween<double>(begin: 0.95, end: 1.0).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+              ),
+              child: FadeTransition(
+                opacity: animation,
+                child: child,
+              ),
+            );
+          },
+          transitionDuration: const Duration(milliseconds: 400),
+        ),
+      ),
+      GoRoute(
+        path: '/saved',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          child: const Saved(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return ScaleTransition(
+              scale: Tween<double>(begin: 0.95, end: 1.0).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+              ),
+              child: FadeTransition(
+                opacity: animation,
+                child: child,
+              ),
+            );
+          },
+          transitionDuration: const Duration(milliseconds: 400),
+        ),
+      ),
+      GoRoute(
+        path: '/nlp',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          child: const Nlp(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return ScaleTransition(
+              scale: Tween<double>(begin: 0.95, end: 1.0).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+              ),
+              child: FadeTransition(
+                opacity: animation,
+                child: child,
+              ),
+            );
+          },
+          transitionDuration: const Duration(milliseconds: 400),
+        ),
+      ),
+      GoRoute(
+        path: '/userinfo',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          child: const Userinfo(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return ScaleTransition(
+              scale: Tween<double>(begin: 0.95, end: 1.0).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+              ),
+              child: FadeTransition(
+                opacity: animation,
+                child: child,
+              ),
+            );
+          },
+          transitionDuration: const Duration(milliseconds: 400),
+        ),
+      ),
 
       // Meeting details page (dynamic or detailed content can be passed here)
       GoRoute(
         path: '/meetingdetailpage',
-        builder: (context, state) => MeetingDetailPage(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          child:  MeetingDetailPage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return ScaleTransition(
+              scale: Tween<double>(begin: 0.95, end: 1.0).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+              ),
+              child: FadeTransition(
+                opacity: animation,
+                child: child,
+              ),
+            );
+          },
+          transitionDuration: const Duration(milliseconds: 400),
+        ),
       ),
     ],
   );
