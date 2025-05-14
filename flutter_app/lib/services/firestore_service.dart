@@ -45,4 +45,8 @@ class FirestoreService {
   static String normalizeEmail(String email) {
     return email.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
   }
+  Future<void> deleteUser(String userId) async {
+  await _firestore.collection('users').doc(userId).delete();
+}
+
 }

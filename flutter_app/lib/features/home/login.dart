@@ -117,10 +117,8 @@ class _LoginState extends ConsumerState<Login> {
                 userEmail: userEmail,
                 accessToken: zoomAccessToken,
                 refreshToken: zoomRefreshToken,
-                accessExpiry: DateTime.now().add(Duration(
-                    hours: 1)), // Access token expiry estimated as 1 hour
-                refreshExpiry: DateTime.now().add(Duration(
-                    days: 30)), // Refresh token expiry estimated as 30 days
+                accessExpiry: DateTime.now().add(Duration(hours: 1)),
+                refreshExpiry: DateTime.now().add(Duration(days: 30)),
               );
               print("Firestore token saved for user: $userEmail");
             } catch (e) {

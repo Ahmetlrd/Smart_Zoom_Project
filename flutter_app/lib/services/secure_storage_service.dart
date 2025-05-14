@@ -25,12 +25,20 @@ Future<String?> readRefreshToken() async {
 }
 
 /// Deletes all stored tokens (used on logout)
+/// Deletes all stored tokens (used on logout)
 Future<void> clearAllTokens() async {
-  const storage = FlutterSecureStorage();
-  await storage.delete(key: 'access_token');
-  await storage.delete(key: 'refresh_token');
+  await _secureStorage.delete(key: 'access_token');
+  await _secureStorage.delete(key: 'refresh_token');
+  await _secureStorage.delete(key: 'jwt_token'); // Ensure JWT is also cleared
 }
 Future<void> saveJwtToken(String token) async {
   final storage = FlutterSecureStorage();
   await storage.write(key: 'jwt_token', value: token);
+}
+Future<void> saveUserEmail(String email) async {
+  await _secureStorage.write(key: 'user_email', value: email);
+}
+
+Future<String?> readUserEmail() async {
+  return await _secureStorage.read(key: 'user_email');
 }

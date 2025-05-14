@@ -1,4 +1,5 @@
-import 'package:flutter_app/services/secure_storage_service.dart' as SecureStorageService;
+import 'package:flutter_app/services/secure_storage_service.dart'
+    as SecureStorageService;
 import 'package:flutter_app/services/zoom_service.dart';
 import 'package:flutter_app/services/firestore_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,10 +32,17 @@ class AuthNotifier extends StateNotifier<bool> {
   }
 
   Future<void> loginWithToken(String token) async {
-    state = true;
-    final info = await ZoomService.fetchUserInfo();
-    _userInfo = info;
+  state = true;
+
+  final info = await ZoomService.fetchUserInfo();
+  _userInfo = info;
+
+  // Save user email to secure storage for future session restoration
+  if (info != null && info['email'] != null) {
+    await SecureStorageService.saveUserEmail(info['email']);
   }
+}
+
 
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
@@ -45,13 +53,10 @@ class AuthNotifier extends StateNotifier<bool> {
     final userEmail = _userInfo?['email'];
     if (userEmail != null) {
       final userId = FirestoreService.normalizeEmail(userEmail);
-      await FirestoreService().saveTokens(
-        userEmail: userEmail,
-        accessToken: '',
-        refreshToken: '',
-        accessExpiry: DateTime.fromMillisecondsSinceEpoch(0),
-        refreshExpiry: DateTime.fromMillisecondsSinceEpoch(0),
-      );
+
+      // Delete only user doc, summaries stay intact
+      await FirestoreService().deleteUser(userId);
+      print('Deleted user doc $userId but summaries remain.');
     }
 
     try {
