@@ -1,4 +1,5 @@
 // Flutter UI framework
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 // Import authentication provider (Riverpod based)
@@ -55,6 +56,8 @@ Future<void> handleIncomingLinks(WidgetRef ref, BuildContext context) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+  await Firebase.initializeApp();
+
   runApp(const ProviderScope(child: MyApp())); // Wrap with Riverpod ProviderScope
 }
 

@@ -1,8 +1,10 @@
+// Import necessary packages for state management (Riverpod) and persistent storage
 import 'dart:async'; // Used for managing asynchronous operations like listening to streams
 import 'package:flutter/material.dart'; // Core Flutter UI toolkit
 import 'package:flutter_app/services/auth_service.dart';
 import 'package:flutter_app/services/secure_storage_service.dart';
 import 'package:flutter_app/services/zoom_service.dart';
+import 'package:flutter_app/services/firestore_service.dart'; // Firestore service added for token management
 import 'package:go_router/go_router.dart'; // Handles navigation and routing between screens
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Provides state management using Riverpod
 import 'package:app_links/app_links.dart'; // Used to listen for incoming deep links
@@ -12,8 +14,7 @@ import 'package:url_launcher/url_launcher.dart'; // Used to open external URLs o
 import 'utility.dart'; // Contains reusable utility functions, such as custom AppBar builder
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Automatically generated localization class
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
-// This is the login screen widget that uses Riverpod state management
+import 'package:firebase_auth/firebase_auth.dart'; // FirebaseAuth for getting current user
 
 class Login extends ConsumerStatefulWidget {
   const Login({super.key});
@@ -76,12 +77,65 @@ class _LoginState extends ConsumerState<Login> {
         if (jwtToken != null &&
             zoomAccessToken != null &&
             zoomRefreshToken != null) {
+          // Save tokens to secure storage for local use
           await saveJwtToken(jwtToken);
           await saveAccessToken(zoomAccessToken);
           await saveRefreshToken(zoomRefreshToken);
 
-          await ref.read(authProvider.notifier).loginWithToken(zoomAccessToken);
-          context.go('/home');
+          // Ensure Firebase user is authenticated (anonymous sign-in if needed)
+          final firebaseUser = FirebaseAuth.instance.currentUser;
+          if (firebaseUser == null) {
+            try {
+              await FirebaseAuth.instance.signInAnonymously();
+              print("Signed in anonymously to Firebase");
+            } catch (e) {
+              print("Failed to sign in anonymously: $e");
+            }
+          }
+
+          // Retrieve user info from Zoom to get user email
+          final userInfo = await ZoomService.fetchUserInfo();
+          final userEmail = userInfo?['email'];
+
+          if (userEmail != null) {
+            await FirestoreService().saveTokens(
+              userEmail: userEmail,
+              accessToken: zoomAccessToken,
+              refreshToken: zoomRefreshToken,
+              accessExpiry: DateTime.now().add(Duration(hours: 1)),
+              refreshExpiry: DateTime.now().add(Duration(days: 30)),
+            );
+            print("Firestore token saved for user: $userEmail");
+          } else {
+            print("Error: Could not retrieve user email from Zoom.");
+          }
+
+          if (userEmail != null) {
+            try {
+              // Save tokens to Firestore under users/{normalizedEmail} document
+              await FirestoreService().saveTokens(
+                userEmail: userEmail,
+                accessToken: zoomAccessToken,
+                refreshToken: zoomRefreshToken,
+                accessExpiry: DateTime.now().add(Duration(
+                    hours: 1)), // Access token expiry estimated as 1 hour
+                refreshExpiry: DateTime.now().add(Duration(
+                    days: 30)), // Refresh token expiry estimated as 30 days
+              );
+              print("Firestore token saved for user: $userEmail");
+            } catch (e) {
+              print("Error saving token to Firestore: $e");
+            }
+
+            // Update app state with the new access token
+            ref.read(authProvider.notifier).loginWithToken(zoomAccessToken);
+
+            // Navigate to home page after successful login and token save
+            if (!mounted) return;
+            context.go('/home');
+          } else {
+            print("Error: Could not retrieve user email from Zoom.");
+          }
         }
       }
     });
@@ -154,16 +208,7 @@ class _LoginState extends ConsumerState<Login> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    final zoomLoginUrl = dotenv.env['ZOOM_LOGIN_URL'] ?? '';
-                    if (zoomLoginUrl.isEmpty) {
-                      print("ZOOM_LOGIN_URL not found in .env");
-                      return;
-                    }
-
-                    launchUrl(Uri.parse(zoomLoginUrl),
-                        mode: LaunchMode.externalApplication);
-                  },
+                  onPressed: _launchZoomLogin, // Opens Zoom login in browser
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(
                         vertical: buttonPadding), // Responsive button padding

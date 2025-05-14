@@ -11,47 +11,56 @@ dependencies:
   flutter:
     sdk: flutter # Core Flutter SDK dependency
 
-  # For loading environment variables from a .env file
+  # Firebase dependencies (versions aligned for Flutter 3.19+)
+  firebase_core: ^3.4.0
+  firebase_auth: ^5.2.0
+  cloud_firestore: ^5.4.0
+
+  # Environment variable loading
   flutter_dotenv: ^5.1.0
+
+  # Secure storage for sensitive data
   flutter_secure_storage: ^9.0.0
 
-  http: ^0.13.6
-  # For storing and retrieving persistent key-value pairs locally
+  # Persistent local key-value storage
   shared_preferences: ^2.2.2
 
-  # To open external URLs or deep links
+  # HTTP client
+  http: ^1.4.0
+
+  # Deep linking (incoming links)
+  app_links: ^6.4.0
+
+  # URL launcher (open browser, maps, etc.)
   url_launcher: ^6.2.5
 
-  # To handle incoming app links (deep linking)
-  app_links: ^4.0.0
+  # Declarative navigation (GoRouter)
+  go_router: ^15.1.2
 
-  # For localization and internationalization support
-  flutter_localizations:
-    sdk: flutter
-
-  # For formatting dates, numbers, etc.
-  intl: ^0.19.0
-
-  # For declarative navigation between screens
-  go_router: ^13.0.1
-
-  # For state management
+  # State management (Riverpod)
   flutter_riverpod: ^2.4.5
 
-  # For displaying web content using WebView
+  # Localization (Flutter default + intl package)
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.19.0
+
+  # Webview for embedded browser content
   webview_flutter: ^4.4.1
 
-  # Optional: Adds Cupertino-style icons (iOS look and feel)
+  # Optional: iOS style icons
   cupertino_icons: ^1.0.6
 
 dev_dependencies:
-  # For running Flutter widget tests
+  # Flutter widget tests
   flutter_test:
     sdk: flutter
 
-  # Linting rules and static analysis
-  flutter_lints: ^2.0.0
-  flutter_launcher_icons: ^0.13.1
+  # Linting and code quality
+  flutter_lints: ^5.0.0
+
+  # App icon generation
+  flutter_launcher_icons: ^0.14.3
 
 flutter:
   generate: true # Enables automatic code generation (e.g., localization)
@@ -60,6 +69,7 @@ flutter:
   assets:
     - .env # Include the .env file for environment variable loading
     - pictures/
+
 flutter_launcher_icons:
   android: true
   ios: true

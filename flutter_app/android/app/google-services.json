@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "998224638542",
+    "project_id": "smartzoom-project",
+    "storage_bucket": "smartzoom-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:998224638542:android:f85c38566a2ad5cd42891f",
+        "android_client_info": {
+          "package_name": "com.example.flutter_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkZnnP9BNhRnb29N08r4_bzFg2GixsWl4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
