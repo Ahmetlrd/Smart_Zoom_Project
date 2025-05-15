@@ -2,6 +2,7 @@
 import 'dart:async'; // Used for managing asynchronous operations like listening to streams
 import 'package:flutter/material.dart'; // Core Flutter UI toolkit
 import 'package:flutter_app/services/auth_service.dart';
+import 'package:flutter_app/services/notifications_service.dart';
 import 'package:flutter_app/services/secure_storage_service.dart';
 import 'package:flutter_app/services/zoom_service.dart';
 import 'package:flutter_app/services/firestore_service.dart'; // Firestore service added for token management
@@ -222,6 +223,15 @@ class _LoginState extends ConsumerState<Login> {
                         color: Colors.white), // Responsive button text
                   ),
                 ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  NotificationService.show(
+                    title: 'ZoomAI Test',
+                    body: 'Notification permission working!',
+                  );
+                },
+                child: const Text('Show Notification'),
               ),
             ],
           ),

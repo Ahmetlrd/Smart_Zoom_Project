@@ -7,6 +7,7 @@ import 'package:flutter_app/providers/auth_provider.dart';
 
 // Import locale (language) provider
 import 'package:flutter_app/providers/locale_provider.dart';
+import 'package:flutter_app/services/notifications_service.dart';
 
 // Flutter's built-in localization support
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -54,7 +55,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp();
-
+  await NotificationService.init();
   runApp(const ProviderScope(child: MyApp())); // Wrap with Riverpod ProviderScope
 }
 
