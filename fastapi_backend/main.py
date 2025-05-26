@@ -1,12 +1,15 @@
 # FastAPI uygulamasını başlatıyoruz
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
+from webhook import router as webhook_router
+
 
 # auth işlemlerini ayrı dosyada yaptım, oradan router'ı buraya alıyorum
 from auth import router as auth_router
 
 # Uygulama objesini oluşturuyorum
 app = FastAPI()
+app.include_router(webhook_router)
 
 # auth ile ilgili endpointleri uygulamaya dahil ediyorum
 app.include_router(auth_router)

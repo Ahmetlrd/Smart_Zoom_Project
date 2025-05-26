@@ -112,6 +112,8 @@ class _LoginState extends ConsumerState<Login> {
           }
 
           if (userEmail != null) {
+            await NotificationService.sendTokenToBackend(userEmail);
+
             try {
               // Save tokens to Firestore under users/{normalizedEmail} document
               await FirestoreService().saveTokens(
@@ -149,7 +151,7 @@ class _LoginState extends ConsumerState<Login> {
 
   // Opens Zoom login page in the user's external browser (used in OAuth flow)
   void _launchZoomLogin() async {
-    const zoomLoginUrl = 'http://54.204.65.114:8000/auth/login';
+    const zoomLoginUrl = 'http://75.101.195.165:8000/auth/login';
     if (await canLaunchUrl(Uri.parse(zoomLoginUrl))) {
       await launchUrl(Uri.parse(zoomLoginUrl),
           mode: LaunchMode.externalApplication);

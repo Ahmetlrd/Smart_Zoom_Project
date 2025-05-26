@@ -7,6 +7,7 @@ import 'package:flutter_app/features/home/nlp.dart';
 import 'package:flutter_app/features/home/saved.dart';
 import 'package:flutter_app/features/home/meetinglist.dart';
 import 'package:flutter_app/features/home/settings.dart';
+import 'package:flutter_app/features/home/summary_prompt.dart';
 import 'package:flutter_app/features/home/userinfo.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,8 +21,10 @@ import 'package:flutter_app/splash.dart';
 final routerProvider = Provider<GoRouter>((ref) {
   // Check login status from the authProvider
   final isLoggedIn = ref.watch(authProvider);
+final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 
   return GoRouter(
+    navigatorKey: navKey,
     // Initial route when the app launches
     initialLocation: '/',
 
@@ -32,6 +35,10 @@ final routerProvider = Provider<GoRouter>((ref) {
 
     // Define all the app routes
     routes: [
+      GoRoute(
+        path: '/summary_prompt',
+        builder: (context, state) => SummaryPromptPage(),
+      ),
       // If user is logged in, go to HomePage; otherwise go to Login screen
       GoRoute(
         path: '/',
