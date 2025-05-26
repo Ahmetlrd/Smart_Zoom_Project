@@ -1,11 +1,10 @@
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/navigator.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
+import 'package:permission_handler/permission_handler.dart';
 
 class NotificationService {
   static final FlutterLocalNotificationsPlugin _plugin =
@@ -14,7 +13,7 @@ class NotificationService {
   /// 🔑 Alınan cihaz FCM token'ını döndürür
   static Future<String?> getFcmToken() async {
     final token = await FirebaseMessaging.instance.getToken();
-    print("📡 FCM token alındı: $token"); // ← EKLENDİ
+    print("📡 FCM token alındı: $token");
     return token;
   }
 
@@ -28,14 +27,15 @@ class NotificationService {
         body: jsonEncode({'email': email, 'token': token}),
       );
       print("✅ Token sent to backend: $token");
-      print("🔁 Backend response: ${response.body}"); // ← EKLENDİ
+      print("🔁 Backend response: ${response.body}");
     } else {
       print("⛔ Token alınamadı, backend'e gönderilmedi.");
     }
   }
 
-  /// 🔔 Bildirim sistemini başlatır
+  /// 🔔 Bildirim sistemini başlatır ve gelen mesajları dinler
   static Future<void> init(GlobalKey<NavigatorState> navKey) async {
+    // FCM mesajları geldiğinde heads-up olarak göster
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       final notification = message.notification;
       final data = message.data;
@@ -45,12 +45,18 @@ class NotificationService {
           0,
           notification.title,
           notification.body,
-          const NotificationDetails(
+          NotificationDetails(
             android: AndroidNotificationDetails(
               'zoomai_channel',
               'ZoomAI Notifications',
+              channelDescription: 'Zoom AI bildirimleri',
               importance: Importance.max,
               priority: Priority.high,
+              playSound: true,
+              enableVibration: true,
+              enableLights: true,
+              visibility: NotificationVisibility.public,
+              ticker: 'ticker',
             ),
             iOS: DarwinNotificationDetails(),
           ),
@@ -59,6 +65,7 @@ class NotificationService {
       }
     });
 
+    // Bildirim kanalı başlat
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
     const iosInit = DarwinInitializationSettings(
       requestAlertPermission: true,
@@ -78,7 +85,8 @@ class NotificationService {
   /// 📱 Kullanıcıdan bildirim izni ister
   static Future<void> _requestPermissions() async {
     if (Platform.isAndroid) {
-      if (await Permission.notification.isDenied) {
+      final status = await Permission.notification.status;
+      if (!status.isGranted) {
         await Permission.notification.request();
       }
     } else if (Platform.isIOS) {
@@ -89,7 +97,7 @@ class NotificationService {
     }
   }
 
-  /// 📤 Uygulama içinden manuel bildirim göstermek için
+  /// 📤 Manuel olarak heads-up bildirim göstermek için
   static Future<void> show({
     required String title,
     required String body,
@@ -97,8 +105,14 @@ class NotificationService {
     const androidDetails = AndroidNotificationDetails(
       'zoomai_channel',
       'ZoomAI Notifications',
+      channelDescription: 'Zoom AI bildirimleri',
       importance: Importance.max,
       priority: Priority.high,
+      playSound: true,
+      enableVibration: true,
+      enableLights: true,
+      visibility: NotificationVisibility.public,
+      ticker: 'ticker',
     );
 
     const details = NotificationDetails(

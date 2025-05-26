@@ -1,5 +1,6 @@
 // Import necessary packages for state management (Riverpod) and persistent storage
 import 'dart:async'; // Used for managing asynchronous operations like listening to streams
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart'; // Core Flutter UI toolkit
 import 'package:flutter_app/services/auth_service.dart';
 import 'package:flutter_app/services/notifications_service.dart';
@@ -112,26 +113,28 @@ class _LoginState extends ConsumerState<Login> {
           }
 
           if (userEmail != null) {
+            // 🔁 FCM token al
+            final fcmToken = await FirebaseMessaging.instance.getToken();
+
+            // 🔁 FCM token'ı backend'e gönder
             await NotificationService.sendTokenToBackend(userEmail);
 
-            try {
-              // Save tokens to Firestore under users/{normalizedEmail} document
-              await FirestoreService().saveTokens(
-                userEmail: userEmail,
-                accessToken: zoomAccessToken,
-                refreshToken: zoomRefreshToken,
-                accessExpiry: DateTime.now().add(Duration(hours: 1)),
-                refreshExpiry: DateTime.now().add(Duration(days: 30)),
-              );
-              print("Firestore token saved for user: $userEmail");
-            } catch (e) {
-              print("Error saving token to Firestore: $e");
-            }
+            // 🔐 Tüm tokenları Firestore'a kaydet
+            await FirestoreService().saveTokens(
+              userEmail: userEmail,
+              accessToken: zoomAccessToken,
+              refreshToken: zoomRefreshToken,
+              accessExpiry: DateTime.now().add(Duration(hours: 1)),
+              refreshExpiry: DateTime.now().add(Duration(days: 30)),
+              fcmToken: fcmToken,
+            );
 
-            // Update app state with the new access token
+            print("Firestore token saved for user: $userEmail");
+
+            // ⏫ AuthProvider güncelle
             ref.read(authProvider.notifier).loginWithToken(zoomAccessToken);
 
-            // Navigate to home page after successful login and token save
+            // 🏠 Ana sayfaya yönlendir
             if (!mounted) return;
             context.go('/home');
           } else {

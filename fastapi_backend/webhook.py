@@ -2,21 +2,19 @@ from fastapi import FastAPI, Request, APIRouter
 from fastapi.responses import JSONResponse
 import json
 import firebase_admin
-from firebase_admin import credentials, messaging
+from firebase_admin import credentials, messaging, firestore
 
-# 🔐 Firebase hizmet hesabı JSON'unu yükle
+# 🔐 Firebase Admin başlat
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred)
 
 app = FastAPI()
+router = APIRouter()
 
-# In-memory token database
-token_db = {}
+# 🔗 Firestore bağlantısı
+db = firestore.client()
 
-# 🔐 Bu kullanıcı e-posta’sı eşleşiyorsa bildirim gönderilecek
-AUTHORIZED_EMAIL = "ahmet.cavusoglu@sabanciuniv.edu"
-
-# 📲 Bildirim gönderme fonksiyonu
+# 🔔 Bildirim gönderme fonksiyonu
 def send_fcm(token: str, title: str, body: str, data: dict = {}):
     message = messaging.Message(
         notification=messaging.Notification(title=title, body=body),
@@ -25,19 +23,19 @@ def send_fcm(token: str, title: str, body: str, data: dict = {}):
     )
     try:
         response = messaging.send(message)
-        print(f"🔥 FCM sent to {token} → {response}")
+        print(f"🔥 FCM gönderildi: {response}")
     except Exception as e:
         print(f"⛔ FCM gönderimi başarısız: {e}")
 
-# 🔁 Zoom webhook endpoint
+# 🧠 Zoom Webhook endpoint
 async def zoom_webhook(request: Request):
     data = await request.json()
 
-    # ✅ Zoom challenge doğrulaması
+    # ✅ Challenge doğrulama (Zoom ilk doğrulamada gönderiyor)
     if "plainToken" in data:
         return {"plainToken": data["plainToken"]}
 
-    # 🎯 Event türü ve e-posta
+    # 📩 Zoom eventi alındı
     event = data.get("event")
     print(f"\n📩 Zoom Event Received: {event}")
     print("📦 Full Payload:")
@@ -48,44 +46,63 @@ async def zoom_webhook(request: Request):
         or data.get("payload", {}).get("object", {}).get("email")
     )
 
-    if participant_email and participant_email != AUTHORIZED_EMAIL:
-        print(f"⛔ Event not from our user: {participant_email} → ignoring.")
-        return JSONResponse(content={"status": "ignored"})
+    if not participant_email:
+        print("⛔ Katılımcı e-postası bulunamadı.")
+        return JSONResponse(content={"error": "No email found"}, status_code=400)
 
     if event in ["meeting.started", "meeting.participant_joined"]:
         meeting_id = data["payload"]["object"]["id"]
-        print(f"🚀 Event matched: {event} → meeting_id: {meeting_id}")
+        print(f"🚀 Event matched: {event} → meeting_id: {meeting_id}, email: {participant_email}")
 
-        # 🔍 Token al
-        token = token_db.get(participant_email)
-        if not token:
-            print(f"⛔ Token bulunamadı: {participant_email}")
-            return JSONResponse(content={"status": "no_token"}, status_code=400)
+        # 🔍 Firestore'dan FCM token çek
+        doc_id = participant_email.replace("@", "_").replace(".", "_")
+        user_ref = db.collection("users").document(doc_id)
+        doc = user_ref.get()
 
-        # 🔔 Bildirim gönder
+        if not doc.exists:
+            print(f"⛔ Firestore'da kullanıcı bulunamadı: {doc_id}")
+            return JSONResponse(content={"error": "User not found"}, status_code=404)
+
+        user_data = doc.to_dict()
+        fcm_token = user_data.get("fcmToken")
+
+        if not fcm_token:
+            print(f"⛔ FCM token yok: {participant_email}")
+            return JSONResponse(content={"error": "FCM token not found"}, status_code=400)
+
+        # 🔔 Bildirimi gönder
         send_fcm(
-            token=token,
+            token=fcm_token,
             title="Zoom Toplantısı Başladı",
-            body="Toplantıya girdiniz gibi görünüyor, özet çıkarmak ister misiniz?",
+            body="Toplantıya katıldınız, özet çıkarmak ister misiniz?",
             data={"action": "start_summary", "meeting_id": str(meeting_id)}
         )
 
     return {"status": "ok"}
 
-# 🔐 Flutter'dan token kaydı için endpoint
+# 📲 Flutter'dan gelen token'ı Firestore'a kaydeder
 async def save_token(request: Request):
     body = await request.json()
     email = body.get("email")
     token = body.get("token")
 
     if email and token:
-        token_db[email] = token
-        print(f"✅ Token kaydedildi → {email} = {token}")
-        return {"status": "saved"}
+        doc_id = email.replace("@", "_").replace(".", "_")
+        user_ref = db.collection("users").document(doc_id)
+        try:
+            await user_ref.set({
+                "fcmToken": token,
+                "fcmUpdatedAt": firestore.SERVER_TIMESTAMP
+            }, merge=True)
+            print(f"✅ FCM token kaydedildi: {email}")
+            return {"status": "saved"}
+        except Exception as e:
+            print(f"⛔ Firestore yazma hatası: {e}")
+            return JSONResponse(content={"error": "write_failed"}, status_code=500)
     else:
-        return JSONResponse(content={"error": "Invalid input"}, status_code=400)
+        return JSONResponse(content={"error": "invalid_input"}, status_code=400)
 
-# Router tanımı
-router = APIRouter()
+# 🔗 Endpoint'leri bağla
 router.add_api_route("/zoom/webhook", zoom_webhook, methods=["POST"])
 router.add_api_route("/save-token", save_token, methods=["POST"])
+app.include_router(router)
