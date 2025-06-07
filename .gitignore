@@ -7,7 +7,11 @@
 .buildlog/
 .history
 
+# .env files
+.env
 
+# Firebase secrets
+fastapi_backend/serviceAccountKey.json
 
 # Flutter repo-specific
 /bin/cache/
@@ -117,6 +121,3 @@ app.*.symbols
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
-
-# Firebase secrets
-fastapi_backend/serviceAccountKey.json

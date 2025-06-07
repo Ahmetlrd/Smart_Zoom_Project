@@ -33,7 +33,6 @@ import 'package:flutter_app/services/notifications_service.dart';
 
 
 // 🔑 Global navigator key (for background notification tıklama)
-final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 
 // 📡 Deep link listener
 Future<void> handleIncomingLinks(WidgetRef ref, BuildContext context) async {
@@ -59,7 +58,7 @@ void main() async {
   await Firebase.initializeApp();
 
   // ✅ Notification setup with global navigator key
-  await NotificationService.init(navKey);
+  await NotificationService.init();
 
   runApp(const ProviderScope(child: MyApp()));
 }

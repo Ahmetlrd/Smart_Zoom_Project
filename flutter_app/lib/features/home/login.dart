@@ -34,6 +34,8 @@ class _LoginState extends ConsumerState<Login> {
   @override
   void initState() {
     super.initState();
+    FirebaseMessaging.instance.requestPermission();
+
     // Try to restore session using secure storage
     Future.delayed(Duration.zero, () async {
       // Step 1: Try refreshing access token using stored refresh token
