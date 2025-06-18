@@ -1,5 +1,6 @@
 // Import necessary packages for state management (Riverpod) and persistent storage
 import 'dart:async'; // Used for managing asynchronous operations like listening to streams
+import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart'; // Core Flutter UI toolkit
 import 'package:flutter_app/services/auth_service.dart';
@@ -14,8 +15,7 @@ import 'package:flutter_app/providers/auth_provider.dart'; // Custom provider th
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart'; // Used to open external URLs or apps
 import 'utility.dart'; // Contains reusable utility functions, such as custom AppBar builder
-import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Automatically generated localization class
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_app/gen_l10n/app_localizations.dart'; // Custom utility functions (e.g., for app bars)import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // FirebaseAuth for getting current user
 
 class Login extends ConsumerStatefulWidget {
@@ -67,84 +67,86 @@ class _LoginState extends ConsumerState<Login> {
     });
 
     // Step 3: Listen for OAuth callback with token info (from Zoom login redirect)
-    _appLinks = AppLinks();
-    _sub = _appLinks.uriLinkStream.listen((Uri? uri) async {
-      if (uri != null && uri.scheme == "zoomai") {
-        final jwtToken = uri.queryParameters['token'];
-        final zoomAccessToken = uri.queryParameters['access_token'];
-        final zoomRefreshToken = uri.queryParameters['refresh_token'];
+    if (Platform.isAndroid || Platform.isIOS) {
+      _appLinks = AppLinks();
+      _sub = _appLinks.uriLinkStream.listen((Uri? uri) async {
+        if (uri != null && uri.scheme == "zoomai") {
+          final jwtToken = uri.queryParameters['token'];
+          final zoomAccessToken = uri.queryParameters['access_token'];
+          final zoomRefreshToken = uri.queryParameters['refresh_token'];
 
-        print("JWT: $jwtToken");
-        print("Zoom Access Token: $zoomAccessToken");
-        print("Zoom Refresh Token: $zoomRefreshToken");
+          print("JWT: $jwtToken");
+          print("Zoom Access Token: $zoomAccessToken");
+          print("Zoom Refresh Token: $zoomRefreshToken");
 
-        if (jwtToken != null &&
-            zoomAccessToken != null &&
-            zoomRefreshToken != null) {
-          // Save tokens to secure storage for local use
-          await saveJwtToken(jwtToken);
-          await saveAccessToken(zoomAccessToken);
-          await saveRefreshToken(zoomRefreshToken);
+          if (jwtToken != null &&
+              zoomAccessToken != null &&
+              zoomRefreshToken != null) {
+            // Save tokens to secure storage for local use
+            await saveJwtToken(jwtToken);
+            await saveAccessToken(zoomAccessToken);
+            await saveRefreshToken(zoomRefreshToken);
 
-          // Ensure Firebase user is authenticated (anonymous sign-in if needed)
-          final firebaseUser = FirebaseAuth.instance.currentUser;
-          if (firebaseUser == null) {
-            try {
-              await FirebaseAuth.instance.signInAnonymously();
-              print("Signed in anonymously to Firebase");
-            } catch (e) {
-              print("Failed to sign in anonymously: $e");
+            // Ensure Firebase user is authenticated (anonymous sign-in if needed)
+            final firebaseUser = FirebaseAuth.instance.currentUser;
+            if (firebaseUser == null) {
+              try {
+                await FirebaseAuth.instance.signInAnonymously();
+                print("Signed in anonymously to Firebase");
+              } catch (e) {
+                print("Failed to sign in anonymously: $e");
+              }
+            }
+
+            // Retrieve user info from Zoom to get user email
+            final userInfo = await ZoomService.fetchUserInfo();
+            final userEmail = userInfo?['email'];
+
+            if (userEmail != null) {
+              await FirestoreService().saveTokens(
+                userEmail: userEmail,
+                accessToken: zoomAccessToken,
+                refreshToken: zoomRefreshToken,
+                accessExpiry: DateTime.now().add(Duration(hours: 1)),
+                refreshExpiry: DateTime.now().add(Duration(days: 30)),
+              );
+              print("Firestore token saved for user: $userEmail");
+            } else {
+              print("Error: Could not retrieve user email from Zoom.");
+            }
+
+            if (userEmail != null) {
+              // 🔁 FCM token al
+              final fcmToken = await FirebaseMessaging.instance.getToken();
+
+              // 🔁 FCM token'ı backend'e gönder
+              await NotificationService.sendTokenToBackend(userEmail);
+
+              // 🔐 Tüm tokenları Firestore'a kaydet
+              await FirestoreService().saveTokens(
+                userEmail: userEmail,
+                accessToken: zoomAccessToken,
+                refreshToken: zoomRefreshToken,
+                accessExpiry: DateTime.now().add(Duration(hours: 1)),
+                refreshExpiry: DateTime.now().add(Duration(days: 30)),
+                fcmToken: fcmToken,
+              );
+
+              print("Firestore token saved for user: $userEmail");
+
+              // ⏫ AuthProvider güncelle
+              ref.read(authProvider.notifier).loginWithToken(zoomAccessToken);
+
+              // 🏠 Ana sayfaya yönlendir
+              if (!mounted) return;
+              context.go('/home');
+            } else {
+              print("Error: Could not retrieve user email from Zoom.");
             }
           }
-
-          // Retrieve user info from Zoom to get user email
-          final userInfo = await ZoomService.fetchUserInfo();
-          final userEmail = userInfo?['email'];
-
-          if (userEmail != null) {
-            await FirestoreService().saveTokens(
-              userEmail: userEmail,
-              accessToken: zoomAccessToken,
-              refreshToken: zoomRefreshToken,
-              accessExpiry: DateTime.now().add(Duration(hours: 1)),
-              refreshExpiry: DateTime.now().add(Duration(days: 30)),
-            );
-            print("Firestore token saved for user: $userEmail");
-          } else {
-            print("Error: Could not retrieve user email from Zoom.");
-          }
-
-          if (userEmail != null) {
-            // 🔁 FCM token al
-            final fcmToken = await FirebaseMessaging.instance.getToken();
-
-            // 🔁 FCM token'ı backend'e gönder
-            await NotificationService.sendTokenToBackend(userEmail);
-
-            // 🔐 Tüm tokenları Firestore'a kaydet
-            await FirestoreService().saveTokens(
-              userEmail: userEmail,
-              accessToken: zoomAccessToken,
-              refreshToken: zoomRefreshToken,
-              accessExpiry: DateTime.now().add(Duration(hours: 1)),
-              refreshExpiry: DateTime.now().add(Duration(days: 30)),
-              fcmToken: fcmToken,
-            );
-
-            print("Firestore token saved for user: $userEmail");
-
-            // ⏫ AuthProvider güncelle
-            ref.read(authProvider.notifier).loginWithToken(zoomAccessToken);
-
-            // 🏠 Ana sayfaya yönlendir
-            if (!mounted) return;
-            context.go('/home');
-          } else {
-            print("Error: Could not retrieve user email from Zoom.");
-          }
         }
-      }
-    });
+      });
+    }
   }
 
   @override
@@ -169,6 +171,7 @@ class _LoginState extends ConsumerState<Login> {
   Widget build(BuildContext context) {
     // Access localized strings (multi-language support)
     var d = AppLocalizations.of(context);
+    
 
     // Get screen dimensions for responsive layout
     final size = MediaQuery.of(context).size;

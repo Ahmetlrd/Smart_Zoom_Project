@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
@@ -29,6 +31,12 @@ class NotificationService {
 
   /// 🚀 Bildirim altyapısını başlatır ve gelen mesajları yakalar
   static Future<void> init() async {
+    // 🔒 Sadece Android ve iOS'ta başlat
+    if (!Platform.isAndroid && !Platform.isIOS) {
+      print("🔕 Bildirim sistemi ${Platform.operatingSystem} platformunda devre dışı");
+      return;
+    }
+
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
     const iOS = DarwinInitializationSettings();
     const initSettings = InitializationSettings(android: android, iOS: iOS);
@@ -61,6 +69,11 @@ class NotificationService {
     required String title,
     required String body,
   }) async {
+    if (!Platform.isAndroid && !Platform.isIOS) {
+      print("🔕 Test bildirimi ${Platform.operatingSystem} için desteklenmiyor");
+      return;
+    }
+
     const androidDetails = AndroidNotificationDetails(
       'zoom_ai_channel',
       'Zoom Notifications',

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart'; // Flutter's core UI toolkit
 import 'package:flutter_app/features/home/utility.dart'; // Utility class for shared UI components like AppBar
-import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Localization support for multi-language strings
-
+import 'package:flutter_app/gen_l10n/app_localizations.dart'; // Custom utility functions (e.g., for app bars)
 // A stateless widget representing the Saved Summaries page
 class Saved extends StatelessWidget {
   const Saved({super.key}); // Constructor with optional key

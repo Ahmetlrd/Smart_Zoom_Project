@@ -1,7 +1,9 @@
 // Flutter UI framework
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/firebase_options.dart';
 
+import 'dart:io'; // En üste ekle
 // Import authentication provider (Riverpod based)
 import 'package:flutter_app/providers/auth_provider.dart';
 
@@ -24,26 +26,26 @@ import 'routes.dart';
 import 'package:app_links/app_links.dart';
 
 // Generated localization class (via flutter gen-l10n)
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
+import 'package:flutter_app/gen_l10n/app_localizations.dart'; // Custom utility functions (e.g., for app bars)
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // 📦 Notification service
 import 'package:flutter_app/services/notifications_service.dart';
 
-
 // 🔑 Global navigator key (for background notification tıklama)
 
 // 📡 Deep link listener
-Future<void> handleIncomingLinks(WidgetRef ref, BuildContext context) async {
-  final appLinks = AppLinks();
 
+Future<void> handleIncomingLinks(WidgetRef ref, BuildContext context) async {
+  if (!Platform.isAndroid && !Platform.isIOS) return; // Sadece mobilde dinle
+
+  final appLinks = AppLinks();
   appLinks.uriLinkStream.listen((Uri? uri) {
     if (uri != null && uri.scheme == 'zoomai') {
       final token = uri.queryParameters['token'];
       if (token != null) {
         ref.read(authProvider.notifier).loginWithToken(token);
-        Future.delayed(Duration(milliseconds: 100), () {
+        Future.delayed(const Duration(milliseconds: 100), () {
           context.go('/home');
         });
       }
@@ -55,13 +57,23 @@ Future<void> handleIncomingLinks(WidgetRef ref, BuildContext context) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  await Firebase.initializeApp();
 
-  // ✅ Notification setup with global navigator key
-  await NotificationService.init();
+  if (Platform.isMacOS) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } else {
+    await Firebase.initializeApp(); 
+  }
+
+
+  if (Platform.isAndroid || Platform.isIOS) {
+    await NotificationService.init();
+  }
 
   runApp(const ProviderScope(child: MyApp()));
 }
+
 
 class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
@@ -76,7 +88,9 @@ class _MyAppState extends ConsumerState<MyApp> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      handleIncomingLinks(ref, context);
+      if (Platform.isAndroid || Platform.isIOS) {
+        handleIncomingLinks(ref, context);
+      }
     });
   }
 
@@ -86,7 +100,6 @@ class _MyAppState extends ConsumerState<MyApp> {
     final locale = ref.watch(localeProvider);
 
     return MaterialApp.router(
-     
       locale: locale ?? WidgetsBinding.instance.platformDispatcher.locale,
       localizationsDelegates: const [
         AppLocalizations.delegate,

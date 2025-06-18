@@ -3,8 +3,7 @@ import 'package:flutter_app/features/home/utility.dart';
 import 'package:flutter_app/providers/auth_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_app/providers/auth_provider.dart'; // Authentication state management
+import 'package:flutter_app/gen_l10n/app_localizations.dart'; // Custom utility functions (e.g., for app bars)import 'package:flutter_app/providers/auth_provider.dart'; // Authentication state management
 
 class Userinfo extends ConsumerWidget {
   const Userinfo({super.key});

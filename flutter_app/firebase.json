@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"macos":{"default":{"projectId":"smartzoom-project","appId":"1:998224638542:ios:e7db8790931d7e7e42891f","uploadDebugSymbols":false,"fileOutput":"macos/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"smartzoom-project","configurations":{"macos":"1:998224638542:ios:e7db8790931d7e7e42891f"}}}}}}

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart'; // Core Flutter UI library
 import 'package:flutter_app/features/home/utility.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Localization helper (auto-generated from .arb files)
-
+import 'package:flutter_app/gen_l10n/app_localizations.dart'; // Custom utility functions (e.g., for app bars)
 // A stateless widget to display meeting details
 class MeetingDetailPage extends StatelessWidget {
   MeetingDetailPage({super.key});

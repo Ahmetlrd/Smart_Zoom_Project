@@ -5,8 +5,7 @@ import 'package:flutter_app/providers/locale_provider.dart'; // Language/locale 
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // State management with Riverpod
 import 'package:go_router/go_router.dart'; // Navigation with GoRouter
 import 'package:shared_preferences/shared_preferences.dart'; // Persistent local storage
-import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Localization support
-
+import 'package:flutter_app/gen_l10n/app_localizations.dart'; // Custom utility functions (e.g., for app bars)
 // Settings page where users can change language, notification preferences, and log out
 class Settings extends ConsumerStatefulWidget {
   const Settings({super.key});

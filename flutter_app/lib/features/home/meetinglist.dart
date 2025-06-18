@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart'; // Flutter's material design components
 import 'package:flutter_app/features/home/utility.dart'; // Custom utility class (e.g., for building app bars)
-import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Localization support for multiple languages
-
+import 'package:flutter_app/gen_l10n/app_localizations.dart'; // Custom utility functions (e.g., for app bars)
 // A stateless widget that represents the meeting list page
 class Meetinglist extends StatelessWidget {
   const Meetinglist({super.key}); // Constructor with optional key for widget identity

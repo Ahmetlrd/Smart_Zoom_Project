@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart'; // Flutter UI components
 import 'package:go_router/go_router.dart'; // Navigation and routing
-import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Localization (not used here, but imported)
-
+import 'package:flutter_app/gen_l10n/app_localizations.dart'; // Custom utility functions (e.g., for app bars)
 // Utility class for reusable UI components
 class Utility {
   // Static method that returns a customized AppBar widget
