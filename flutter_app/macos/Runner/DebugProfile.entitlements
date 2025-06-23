@@ -8,5 +8,9 @@
 	<true/>
 	<key>com.apple.security.network.server</key>
 	<true/>
+
+	<!-- 🛎️ Bildirim desteği için eklenen satır -->
+	<key>com.apple.security.notification-center</key>
+	<true/>
 </dict>
 </plist>

@@ -7,69 +7,92 @@ import 'package:http/http.dart' as http;
 class NotificationService {
   static final _notifications = FlutterLocalNotificationsPlugin();
 
-  /// 🔁 FCM token'ı backend'e gönderir
+  /// 🔁 FCM token'ı backend'e gönderir (sadece Android/iOS'ta çalışır)
   static Future<void> sendTokenToBackend(String email) async {
-    final fcmToken = await FirebaseMessaging.instance.getToken();
-    if (fcmToken == null) {
-      print("⛔ FCM token alınamadı.");
+    if (!(Platform.isAndroid || Platform.isIOS)) {
+      print("📵 macOS veya diğer platformlarda FCM token gönderilmiyor.");
       return;
     }
 
-    final url = Uri.parse('http://75.101.195.165:8000/save-token');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: '{"email": "$email", "token": "$fcmToken"}',
-    );
+    try {
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken == null) {
+        print("⛔ FCM token alınamadı.");
+        return;
+      }
 
-    if (response.statusCode == 200) {
-      print("✅ FCM token backend'e gönderildi.");
-    } else {
-      print("⛔ Backend token kaydı başarısız: ${response.body}");
+      final url = Uri.parse('http://75.101.195.165:8000/save-token');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: '{"email": "$email", "token": "$fcmToken"}',
+      );
+
+      if (response.statusCode == 200) {
+        print("✅ FCM token backend'e gönderildi.");
+      } else {
+        print("⛔ Backend token kaydı başarısız: ${response.body}");
+      }
+    } catch (e) {
+      print("🔥 FCM token gönderme hatası: $e");
     }
   }
 
-  /// 🚀 Bildirim altyapısını başlatır ve gelen mesajları yakalar
+  /// 🚀 Bildirim altyapısını başlatır (platforma göre)
   static Future<void> init() async {
-    // 🔒 Sadece Android ve iOS'ta başlat
-    if (!Platform.isAndroid && !Platform.isIOS) {
-      print("🔕 Bildirim sistemi ${Platform.operatingSystem} platformunda devre dışı");
+    if (!(Platform.isAndroid || Platform.isIOS || Platform.isMacOS)) {
+      print("🔕 Bildirim sistemi ${Platform.operatingSystem} platformunda desteklenmiyor");
       return;
     }
 
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
     const iOS = DarwinInitializationSettings();
-    const initSettings = InitializationSettings(android: android, iOS: iOS);
+    const macOS = DarwinInitializationSettings(); // macOS da Darwin kullanır
+
+    const initSettings = InitializationSettings(
+      android: android,
+      iOS: iOS,
+      macOS: macOS,
+    );
 
     await _notifications.initialize(initSettings);
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      final notification = message.notification;
-      if (notification == null) return;
+    // 🔔 Firebase mesajlarını sadece mobilde dinle
+    if (Platform.isAndroid || Platform.isIOS) {
+      try {
+        FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+          final notification = message.notification;
+          if (notification == null) return;
 
-      _notifications.show(
-        notification.hashCode,
-        notification.title,
-        notification.body,
-        const NotificationDetails(
-          android: AndroidNotificationDetails(
-            'zoom_ai_channel',
-            'Zoom Notifications',
-            importance: Importance.high,
-            priority: Priority.high,
-          ),
-          iOS: DarwinNotificationDetails(),
-        ),
-      );
-    });
+          _notifications.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            const NotificationDetails(
+              android: AndroidNotificationDetails(
+                'zoom_ai_channel',
+                'Zoom Notifications',
+                importance: Importance.high,
+                priority: Priority.high,
+              ),
+              iOS: DarwinNotificationDetails(),
+            ),
+          );
+        });
+      } catch (e) {
+        print("⚠️ Firebase dinleme başlatılamadı: $e");
+      }
+    } else if (Platform.isMacOS) {
+      print("🍎 macOS'ta sadece local notification destekleniyor");
+    }
   }
 
-  /// 🧪 Test amaçlı manuel bildirim gösterir
+  /// 🧪 Test amaçlı manuel local notification (her platformda)
   static Future<void> show({
     required String title,
     required String body,
   }) async {
-    if (!Platform.isAndroid && !Platform.isIOS) {
+    if (!(Platform.isAndroid || Platform.isIOS || Platform.isMacOS)) {
       print("🔕 Test bildirimi ${Platform.operatingSystem} için desteklenmiyor");
       return;
     }
@@ -81,10 +104,12 @@ class NotificationService {
       priority: Priority.high,
     );
     const iosDetails = DarwinNotificationDetails();
+    const macDetails = DarwinNotificationDetails(); // Aynı sınıf
 
     const notificationDetails = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
+      macOS: macDetails,
     );
 
     await _notifications.show(

@@ -57,23 +57,11 @@ Future<void> handleIncomingLinks(WidgetRef ref, BuildContext context) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-
-  if (Platform.isMacOS) {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  } else {
-    await Firebase.initializeApp(); 
-  }
-
-
-  if (Platform.isAndroid || Platform.isIOS) {
-    await NotificationService.init();
-  }
+  await Firebase.initializeApp();
+  await NotificationService.init(); // ← Eklendi
 
   runApp(const ProviderScope(child: MyApp()));
 }
-
 
 class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});

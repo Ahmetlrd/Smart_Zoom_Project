@@ -17,29 +17,17 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for android - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -60,4 +48,40 @@ class DefaultFirebaseOptions {
     storageBucket: 'smartzoom-project.firebasestorage.app',
     iosBundleId: 'com.example.flutterApp',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyA2HFs_F6FNcR5VuyuP_BNbp-Xf-UJZCrc',
+    appId: '1:998224638542:web:41fc4aa1baf06c8a42891f',
+    messagingSenderId: '998224638542',
+    projectId: 'smartzoom-project',
+    authDomain: 'smartzoom-project.firebaseapp.com',
+    storageBucket: 'smartzoom-project.firebasestorage.app',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyA9KjybS2t2A2h8DN36zUU-8vrTFOuAPjs',
+    appId: '1:998224638542:ios:e7db8790931d7e7e42891f',
+    messagingSenderId: '998224638542',
+    projectId: 'smartzoom-project',
+    storageBucket: 'smartzoom-project.firebasestorage.app',
+    iosBundleId: 'com.example.flutterApp',
+  );
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyAkZnnP9BNhRnb29N08r4_bzFg2GixsWl4',
+    appId: '1:998224638542:android:1634bb3b0cb2b5d142891f',
+    messagingSenderId: '998224638542',
+    projectId: 'smartzoom-project',
+    storageBucket: 'smartzoom-project.firebasestorage.app',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyA2HFs_F6FNcR5VuyuP_BNbp-Xf-UJZCrc',
+    appId: '1:998224638542:web:8e0eec0cf682b1c142891f',
+    messagingSenderId: '998224638542',
+    projectId: 'smartzoom-project',
+    authDomain: 'smartzoom-project.firebaseapp.com',
+    storageBucket: 'smartzoom-project.firebasestorage.app',
+  );
+
 }
