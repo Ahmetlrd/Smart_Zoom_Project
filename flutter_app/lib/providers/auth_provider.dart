@@ -31,7 +31,7 @@ class AuthNotifier extends StateNotifier<bool> {
     state = true;
   }
 
-  Future<void> loginWithToken(String token) async {
+Future<void> loginWithToken(String token, {String? refreshToken}) async {
   state = true;
 
   final info = await ZoomService.fetchUserInfo();
