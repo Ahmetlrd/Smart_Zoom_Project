@@ -31,16 +31,28 @@ class AuthNotifier extends StateNotifier<bool> {
     state = true;
   }
 
-Future<void> loginWithToken(String token, {String? refreshToken}) async {
+ Future<void> loginWithToken(String token, {String? refreshToken}) async {
+  print('🔐 [loginWithToken] Access token: $token');
+
+  // Hem cache'e hem diske yaz
+  await SecureStorageService.saveAccessToken(token);
+
+  if (refreshToken != null) {
+    await SecureStorageService.saveRefreshToken(refreshToken);
+  }
+
+  // Artık token'ı tekrar okumadan doğrudan kullan
+  final info = await ZoomService.fetchUserInfoWithToken(token);
+  _userInfo = info;
   state = true;
 
-  final info = await ZoomService.fetchUserInfo();
-  _userInfo = info;
+  print('👤 User info: $info');
 
-  // Save user email to secure storage for future session restoration
   if (info != null && info['email'] != null) {
     await SecureStorageService.saveUserEmail(info['email']);
   }
+
+  print('✅ loginWithToken finished');
 }
 
 

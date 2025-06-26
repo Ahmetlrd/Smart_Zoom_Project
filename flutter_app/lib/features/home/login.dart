@@ -67,7 +67,7 @@ class _LoginState extends ConsumerState<Login> {
     });
 
     // Step 3: Listen for OAuth callback with token info (from Zoom login redirect)
-    if (Platform.isAndroid || Platform.isIOS) {
+    if (Platform.isAndroid || Platform.isIOS||Platform.isMacOS) {
       _appLinks = AppLinks();
       _sub = _appLinks.uriLinkStream.listen((Uri? uri) async {
         if (uri != null && uri.scheme == "zoomai") {
@@ -99,7 +99,8 @@ class _LoginState extends ConsumerState<Login> {
             }
 
             // Retrieve user info from Zoom to get user email
-            final userInfo = await ZoomService.fetchUserInfo();
+            final userInfo =
+                await ZoomService.fetchUserInfoWithToken(zoomAccessToken);
             final userEmail = userInfo?['email'];
 
             if (userEmail != null) {
@@ -171,7 +172,6 @@ class _LoginState extends ConsumerState<Login> {
   Widget build(BuildContext context) {
     // Access localized strings (multi-language support)
     var d = AppLocalizations.of(context);
-    
 
     // Get screen dimensions for responsive layout
     final size = MediaQuery.of(context).size;

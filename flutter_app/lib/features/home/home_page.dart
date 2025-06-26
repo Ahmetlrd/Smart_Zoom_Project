@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_app/features/home/utility.dart';
-import 'package:flutter_app/services/secure_storage_service.dart' as SecureStorageService;
+import 'package:flutter_app/services/secure_storage_service.dart'
+    as SecureStorageService;
 import 'package:flutter_app/services/zoom_service.dart';
 import 'package:flutter_app/services/secure_storage_service.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_app/gen_l10n/app_localizations.dart'; // Custom utility functions (e.g., for app bars)
+
 // ENUM: Özet çıkarma tercihi
 enum SummaryPreference { always, once, never }
 
 // Firestore meeting status stream provider
-final meetingStatusProvider = StreamProvider.family<bool, String>((ref, userEmail) {
+final meetingStatusProvider =
+    StreamProvider.family<bool, String>((ref, userEmail) {
   final userId = userEmail.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
   final docRef = FirebaseFirestore.instance.collection('users').doc(userId);
   return docRef.snapshots().map((doc) {
@@ -36,7 +39,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final d = AppLocalizations.of(context);
-    
+
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final crossAxisCount = screenWidth < 600 ? 2 : 4;
@@ -63,7 +66,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                 children: [
                   // 🔥 Eklenen Meeting Bilgilendirme Kutusu
                   if (isJoined)
-                    
                     Padding(
                       padding: const EdgeInsets.only(bottom: 12.0),
                       child: Card(
@@ -138,7 +140,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: () async {
-                        final userData = await ZoomService.fetchUserInfo();
+                        final token =
+                            await SecureStorageService.readAccessToken();
+
+                        final userData =
+                            await ZoomService.fetchUserInfoWithToken(token!);
                         print("Kullanıcı Bilgisi:");
                         print(userData);
                       },
@@ -157,8 +163,10 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
             ),
           ),
-          loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
-          error: (e, st) => Scaffold(body: Center(child: Text("Meeting status error: $e"))),
+          loading: () =>
+              const Scaffold(body: Center(child: CircularProgressIndicator())),
+          error: (e, st) =>
+              Scaffold(body: Center(child: Text("Meeting status error: $e"))),
         );
       },
     );

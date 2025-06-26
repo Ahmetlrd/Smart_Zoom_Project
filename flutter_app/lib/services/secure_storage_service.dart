@@ -16,6 +16,8 @@ Future<void> saveRefreshToken(String token) async {
 
 /// Reads the access token from secure storage
 Future<String?> readAccessToken() async {
+  final a = await _secureStorage.read(key: 'access_token');
+  print(a);
   return await _secureStorage.read(key: 'access_token');
 }
 
@@ -31,12 +33,16 @@ Future<void> clearAllTokens() async {
   await _secureStorage.delete(key: 'refresh_token');
   await _secureStorage.delete(key: 'jwt_token'); // Ensure JWT is also cleared
 }
+
 Future<void> saveJwtToken(String token) async {
   final storage = FlutterSecureStorage();
   await storage.write(key: 'jwt_token', value: token);
 }
+
 Future<void> saveUserEmail(String email) async {
+  print("ilk email değeri: ${email}");
   await _secureStorage.write(key: 'user_email', value: email);
+  print("ikinci email değeri: ${email}");
 }
 
 Future<String?> readUserEmail() async {

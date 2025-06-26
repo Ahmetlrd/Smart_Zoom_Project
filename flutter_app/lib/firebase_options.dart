@@ -46,7 +46,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '998224638542',
     projectId: 'smartzoom-project',
     storageBucket: 'smartzoom-project.firebasestorage.app',
-    iosBundleId: 'com.example.flutterApp',
+    iosBundleId: 'com.megalabsai.smartzoom',
   );
 
   static const FirebaseOptions web = FirebaseOptions(
@@ -64,7 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '998224638542',
     projectId: 'smartzoom-project',
     storageBucket: 'smartzoom-project.firebasestorage.app',
-    iosBundleId: 'com.example.flutterApp',
+    iosBundleId: 'com.megalabsai.smartzoom',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
