@@ -11,6 +11,8 @@ class FirestoreService {
     required DateTime accessExpiry,
     required DateTime refreshExpiry,
     String? fcmToken, // Optional
+    String? timezone,
+    String? hostId,
   }) async {
     final userId = normalizeEmail(userEmail);
     final userDoc = _firestore.collection('users').doc(userId);
@@ -26,7 +28,8 @@ class FirestoreService {
     if (fcmToken != null) {
       data['fcmToken'] = fcmToken;
     }
-
+    if (timezone != null) data['timezone'] = timezone;
+    if (hostId != null) data['hostId'] = hostId;
     await userDoc.set(data, SetOptions(merge: true));
   }
 
@@ -51,7 +54,8 @@ class FirestoreService {
   // Add a new summary under user's summaries subcollection
   Future<void> addSummary(String userEmail, String text) async {
     final userId = normalizeEmail(userEmail);
-    final summariesCol = _firestore.collection('users').doc(userId).collection('summaries');
+    final summariesCol =
+        _firestore.collection('users').doc(userId).collection('summaries');
     await summariesCol.add({
       'text': text,
       'createdAt': FieldValue.serverTimestamp(),

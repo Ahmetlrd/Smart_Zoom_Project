@@ -8,35 +8,26 @@ class NotificationService {
   static final _notifications = FlutterLocalNotificationsPlugin();
 
   /// 🔁 FCM token'ı backend'e gönderir (sadece Android/iOS'ta çalışır)
-  static Future<void> sendTokenToBackend(String email) async {
-    if (!(Platform.isAndroid || Platform.isIOS)) {
-      print("📵 macOS veya diğer platformlarda FCM token gönderilmiyor.");
-      return;
+  static Future<void> sendPlatformToBackend(String email) async {
+  final url = Uri.parse('http://75.101.195.165:8000/save-platform');
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: '{"email": "$email", "platform": "macos"}',
+    );
+
+    if (response.statusCode == 200) {
+      print("✅ Platform bilgisi backend'e gönderildi.");
+    } else {
+      print("⛔ Platform bilgisi gönderilemedi: ${response.body}");
     }
-
-    try {
-      final fcmToken = await FirebaseMessaging.instance.getToken();
-      if (fcmToken == null) {
-        print("⛔ FCM token alınamadı.");
-        return;
-      }
-
-      final url = Uri.parse('http://75.101.195.165:8000/save-token');
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: '{"email": "$email", "token": "$fcmToken"}',
-      );
-
-      if (response.statusCode == 200) {
-        print("✅ FCM token backend'e gönderildi.");
-      } else {
-        print("⛔ Backend token kaydı başarısız: ${response.body}");
-      }
-    } catch (e) {
-      print("🔥 FCM token gönderme hatası: $e");
-    }
+  } catch (e) {
+    print("🔥 Platform gönderme hatası: $e");
   }
+}
+
 
   /// 🚀 Bildirim altyapısını başlatır (platforma göre)
   static Future<void> init() async {
@@ -58,7 +49,7 @@ class NotificationService {
     await _notifications.initialize(initSettings);
 
     // 🔔 Firebase mesajlarını sadece mobilde dinle
-    if (Platform.isAndroid || Platform.isIOS) {
+    if (Platform.isAndroid || Platform.isIOS||Platform.isMacOS) {
       try {
         FirebaseMessaging.onMessage.listen((RemoteMessage message) {
           final notification = message.notification;

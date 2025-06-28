@@ -4,11 +4,11 @@ import 'package:flutter_app/features/home/utility.dart';
 import 'package:flutter_app/services/secure_storage_service.dart'
     as SecureStorageService;
 import 'package:flutter_app/services/zoom_service.dart';
-import 'package:flutter_app/services/secure_storage_service.dart';
-
+import 'package:flutter_app/services/notifications_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_app/gen_l10n/app_localizations.dart'; // Custom utility functions (e.g., for app bars)
+import 'package:flutter_app/gen_l10n/app_localizations.dart';
+import 'dart:io';
 
 // ENUM: Özet çıkarma tercihi
 enum SummaryPreference { always, once, never }
@@ -35,6 +35,7 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   SummaryPreference summaryPreference = SummaryPreference.once;
+  bool _hasNotified = false;
 
   @override
   Widget build(BuildContext context) {
@@ -55,114 +56,125 @@ class _HomePageState extends ConsumerState<HomePage> {
         final meetingStatusAsync = ref.watch(meetingStatusProvider(userEmail));
 
         return meetingStatusAsync.when(
-          data: (isJoined) => Scaffold(
-            appBar: Utility.buildAppBar(context),
-            body: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: screenWidth * 0.05,
-                vertical: screenHeight * 0.02,
-              ),
-              child: Column(
-                children: [
-                  // 🔥 Eklenen Meeting Bilgilendirme Kutusu
-                  if (isJoined)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 12.0),
-                      child: Card(
-                        elevation: 6,
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            children: [
-                              Text(
-                                "Şu an toplantıdasın!",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+          data: (isJoined) {
+            if (!isJoined) {
+              _hasNotified = false;
+            }
+
+            if (isJoined && Platform.isMacOS && !_hasNotified) {
+              NotificationService.show(
+                title: "Toplantıya Katıldınız",
+                body: "Özet çıkarmak ister misiniz?",
+              );
+              _hasNotified = true;
+            }
+
+            return Scaffold(
+              appBar: Utility.buildAppBar(context),
+              body: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth * 0.05,
+                  vertical: screenHeight * 0.02,
+                ),
+                child: Column(
+                  children: [
+                    if (isJoined)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 12.0),
+                        child: Card(
+                          elevation: 6,
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              children: [
+                                Text(
+                                  "Şu an toplantıdasın!",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                "Özet Tercihi: ${_preferenceLabel(summaryPreference)}",
-                                style: const TextStyle(fontSize: 15),
-                              ),
-                              const SizedBox(height: 8),
-                              ElevatedButton.icon(
-                                onPressed: () => _showSummaryOptions(context),
-                                icon: const Icon(Icons.edit),
-                                label: const Text("Tercihi Değiştir"),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blueAccent,
+                                Text(
+                                  "Özet Tercihi: ${_preferenceLabel(summaryPreference)}",
+                                  style: const TextStyle(fontSize: 15),
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 8),
+                                ElevatedButton.icon(
+                                  onPressed: () => _showSummaryOptions(context),
+                                  icon: const Icon(Icons.edit),
+                                  label: const Text("Tercihi Değiştir"),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blueAccent,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
+                    Expanded(
+                      child: GridView.count(
+                        crossAxisCount: crossAxisCount,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                        childAspectRatio: screenWidth / (screenHeight / 2),
+                        children: [
+                          _buildCard(
+                            icon: Icons.calendar_today,
+                            label: d!.meetinglist,
+                            onTap: () => context.push('/meetinglist'),
+                          ),
+                          _buildCard(
+                            icon: Icons.connect_without_contact,
+                            label: d.meetingdetails,
+                            onTap: () => context.push('/meetingdetailpage'),
+                          ),
+                          _buildCard(
+                            icon: Icons.auto_awesome,
+                            label: d.nlpsummary,
+                            onTap: () => context.push('/nlp'),
+                          ),
+                          _buildCard(
+                            icon: Icons.note,
+                            label: d.saved,
+                            onTap: () => context.push('/saved'),
+                          ),
+                        ],
+                      ),
                     ),
-                  // GRID
-                  Expanded(
-                    child: GridView.count(
-                      crossAxisCount: crossAxisCount,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: screenWidth / (screenHeight / 2),
-                      children: [
-                        _buildCard(
-                          icon: Icons.calendar_today,
-                          label: d!.meetinglist,
-                          onTap: () => context.push('/meetinglist'),
-                        ),
-                        _buildCard(
-                          icon: Icons.connect_without_contact,
-                          label: d.meetingdetails,
-                          onTap: () => context.push('/meetingdetailpage'),
-                        ),
-                        _buildCard(
-                          icon: Icons.auto_awesome,
-                          label: d.nlpsummary,
-                          onTap: () => context.push('/nlp'),
-                        ),
-                        _buildCard(
-                          icon: Icons.note,
-                          label: d.saved,
-                          onTap: () => context.push('/saved'),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // BUTON
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: () async {
-                        final token =
-                            await SecureStorageService.readAccessToken();
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          final token =
+                              await SecureStorageService.readAccessToken();
 
-                        final userData =
-                            await ZoomService.fetchUserInfoWithToken(token!);
-                        print("Kullanıcı Bilgisi:");
-                        print(userData);
-                      },
-                      icon: const Icon(Icons.person),
-                      label: const Text(
-                        "Fetch User Info",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        backgroundColor: Colors.blueAccent,
+                          final userData =
+                              await ZoomService.fetchUserInfoWithToken(token!);
+                          print("Kullanıcı Bilgisi:");
+                          print(userData);
+                        },
+                        icon: const Icon(Icons.person),
+                        label: const Text(
+                          "Fetch User Info",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          backgroundColor: Colors.blueAccent,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
           loading: () =>
               const Scaffold(body: Center(child: CircularProgressIndicator())),
           error: (e, st) =>
@@ -172,7 +184,6 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  // Özet tercih label
   String _preferenceLabel(SummaryPreference pref) {
     switch (pref) {
       case SummaryPreference.always:
@@ -184,7 +195,6 @@ class _HomePageState extends ConsumerState<HomePage> {
     }
   }
 
-  // Tercih seçme alt ekranı
   void _showSummaryOptions(BuildContext context) {
     showModalBottomSheet(
       context: context,

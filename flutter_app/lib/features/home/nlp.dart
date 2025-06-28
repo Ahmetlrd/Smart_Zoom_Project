@@ -1,17 +1,57 @@
-import 'package:flutter/material.dart'; // Flutter's material design library
-import 'package:flutter_app/features/home/utility.dart'; // Custom utility functions (e.g., for app bars)
-import 'package:flutter_app/gen_l10n/app_localizations.dart'; // Custom utility functions (e.g., for app bars)
-// A stateless widget representing the NLP (Natural Language Processing) page
-class Nlp extends StatelessWidget {
-  const Nlp({super.key}); // Constructor with optional widget key
+import 'package:flutter/material.dart';
+import 'package:flutter_app/services/openai_service.dart';
+
+class Nlp extends StatefulWidget {
+  const Nlp({super.key});
+
+  @override
+  State<Nlp> createState() => _NlpState();
+}
+
+class _NlpState extends State<Nlp> {
+  final _openAI = OpenAIService(); // .env’den alacak
+  String _summary = '';
+  bool _isLoading = false;
+
+  void _summarizeText() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    const transcript = '''
+    denemek için bir transkript örneği yazıldı
+    ''';
+
+    final result = await _openAI.summarizeText(transcript);
+
+    setState(() {
+      _summary = result ?? 'No summary could be generated.';
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    var d = AppLocalizations.of(context); // Loads localized text resources for the current locale
-
-    // Returns a page layout with just a custom app bar for now
     return Scaffold(
-      appBar: Utility.buildAppBar(context), // Custom app bar created using Utility class
+      appBar: AppBar(title: const Text("NLP Summary")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            ElevatedButton(
+              onPressed: _isLoading ? null : _summarizeText,
+              child: const Text("Generate Summary"),
+            ),
+            const SizedBox(height: 20),
+            _isLoading
+                ? const CircularProgressIndicator()
+                : Text(
+                    _summary,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+          ],
+        ),
+      ),
     );
   }
 }

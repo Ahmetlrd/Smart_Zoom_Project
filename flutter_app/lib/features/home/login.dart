@@ -67,7 +67,7 @@ class _LoginState extends ConsumerState<Login> {
     });
 
     // Step 3: Listen for OAuth callback with token info (from Zoom login redirect)
-    if (Platform.isAndroid || Platform.isIOS||Platform.isMacOS) {
+    if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
       _appLinks = AppLinks();
       _sub = _appLinks.uriLinkStream.listen((Uri? uri) async {
         if (uri != null && uri.scheme == "zoomai") {
@@ -102,7 +102,8 @@ class _LoginState extends ConsumerState<Login> {
             final userInfo =
                 await ZoomService.fetchUserInfoWithToken(zoomAccessToken);
             final userEmail = userInfo?['email'];
-
+            final timezone = userInfo?['timezone'] ?? 'UTC';
+            final hostId = userInfo?['id'];
             if (userEmail != null) {
               await FirestoreService().saveTokens(
                 userEmail: userEmail,
@@ -110,6 +111,8 @@ class _LoginState extends ConsumerState<Login> {
                 refreshToken: zoomRefreshToken,
                 accessExpiry: DateTime.now().add(Duration(hours: 1)),
                 refreshExpiry: DateTime.now().add(Duration(days: 30)),
+                timezone: timezone,
+                hostId: hostId,
               );
               print("Firestore token saved for user: $userEmail");
             } else {
@@ -121,7 +124,7 @@ class _LoginState extends ConsumerState<Login> {
               final fcmToken = await FirebaseMessaging.instance.getToken();
 
               // 🔁 FCM token'ı backend'e gönder
-              await NotificationService.sendTokenToBackend(userEmail);
+              await NotificationService.sendPlatformToBackend(userEmail);
 
               // 🔐 Tüm tokenları Firestore'a kaydet
               await FirestoreService().saveTokens(

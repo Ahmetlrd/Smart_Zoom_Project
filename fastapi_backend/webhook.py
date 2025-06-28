@@ -41,12 +41,10 @@ def handle_participant_joined(email: str, meeting_id: str):
         user_data = doc.to_dict()
         print(f"📥 Firestore user data for {email}: {user_data}")
 
+        platform = user_data.get("platform")
         fcm_token = user_data.get("fcmToken")
-        if not fcm_token:
-            print(f"⛔ FCM token missing in Firestore document: {email}")
-            return
 
-        # 🔑 1. Firestore'da meeting status güncelle
+        # 🔑 1. Firestore'da meeting status güncelle (her durumda)
         user_ref.set({
             "meetingStatus": {
                 "isJoined": True,
@@ -56,15 +54,20 @@ def handle_participant_joined(email: str, meeting_id: str):
         }, merge=True)
         print(f"✅ [FS] MeetingStatus: isJoined=True -> {email}")
 
-        # 🔑 2. Mevcut FCM notification sistemini bozmadan gönder
-        send_fcm(
-            token=fcm_token,
-            title="Zoom Toplantısı Başladı",
-            body="Toplantıya katıldınız, özet çıkarmak ister misiniz?",
-            data={"action": "start_summary", "meeting_id": str(meeting_id)}
-        )
+        # 🔔 FCM token varsa veya platform macOS değilse, bildirimi gönder
+        if fcm_token:
+            send_fcm(
+                token=fcm_token,
+                title="Zoom Toplantısı Başladı",
+                body="Toplantıya katıldınız, özet çıkarmak ister misiniz?",
+                data={"action": "start_summary", "meeting_id": str(meeting_id)}
+            )
+        else:
+            print(f"ℹ️ Bildirim atlanıyor: FCM token yok veya platform macOS ({platform})")
+
     except Exception as e:
         print(f"⛔ Exception in background handler for {email}: {e}")
+
 
 def handle_participant_left(email: str, meeting_id: str):
     try:
@@ -167,3 +170,25 @@ async def save_token(request: Request):
         return JSONResponse(content={"error": "write_failed"}, status_code=500)
 
 app.include_router(router)
+@router.post("/save-platform")
+async def save_platform(request: Request):
+    body = await request.json()
+    email = body.get("email")
+    platform = body.get("platform")
+
+    if not (email and platform):
+        return JSONResponse(content={"error": "invalid input"}, status_code=400)
+
+    doc_id = email.replace("@", "_").replace(".", "_")
+    user_ref = db.collection("users").document(doc_id)
+
+    try:
+        user_ref.set({
+            "platform": platform,
+            "platformUpdatedAt": firestore.SERVER_TIMESTAMP
+        }, merge=True)
+        print(f"✅ Platform bilgisi kaydedildi: {email} → {platform}")
+        return {"status": "saved"}
+    except Exception as e:
+        print(f"⛔ Firestore yazma hatası (platform): {e}")
+        return JSONResponse(content={"error": "write_failed"}, status_code=500)
