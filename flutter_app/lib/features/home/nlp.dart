@@ -19,7 +19,8 @@ class _NlpState extends State<Nlp> {
     });
 
     const transcript = '''
-    denemek için bir transkript örneği yazıldı
+    denemek için bir transkript örneği yazıldı sonrasında recording örneği eklenecek
+  
     ''';
 
     final result = await _openAI.summarizeText(transcript);
