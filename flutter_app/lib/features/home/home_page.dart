@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_app/features/home/utility.dart';
+import 'package:flutter_app/services/openai_service.dart';
 import 'package:flutter_app/services/secure_storage_service.dart'
     as SecureStorageService;
+import 'package:flutter_app/services/zoom_recording_helper.dart';
 import 'package:flutter_app/services/zoom_service.dart';
 import 'package:flutter_app/services/notifications_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_app/gen_l10n/app_localizations.dart';
 import 'dart:io';
+import 'package:flutter_app/services/zoom_permission_service.dart';
 
 // ENUM: Özet çıkarma tercihi
 enum SummaryPreference { always, once, never }
@@ -170,6 +173,34 @@ class _HomePageState extends ConsumerState<HomePage> {
                         ),
                       ),
                     ),
+                    ElevatedButton(
+                      onPressed: runDirectZoomSummaryFlow,
+                      child: Text("Zoom (otomatik path) ile özetle"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        final zoomPath = await ZoomPermissionService.getValidZoomPathOrReselectIfNeeded();
+
+
+                        if (zoomPath == null) {
+                          print("⚠️ Zoom klasörüne erişim sağlanamadı.");
+                          return;
+                        }
+
+                        final files = Directory(zoomPath)
+                            .listSync()
+                            .whereType<File>()
+                            .where((f) => f.path.endsWith('.m4a'))
+                            .toList();
+
+                        if (files.isEmpty) {
+                          print("❌ Hiç .m4a dosyası bulunamadı.");
+                        } else {
+                          print("✅ İlk ses dosyası: ${files.first.path}");
+                        }
+                      },
+                      child: Text("Zoom ses klasörüne eriş"),
+                    )
                   ],
                 ),
               ),

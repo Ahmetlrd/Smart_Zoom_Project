@@ -4,14 +4,15 @@
 <dict>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-  	<key>NSAllowsArbitraryLoads</key>
- 	 <true/>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
 	</dict>
 
 	<key>NSUserActivityTypes</key>
 	<array>
-    <string>NSUserActivityTypeBrowsingWeb</string>
+		<string>NSUserActivityTypeBrowsingWeb</string>
 	</array>
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -39,11 +40,15 @@
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 
-	<!-- 🛎️ Local Notification için gerekli -->
+	<!-- 📣 Local Notification desteği -->
 	<key>NSUserNotificationAlertStyle</key>
 	<string>alert</string>
 
-	<!-- 🧩 Custom URL Scheme for deep linking -->
+	<!-- 📂 Documents klasörüne erişim gerekçesi -->
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>Zoom kayıtlarına erişebilmek için Documents klasörüne izin gereklidir.</string>
+
+	<!-- 🌐 Deep link URL scheme -->
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

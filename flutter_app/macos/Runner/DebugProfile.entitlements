@@ -1,19 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+   "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>com.apple.security.network.client</key>
-	<true/>
+  <!-- Uygulama sandbox içinde çalışsın -->
+  <key>com.apple.security.app-sandbox</key>
+  <true/>
 
-	<key>com.apple.security.app-sandbox</key>
-	<true/>
-	<key>com.apple.security.cs.allow-jit</key>
-	<true/>
-	<key>com.apple.security.network.server</key>
-	<true/>
+  <!-- Network istemcisi -->
+  <key>com.apple.security.network.client</key>
+  <true/>
 
-	<!-- 🛎️ Bildirim desteği için eklenen satır -->
-	<key>com.apple.security.notification-center</key>
-	<true/>
+  <!-- Network sunucu olarak dinleme izni -->
+  <key>com.apple.security.network.server</key>
+  <true/>
+
+  <!-- JIT derleme izni (gerekirse) -->
+  <key>com.apple.security.cs.allow-jit</key>
+  <true/>
+
+  <!-- Bildirim desteği -->
+  <key>com.apple.security.notification-center</key>
+  <true/>
+
+  <!-- Kullanıcının seçtiği klasörlere okuma/yazma izni -->
+  <key>com.apple.security.files.user-selected.read-write</key>
+  <true/>
 </dict>
 </plist>
