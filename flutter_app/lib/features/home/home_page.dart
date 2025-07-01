@@ -12,11 +12,10 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_app/gen_l10n/app_localizations.dart';
 import 'dart:io';
 import 'package:flutter_app/services/zoom_permission_service.dart';
+import 'package:window_size/window_size.dart';
 
-// ENUM: Özet çıkarma tercihi
 enum SummaryPreference { always, once, never }
 
-// Firestore meeting status stream provider
 final meetingStatusProvider =
     StreamProvider.family<bool, String>((ref, userEmail) {
   final userId = userEmail.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
@@ -41,9 +40,16 @@ class _HomePageState extends ConsumerState<HomePage> {
   bool _hasNotified = false;
 
   @override
+  void initState() {
+    super.initState();
+    if (Platform.isMacOS || Platform.isWindows) {
+      setWindowMinSize(const Size(800, 600));
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final d = AppLocalizations.of(context);
-
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final crossAxisCount = screenWidth < 600 ? 2 : 4;
@@ -73,143 +79,134 @@ class _HomePageState extends ConsumerState<HomePage> {
             }
 
             return Scaffold(
-              appBar: Utility.buildAppBar(context),
-              body: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: screenWidth * 0.05,
-                  vertical: screenHeight * 0.02,
-                ),
-                child: Column(
-                  children: [
-                    if (isJoined)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 12.0),
-                        child: Card(
-                          elevation: 6,
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              children: [
-                                Text(
-                                  "Şu an toplantıdasın!",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
+                    appBar: Utility.buildAppBar(context), // Adds a custom top app bar
+
+              body: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1000),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+                    child: Column(
+                      children: [
+                        if (isJoined)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12.0),
+                            child: Card(
+                              elevation: 6,
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  children: [
+                                    const Text(
+                                      "Şu an toplantıdasın!",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Özet Tercihi: ${_preferenceLabel(summaryPreference)}",
+                                      style: const TextStyle(fontSize: 15),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    ElevatedButton.icon(
+                                      onPressed: () => _showSummaryOptions(context),
+                                      icon: const Icon(Icons.edit),
+                                      label: const Text("Tercihi Değiştir"),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blueAccent,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  "Özet Tercihi: ${_preferenceLabel(summaryPreference)}",
-                                  style: const TextStyle(fontSize: 15),
-                                ),
-                                const SizedBox(height: 8),
-                                ElevatedButton.icon(
-                                  onPressed: () => _showSummaryOptions(context),
-                                  icon: const Icon(Icons.edit),
-                                  label: const Text("Tercihi Değiştir"),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blueAccent,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           ),
+                        Expanded(
+                          child: GridView.count(
+                            crossAxisCount: crossAxisCount,
+                            crossAxisSpacing: 24,
+                            mainAxisSpacing: 24,
+                            childAspectRatio: 0.9,
+                            children: [
+                              _buildCard(
+                                icon: Icons.calendar_today,
+                                label: d!.meetinglist,
+                                onTap: () => context.push('/meetinglist'),
+                              ),
+                              _buildCard(
+                                icon: Icons.connect_without_contact,
+                                label: d.meetingdetails,
+                                onTap: () => context.push('/meetingdetailpage'),
+                              ),
+                              _buildCard(
+                                icon: Icons.auto_awesome,
+                                label: d.nlpsummary,
+                                onTap: () => context.push('/nlp'),
+                              ),
+                              _buildCard(
+                                icon: Icons.note,
+                                label: d.saved,
+                                onTap: () => context.push('/saved'),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    Expanded(
-                      child: GridView.count(
-                        crossAxisCount: crossAxisCount,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                        childAspectRatio: screenWidth / (screenHeight / 2),
-                        children: [
-                          _buildCard(
-                            icon: Icons.calendar_today,
-                            label: d!.meetinglist,
-                            onTap: () => context.push('/meetinglist'),
-                          ),
-                          _buildCard(
-                            icon: Icons.connect_without_contact,
-                            label: d.meetingdetails,
-                            onTap: () => context.push('/meetingdetailpage'),
-                          ),
-                          _buildCard(
-                            icon: Icons.auto_awesome,
-                            label: d.nlpsummary,
-                            onTap: () => context.push('/nlp'),
-                          ),
-                          _buildCard(
-                            icon: Icons.note,
-                            label: d.saved,
-                            onTap: () => context.push('/saved'),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: () async {
-                          final token =
-                              await SecureStorageService.readAccessToken();
-
-                          final userData =
-                              await ZoomService.fetchUserInfoWithToken(token!);
-                          print("Kullanıcı Bilgisi:");
-                          print(userData);
-                        },
-                        icon: const Icon(Icons.person),
-                        label: const Text(
-                          "Fetch User Info",
-                          style: TextStyle(fontSize: 16),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.person, color: Colors.grey),
+                              tooltip: "Fetch User Info",
+                              onPressed: () async {
+                                final token = await SecureStorageService.readAccessToken();
+                                final userData = await ZoomService.fetchUserInfoWithToken(token!);
+                                print("Kullanıcı Bilgisi:");
+                                print(userData);
+                              },
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.play_circle, color: Colors.grey),
+                              tooltip: "Zoom (otomatik path) ile özetle",
+                              onPressed: runDirectZoomSummaryFlow,
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.folder_open, color: Colors.grey),
+                              tooltip: "Zoom ses klasörünü gör",
+                              onPressed: () async {
+                                final zoomPath = await ZoomPermissionService.getValidZoomPathOrReselectIfNeeded();
+                                if (zoomPath == null) {
+                                  print("⚠️ Zoom klasörününe erişim sağlanamadı.");
+                                  return;
+                                }
+                                final files = Directory(zoomPath)
+                                    .listSync()
+                                    .whereType<File>()
+                                    .where((f) => f.path.endsWith('.m4a'))
+                                    .toList();
+                                if (files.isEmpty) {
+                                  print("❌ Hiç .m4a dosyası bulunamadı.");
+                                } else {
+                                  print("✅ İlk ses dosyası: ${files.first.path}");
+                                }
+                              },
+                            ),
+                          ],
                         ),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          backgroundColor: Colors.blueAccent,
-                        ),
-                      ),
+                      ],
                     ),
-                    ElevatedButton(
-                      onPressed: runDirectZoomSummaryFlow,
-                      child: Text("Zoom (otomatik path) ile özetle"),
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        final zoomPath = await ZoomPermissionService.getValidZoomPathOrReselectIfNeeded();
-
-
-                        if (zoomPath == null) {
-                          print("⚠️ Zoom klasörüne erişim sağlanamadı.");
-                          return;
-                        }
-
-                        final files = Directory(zoomPath)
-                            .listSync()
-                            .whereType<File>()
-                            .where((f) => f.path.endsWith('.m4a'))
-                            .toList();
-
-                        if (files.isEmpty) {
-                          print("❌ Hiç .m4a dosyası bulunamadı.");
-                        } else {
-                          print("✅ İlk ses dosyası: ${files.first.path}");
-                        }
-                      },
-                      child: Text("Zoom ses klasörüne eriş"),
-                    )
-                  ],
+                  ),
                 ),
               ),
             );
           },
-          loading: () =>
-              const Scaffold(body: Center(child: CircularProgressIndicator())),
-          error: (e, st) =>
-              Scaffold(body: Center(child: Text("Meeting status error: $e"))),
+          loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
+          error: (e, st) => Scaffold(body: Center(child: Text("Meeting status error: $e"))),
         );
       },
     );

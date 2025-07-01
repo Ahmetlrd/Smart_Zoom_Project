@@ -27,6 +27,7 @@ class OpenAIService {
             "role": "user",
             "content": """
 Aşağıda bir Zoom toplantısının transkripti bulunmaktadır.
+ilk 3 kelimesi benim için önemli o yüzden (3 kelimelik özet) olarak başla.
 
 Bu transkripti incele ve toplantının içeriğini profesyonelce özetle.  
 Kullanıcı bu özeti okuduğunda toplantıya katılmadan ne konuşulduğunu net şekilde anlayabilsin. Toplantıyı tekrar izlemeye ihtiyaç duymasın.

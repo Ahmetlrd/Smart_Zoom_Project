@@ -5,6 +5,7 @@ import 'package:flutter_app/firebase_options.dart';
 import 'package:flutter_app/providers/auth_provider.dart';
 import 'package:flutter_app/providers/locale_provider.dart';
 import 'package:flutter_app/services/secure_storage_service.dart' as SecureStorageService;
+import 'package:flutter_app/services/zoom_recording_helper.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -54,6 +55,7 @@ Future<void> handleIncomingLinks(WidgetRef ref, BuildContext context) async {
 
 
 void main() async {
+  watchZoomFolder();
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp();
@@ -64,7 +66,9 @@ void main() async {
 
 class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
+  
   @override
+  
   ConsumerState<MyApp> createState() => _MyAppState();
 }
 
@@ -72,6 +76,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   bool _listenerAttached = false;
 
   @override
+  
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
@@ -113,6 +118,8 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
     final locale = ref.watch(localeProvider);
 
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+
       locale: locale ?? WidgetsBinding.instance.platformDispatcher.locale,
       localizationsDelegates: const [
         AppLocalizations.delegate,

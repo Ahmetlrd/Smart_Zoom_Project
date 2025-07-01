@@ -25,14 +25,14 @@ dependencies:
 
   # Persistent local key-value storage
   shared_preferences: ^2.2.2
-
+  flutter_launcher_icons: ^0.14.4
   # HTTP client
   http: ^1.4.0
   file_selector: ^1.0.3  
   path: any
   # Deep linking (incoming links)
   app_links: ^6.4.0
-
+  window_size: ^0.1.0 
   # URL launcher (open browser, maps, etc.)
   url_launcher: ^6.2.5
 
@@ -49,7 +49,7 @@ dependencies:
 
   # Webview for embedded browser content
   webview_flutter: ^4.4.1
-
+  uuid: ^4.0.0
   # Optional: iOS style icons
   cupertino_icons: ^1.0.6
   permission_handler: ^12.0.0+1
@@ -64,7 +64,6 @@ dev_dependencies:
   flutter_lints: ^5.0.0
 
   # App icon generation
-  flutter_launcher_icons: ^0.14.3
 
 flutter:
   generate: true # Enables automatic code generation (e.g., localization)
@@ -77,5 +76,7 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "pictures/appicon.jpeg"
+  image_path: "pictures/appicon_1.png"
+  macos:
+    generate: true
   

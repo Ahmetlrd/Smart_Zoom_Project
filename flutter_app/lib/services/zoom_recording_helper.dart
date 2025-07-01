@@ -1,51 +1,57 @@
 import 'dart:io';
-import 'package:file_selector/file_selector.dart';
-import 'package:path/path.dart' as p;
 import 'package:flutter_app/services/openai_service.dart';
+import 'package:flutter_app/services/notifications_service.dart';
 
-/// Kullanıcıya Zoom klasörünü seçtirir
-Future<String?> selectZoomFolderWithFileSelector() async {
-  final directory = await getDirectoryPath(
-    confirmButtonText: 'Seç',
-    initialDirectory: '/Users/${Platform.environment['USER']}/Documents/Zoom',
-  );
+String? latestSummary;
+String? latestTranscript;
 
-  if (directory == null) {
-    print("❌ Kullanıcı klasör seçmedi.");
+/// Zoom klasöründeki en son klasörü bulur ve ilk .m4a dosyasını getirir
+Future<File?> findLatestZoomAudioFile() async {
+  final zoomFolder =
+      Directory('/Users/${Platform.environment['USER']}/Documents/Zoom');
+
+  if (!await zoomFolder.exists()) {
+    print("❌ Zoom klasörü bulunamadı.");
     return null;
   }
 
-  print("📂 Seçilen klasör: $directory");
-  return directory;
+  final subDirs = zoomFolder.listSync().whereType<Directory>().toList();
+
+  if (subDirs.isEmpty) {
+    print("❌ Zoom klasöründe alt klasör yok.");
+    return null;
+  }
+
+  subDirs
+      .sort((a, b) => b.statSync().modified.compareTo(a.statSync().modified));
+
+  for (final dir in subDirs) {
+    final audioFiles = dir
+        .listSync()
+        .whereType<File>()
+        .where((file) => file.path.toLowerCase().endsWith('.m4a'))
+        .toList();
+
+    if (audioFiles.isNotEmpty) {
+      print("🎯 Ses dosyası bulundu: ${audioFiles.first.path}");
+      return audioFiles.first;
+    }
+  }
+
+  print("❌ Hiçbir .m4a dosyası bulunamadı.");
+  return null;
 }
 
-/// Seçilen klasördeki ilk .m4a dosyasını döner
-Future<File?> getFirstM4aFile(String folderPath) async {
-  final dir = Directory(folderPath);
-  if (!await dir.exists()) return null;
-
-  final m4aFiles = dir
-      .listSync()
-      .whereType<File>()
-      .where((file) => file.path.toLowerCase().endsWith('.m4a'))
-      .toList();
-
-  return m4aFiles.isNotEmpty ? m4aFiles.first : null;
-}
-
-/// Tüm süreci çalıştırır: klasör seç > m4a bul > transkribe > özetle
-
-
+/// Tüm süreci çalıştırır: klasör bul > .m4a dosyasını al > transkribe > özetle
 Future<void> runDirectZoomSummaryFlow() async {
-  final path = "/Users/ahmetcavusoglu/Documents/Zoom/2023-12-25 21.19.42 Ahmet Çavuşoğlu (Student)'s Zoom Meeting/audio5033074858.m4a";
-  final file = File(path);
+  final file = await findLatestZoomAudioFile();
 
-  if (!await file.exists()) {
-    print("❌ Dosya bulunamadı: $path");
+  if (file == null || !await file.exists()) {
+    print("❌ Ses dosyası bulunamadı.");
     return;
   }
 
-  print("✅ Ses dosyası bulundu: $path");
+  print("✅ Ses dosyası bulundu: ${file.path}");
 
   final service = OpenAIService();
 
@@ -63,5 +69,38 @@ Future<void> runDirectZoomSummaryFlow() async {
     print("❌ Özetleme başarısız.");
     return;
   }
+  latestTranscript = transcript;
+  latestSummary = summary;
+
   print("🧾 Özet:\n$summary");
+}
+
+void watchZoomFolder() {
+  final zoomDir =
+      Directory('/Users/${Platform.environment['USER']}/Documents/Zoom');
+
+  if (!zoomDir.existsSync()) {
+    print("❌ Zoom klasörü bulunamadı.");
+    return;
+  }
+
+  zoomDir.watch(recursive: true).listen((event) async {
+    if (event.type == FileSystemEvent.create &&
+        event.path.toLowerCase().endsWith('.m4a')) {
+      print("🆕 Yeni .m4a dosyası algılandı: ${event.path}");
+
+      // Dosyanın tamamen yazılmasını bekle
+      await Future.delayed(Duration(seconds: 2));
+
+      await runDirectZoomSummaryFlow(); // Özet çıkar
+
+      // Bildirim gönder (mevcut sistemle)
+      NotificationService.show(
+        title: 'Zoom özeti hazır!',
+        body: 'Yeni toplantı otomatik özetlendi.',
+      );
+    }
+  });
+
+  print("📡 Zoom klasörü izleniyor...");
 }

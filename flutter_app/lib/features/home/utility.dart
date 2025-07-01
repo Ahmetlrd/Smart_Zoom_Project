@@ -1,47 +1,53 @@
 import 'package:flutter/material.dart'; // Flutter UI components
 import 'package:go_router/go_router.dart'; // Navigation and routing
 import 'package:flutter_app/gen_l10n/app_localizations.dart'; // Custom utility functions (e.g., for app bars)
+
 // Utility class for reusable UI components
 class Utility {
   // Static method that returns a customized AppBar widget
-  static AppBar buildAppBar(BuildContext context) {
-    // Get the current route name to conditionally style the settings icon
+  static AppBar buildAppBar(BuildContext context,
+      {bool disableSettings = false}) {
     final routeName = ModalRoute.of(context)?.settings.name;
-
-    // Screen width is used to adjust font and icon size responsively
     final screenWidth = MediaQuery.of(context).size.width;
-    final titleFontSize =
-        screenWidth * 0.07; // Responsive font size (e.g., 40 at 570px)
-    final settingsIconSize =
-        screenWidth * 0.07; // Icon size adjusts with screen width
+
+    final titleFontSize = screenWidth.clamp(400, 1000) / 25;
+    final iconSize = screenWidth.clamp(400, 1000) / 30;
 
     return AppBar(
-      centerTitle: true, // Center the title text
+      centerTitle: true,
+      elevation: 3,
+      backgroundColor: Colors.blueAccent,
       title: Text(
-        "Zoom Project", // Fixed title text
+        "Zoom Project",
         style: TextStyle(
-          fontSize: titleFontSize, // Dynamic font size based on screen width
-          fontWeight: FontWeight.bold, // Bold text
-          color: Colors.white, // White color text
+          fontSize: titleFontSize,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 1.1,
+          color: Colors.white,
         ),
       ),
-      actions: [
-        // Settings icon on the right of the AppBar
-        IconButton(
-          icon: Icon(
-            Icons.settings,
-            size: settingsIconSize, // Dynamic icon size
-            // If the current route is /settings, show the icon in grey (disabled)
-            color: (routeName == '/settings' || routeName == '/userinfo') ? Colors.grey[400] : Colors.white,
-          ),
-          onPressed: (routeName == '/settings' || routeName == '/userinfo')
-              ? null
-              : () {
-                  context.push('/settings');
-                },
-        ),
-      ],
-      backgroundColor: Colors.blue, // AppBar background color
+      actions: disableSettings
+          ? []
+          : [
+              Padding(
+                padding: const EdgeInsets.only(right: 12.0),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.settings_outlined,
+                    size: iconSize,
+                    color:
+                        (routeName == '/settings' || routeName == '/userinfo')
+                            ? Colors.grey[300]
+                            : Colors.white,
+                  ),
+                  tooltip: 'Ayarlar',
+                  onPressed:
+                      (routeName == '/settings' || routeName == '/userinfo')
+                          ? null
+                          : () => context.push('/settings'),
+                ),
+              ),
+            ],
     );
   }
 }

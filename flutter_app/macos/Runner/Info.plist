@@ -12,13 +12,16 @@
 	<array>
 		<string>NSUserActivityTypeBrowsingWeb</string>
 	</array>
+	<key>CFBundleIconName</key>
+	<string>AppIcon</string>
+
+	
 
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIconFile</key>
-	<string></string>
+	
 	<key>CFBundleIdentifier</key>
 	<string>com.megalabsai.smartzoom</string>
 	<key>CFBundleInfoDictionaryVersion</key>

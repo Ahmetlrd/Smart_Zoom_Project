@@ -3,7 +3,7 @@ import 'package:flutter_app/features/home/utility.dart';
 import 'package:flutter_app/providers/auth_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_app/gen_l10n/app_localizations.dart'; // Custom utility functions (e.g., for app bars)import 'package:flutter_app/providers/auth_provider.dart'; // Authentication state management
+import 'package:flutter_app/gen_l10n/app_localizations.dart';
 
 class Userinfo extends ConsumerWidget {
   const Userinfo({super.key});
@@ -12,120 +12,120 @@ class Userinfo extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoggedIn = ref.watch(authProvider);
     final userInfo = ref.read(authProvider.notifier).userInfo;
-    // If userInfo is null (e.g. token expired), redirect to login page
+    final d = AppLocalizations.of(context);
+
     if (userInfo == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         context.go('/login');
       });
       return const SizedBox.shrink();
     }
-    // Update dropdown selection based on current locale
 
-    // Responsive ölçüler hesaplanıyor
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
     final screenHeight = size.height;
-    final d = AppLocalizations.of(context); // Localized strings
-
-    final iconSize = screenWidth * 0.12;
-    final fontSize = screenWidth * 0.045;
-    final horizontalPadding = screenWidth * 0.1;
-    final dropdownWidth = screenWidth * 0.3;
+    final spacing = screenHeight * 0.03;
     final buttonWidth = screenWidth * 0.5;
-    final spacing = screenHeight * 0.02;
-    final userType = userInfo!['type'];
+    final userType = userInfo['type'];
     final userTypeText = userType == 2
         ? 'Zoom Pro'
         : userType == 1
             ? 'Zoom Free (Basic)'
             : 'Unknown';
+
     return Scaffold(
-      appBar: Utility.buildAppBar(context),
+      appBar: Utility.buildAppBar(context, disableSettings: true),
+      backgroundColor: const Color(0xFFF7F7FC),
       body: Center(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 170.0, bottom: 10),
-              child: CircleAvatar(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CircleAvatar(
                 radius: 50,
-                backgroundImage: isLoggedIn && userInfo?['pic_url'] != null
-                    ? NetworkImage(userInfo!['pic_url'])
+                backgroundImage: isLoggedIn && userInfo['pic_url'] != null
+                    ? NetworkImage(userInfo['pic_url'])
                     : const AssetImage('pictures/avatar.png') as ImageProvider,
                 backgroundColor: Colors.white,
               ),
-            ),
-            SizedBox(
-              height: 40,
-            ),
-            Text(userInfo!['first_name'], style: TextStyle(fontSize: 30)),
-            Text(
-              userInfo!['last_name'],
-              style: TextStyle(fontSize: 30),
-            ),
-            Divider(),
-            Text(
-              d!.email,
-              style: TextStyle(
-                  color: Colors.blue,
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Text(
-              userInfo['email'],
-              style: TextStyle(
-                fontSize: 18,
-              ),
-            ),
-            Divider(),
-            Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(
-                    text: d!.accounttype,
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue),
-                  ),
-                  TextSpan(
-                    text: userTypeText,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 60,
-            ),
-            // Logout button if user is logged in
-            if (isLoggedIn)
-              SizedBox(
-                width: buttonWidth,
-                height: screenHeight * 0.07,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white10,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onPressed: () async {
-                    await ref.read(authProvider.notifier).logout();
-                    context.go('/');
-                  },
-                  child: Text(d!.logout,
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold)),
+              const SizedBox(height: 24),
+              Text(
+                "${userInfo['first_name']} ${userInfo['last_name']}",
+                style: const TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            SizedBox(height: spacing),
-          ],
+              const SizedBox(height: 12),
+              Text(
+                d!.email,
+                style: const TextStyle(
+                  color: Colors.blue,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                userInfo['email'],
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 24),
+              Divider(thickness: 1.2, color: Colors.grey[300]),
+              const SizedBox(height: 24),
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "${d.accounttype}: ",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
+                    ),
+                    TextSpan(
+                      text: userTypeText,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: spacing * 2),
+              if (isLoggedIn)
+                SizedBox(
+                  width: buttonWidth,
+                  height: screenHeight * 0.07,
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    icon: const Icon(Icons.logout),
+                    onPressed: () async {
+                      await ref.read(authProvider.notifier).logout();
+                      context.go('/');
+                    },
+                    label: Text(
+                      d.logout,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              SizedBox(height: spacing),
+            ],
+          ),
         ),
       ),
     );
