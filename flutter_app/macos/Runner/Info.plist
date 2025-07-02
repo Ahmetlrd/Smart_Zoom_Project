@@ -12,16 +12,16 @@
 	<array>
 		<string>NSUserActivityTypeBrowsingWeb</string>
 	</array>
+
 	<key>CFBundleIconName</key>
 	<string>AppIcon</string>
-
-	
+	<key>CFBundleIconFile</key>
+	<string>AppIcon.icns</string>
 
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
-	
 	<key>CFBundleIdentifier</key>
 	<string>com.megalabsai.smartzoom</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -43,15 +43,15 @@
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 
-	<!-- 📣 Local Notification desteği -->
+	<!-- 📣 Local Notification -->
 	<key>NSUserNotificationAlertStyle</key>
 	<string>alert</string>
 
-	<!-- 📂 Documents klasörüne erişim gerekçesi -->
+	<!-- 📂 Documents permission -->
 	<key>NSDocumentsFolderUsageDescription</key>
 	<string>Zoom kayıtlarına erişebilmek için Documents klasörüne izin gereklidir.</string>
 
-	<!-- 🌐 Deep link URL scheme -->
+	<!-- 🌐 Deep link support -->
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

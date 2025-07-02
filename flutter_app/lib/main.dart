@@ -19,37 +19,48 @@ import 'routes.dart';
 Future<void> handleIncomingLinks(WidgetRef ref, BuildContext context) async {
   final appLinks = AppLinks();
 
+  // AppLinks ile gelen bağlantılar
   appLinks.uriLinkStream.listen((Uri? uri) async {
     debugPrint("🔗 URI from stream: $uri");
-
-    if (uri != null && uri.scheme == 'zoomai') {
-      final jwt = uri.queryParameters['token']; // senin backend'in oluşturduğu JWT (opsiyonel)
-      String? accessToken = uri.queryParameters['access_token']; // Zoom'un verdiği
-      final refreshToken = uri.queryParameters['refresh_token'];
-
-      debugPrint('🪪 JWT: $jwt');
-      debugPrint('🔐 Access Token: $accessToken');
-      debugPrint('🔁 Refresh Token: $refreshToken');
-
-      // Zoom API için access_token gerekli
-      if (accessToken != null) {
-        // Access & refresh token'ı kaydet
-        await SecureStorageService.saveAccessToken(accessToken);
-        if (refreshToken != null) {
-          await SecureStorageService.saveRefreshToken(refreshToken);
-        }
-
-        // Giriş işlemi başlat (Zoom access_token ile)
-        await ref.read(authProvider.notifier).loginWithToken(accessToken);
-
-        // İsteğe bağlı: JWT ile Firebase login vs yapılabilir
-        ref.read(routerProvider).go('/home');
-      } else {
-        debugPrint('❌ Access token missing in deep link');
-      }
-    }
+    if (uri != null) await _processZoomUri(uri, ref, context);
   });
+
+  // macOS için MethodChannel üzerinden gelen linkler
+  if (Platform.isMacOS) {
+    const MethodChannel('app.channel.shared.data')
+        .setMethodCallHandler((call) async {
+      if (call.method == "deep-link") {
+        final uri = Uri.tryParse(call.arguments);
+        debugPrint("🧭 macOS deep-link yakalandı: $uri");
+        if (uri != null) await _processZoomUri(uri, ref, context);
+      }
+    });
+  }
 }
+Future<void> _processZoomUri(Uri uri, WidgetRef ref, BuildContext context) async {
+  if (uri.scheme == 'zoomai') {
+    final jwt = uri.queryParameters['token'];
+    final accessToken = uri.queryParameters['access_token'];
+    final refreshToken = uri.queryParameters['refresh_token'];
+
+    debugPrint('🪪 JWT: $jwt');
+    debugPrint('🔐 Access Token: $accessToken');
+    debugPrint('🔁 Refresh Token: $refreshToken');
+
+    if (accessToken != null) {
+      await SecureStorageService.saveAccessToken(accessToken);
+      if (refreshToken != null) {
+        await SecureStorageService.saveRefreshToken(refreshToken);
+      }
+
+      await ref.read(authProvider.notifier).loginWithToken(accessToken);
+      ref.read(routerProvider).go('/home');
+    } else {
+      debugPrint('❌ Access token eksik');
+    }
+  }
+}
+
 
 
 

@@ -29,9 +29,10 @@ class _NlpState extends ConsumerState<Nlp> {
     setState(() => isLoading = true);
     final service = OpenAIService();
     final prompt = """
-Aşağıdaki Zoom toplantısı transkriptini kullanarak bir özet oluştur:
+Aşağıdaki Zoom toplantısı transkriptini kullanarak bir özet oluştur:(başlık kurallarını aynen uygulamayı unutma)
 ---
-$latestTranscript
+$latestTranscript bu toplantının transkripti
+$latestSummary bu da son yapılan özet çıktı
 ---
 
 Kullanıcının isteği:
@@ -74,13 +75,23 @@ Lütfen özeti bu yeni isteğe göre oluştur. Kısa, öz ve bilgi odaklı yaz.
       final email = ref.read(authProvider.notifier).userInfo?['email'];
       if (email == null || summary == null) return;
 
-      final title = summary!.split(" ").take(5).join(" ") + "...";
-      final docRef = FirebaseFirestore.instance.collection('summaries').doc(email);
+      final titleLine = summary!.split('\n').firstWhere(
+          (line) => line.startsWith('Title:'),
+          orElse: () => 'Title: Başlıksız');
+
+      final title = titleLine
+          .replaceFirst('Title:', '') // "Title:" kısmını çıkar
+          .replaceAll('"', '') // varsa çift tırnakları temizle
+          .trim(); // baştaki/sondaki boşlukları sil
+
+      final docRef =
+          FirebaseFirestore.instance.collection('summaries').doc(email);
       final historyRef = docRef.collection('history');
 
       await historyRef.add({
         'title': title,
         'text': summary,
+        'transcript': latestTranscript,
         'timestamp': DateTime.now().toIso8601String(),
       });
 

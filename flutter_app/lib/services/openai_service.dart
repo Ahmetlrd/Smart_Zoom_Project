@@ -27,7 +27,13 @@ class OpenAIService {
             "role": "user",
             "content": """
 Aşağıda bir Zoom toplantısının transkripti bulunmaktadır.
-ilk 3 kelimesi benim için önemli o yüzden (3 kelimelik özet) olarak başla.
+
+Lütfen bu transkripti analiz ederek önce **toplantının başlığı** olacak şekilde ilk 1 satırı üret. Tırnak kullanma. Bu başlık, transkriptten yola çıkarak oluşturulmalı ve 5 kelime olacak şekilde içeriği yansıtmalıdır. Başlık satırı şu formatta başlamalıdır:
+
+"Title: ..."
+
+Bu satırdan sonra **asıl özete** geç.
+Aşağıda bir Zoom toplantısının transkripti bulunmaktadır.
 
 Bu transkripti incele ve toplantının içeriğini profesyonelce özetle.  
 Kullanıcı bu özeti okuduğunda toplantıya katılmadan ne konuşulduğunu net şekilde anlayabilsin. Toplantıyı tekrar izlemeye ihtiyaç duymasın.
