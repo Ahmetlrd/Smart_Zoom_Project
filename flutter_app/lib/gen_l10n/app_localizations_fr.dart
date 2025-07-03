@@ -58,4 +58,84 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get pleaselogin => 'Veuillez vous connecter';
+
+  @override
+  String get close => 'Fermer';
+
+  @override
+  String get delete => 'Supprimer';
+
+  @override
+  String get update => 'Mettre à jour';
+
+  @override
+  String get save => 'Enregistrer';
+
+  @override
+  String get nosummaryyet => 'Aucun résumé de réunion n\'a encore été créé.';
+
+  @override
+  String get firstnotification =>
+      'l\'application a été ouverte pour la première fois - notification de test';
+
+  @override
+  String get testnotification => 'L\'autorisation de notification fonctionne !';
+
+  @override
+  String get wannasave => 'Voulez-vous enregistrer ?';
+
+  @override
+  String get savetofirestore =>
+      'Ce résumé sera enregistré dans Firestore. Continuer ?';
+
+  @override
+  String get savedsuccesfully => 'Résumé enregistré avec succès.';
+
+  @override
+  String get writeprompt => 'Écrivez votre demande à ajouter au résumé...';
+
+  @override
+  String get abouttodelete => 'Vous êtes sur le point de supprimer le résumé';
+
+  @override
+  String get areyousuretodelete =>
+      'Cette action est irréversible. Êtes-vous sûr de vouloir supprimer ce résumé ?';
+
+  @override
+  String get cancel => 'Annuler';
+
+  @override
+  String get summarydeleted => 'Résumé supprimé.';
+
+  @override
+  String get wannadeletemeeting => 'Voulez-vous supprimer la réunion ?';
+
+  @override
+  String get areyousuretocont =>
+      'Cette action est irréversible. Voulez-vous continuer ?';
+
+  @override
+  String get meetingdeleted => 'Réunion supprimée.';
+
+  @override
+  String get nosummaryfound => 'Aucun résumé trouvé.';
+
+  @override
+  String get notranscriptfound => 'Aucune transcription trouvée.';
+
+  @override
+  String get nomeetingfound => 'Aucun enregistrement de réunion trouvé.';
+
+  @override
+  String get joinedmeeting => 'Vous avez rejoint la réunion';
+
+  @override
+  String get wannapsummarize => 'Souhaitez-vous générer un résumé ?';
+
+  @override
+  String get summaryready => 'Le résumé Zoom est prêt !';
+
+  @override
+  String get newmeetingsummarized =>
+      'La nouvelle réunion a été résumée automatiquement.';
 }

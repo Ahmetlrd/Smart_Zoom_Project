@@ -240,8 +240,8 @@ class _LoginState extends ConsumerState<Login> {
               ElevatedButton(
                 onPressed: () {
                   NotificationService.show(
-                    title: 'ZoomAI Test',
-                    body: 'Notification permission working!',
+                    title:d!.login,
+                    body: d!.firstnotification,
                   );
                 },
                 child: const Text('Show Notification'),

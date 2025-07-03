@@ -5,7 +5,7 @@ import 'package:file_selector/file_selector.dart';
 class ZoomPermissionService {
   static const _zoomPathKey = 'zoom_folder_path';
 
-  /// İlk kullanımda kullanıcıdan klasörü seçtirir
+  /// İlk kullanımda kullanıcıdan klasörü seçtirir veya kayıtlı klasörü doğrular
   static Future<String?> getValidZoomPathOrReselectIfNeeded() async {
     final prefs = await SharedPreferences.getInstance();
     final savedPath = prefs.getString(_zoomPathKey);
@@ -28,10 +28,18 @@ class ZoomPermissionService {
     );
 
     if (reselectedPath != null) {
-      await prefs.setString(_zoomPathKey, reselectedPath);
-      print("✅ Yeni klasör seçildi ve kayıt edildi: $reselectedPath");
+      try {
+        final dir = Directory(reselectedPath);
+        dir.listSync(); // Erişilebilir mi test et
+        await prefs.setString(_zoomPathKey, reselectedPath);
+        print("✅ Yeni klasör seçildi ve kayıt edildi: $reselectedPath");
+        return reselectedPath;
+      } catch (e) {
+        print("❌ Seçilen klasöre erişilemedi: $e");
+        return null;
+      }
     }
 
-    return reselectedPath;
+    return null;
   }
 }

@@ -49,63 +49,77 @@ Lütfen özeti bu yeni isteğe göre oluştur. Kısa, öz ve bilgi odaklı yaz.
     });
   }
 
-  Future<void> confirmAndSave() async {
-    if (summary != null && summary != lastSavedSummary) {
-      final confirm = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text("Kaydetmek istiyor musunuz?"),
-          content: const Text(
-              "Bu özeti Firestore'a kaydedeceksiniz. Devam edilsin mi?"),
+ Future<void> confirmAndSave() async {
+  if (summary != null &&
+      summary != lastSavedSummary &&
+      summary != "null" &&
+      summary!.trim().isNotEmpty) {
+    
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        final d = AppLocalizations.of(dialogContext)!;
+        return AlertDialog(
+          title: Text(d.wannasave),
+          content: Text(d.savetofirestore),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text("Hayır"),
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: Text(d.cancel),
             ),
             TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text("Evet"),
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: Text(d.save),
             ),
           ],
-        ),
-      );
+        );
+      },
+    );
 
-      if (confirm != true) return;
+    if (confirm != true) return;
 
-      final email = ref.read(authProvider.notifier).userInfo?['email'];
-      if (email == null || summary == null) return;
+    final email = ref.read(authProvider.notifier).userInfo?['email'];
+    if (email == null) return;
 
-      final titleLine = summary!.split('\n').firstWhere(
-          (line) => line.startsWith('Title:'),
-          orElse: () => 'Title: Başlıksız');
-
-      final title = titleLine
-          .replaceFirst('Title:', '') // "Title:" kısmını çıkar
-          .replaceAll('"', '') // varsa çift tırnakları temizle
-          .trim(); // baştaki/sondaki boşlukları sil
-
-      final docRef =
-          FirebaseFirestore.instance.collection('summaries').doc(email);
-      final historyRef = docRef.collection('history');
-
-      await historyRef.add({
-        'title': title,
-        'text': summary,
-        'transcript': latestTranscript,
-        'timestamp': DateTime.now().toIso8601String(),
-      });
-
-      setState(() {
-        lastSavedSummary = summary;
-        summary = null;
-        latestSummary = null;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Özet başarıyla kaydedildi.")),
-      );
+    String title = 'Başlıksız';
+    try {
+      final titleLine = summary!
+          .split('\n')
+          .firstWhere((line) => line.startsWith('Title:'), orElse: () => '');
+      if (titleLine.isNotEmpty) {
+        title = titleLine
+            .replaceFirst('Title:', '')
+            .replaceAll('"', '')
+            .trim();
+      }
+    } catch (e) {
+      debugPrint('⚠️ Başlık ayrıştırılamadı: $e');
     }
+
+    final docRef = FirebaseFirestore.instance.collection('summaries').doc(email);
+    final historyRef = docRef.collection('history');
+
+    await historyRef.add({
+      'title': title,
+      'text': summary,
+      'transcript': latestTranscript,
+      'timestamp': DateTime.now().toIso8601String(),
+    });
+
+    setState(() {
+      lastSavedSummary = summary;
+      summary = null;
+      latestSummary = null;
+    });
+
+    final d = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(d.savedsuccesfully)),
+    );
   }
+}
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -119,8 +133,8 @@ Lütfen özeti bu yeni isteğe göre oluştur. Kısa, öz ve bilgi odaklı yaz.
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text(
-              "Özet",
+             Text(
+              d!.summary,
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
@@ -145,11 +159,11 @@ Lütfen özeti bu yeni isteğe göre oluştur. Kısa, öz ve bilgi odaklı yaz.
               )
             else
               Column(
-                children: const [
+                children: [
                   Icon(Icons.info_outline, size: 60, color: Colors.grey),
                   SizedBox(height: 20),
                   Text(
-                    "Henüz bir toplantı özeti oluşturulmadı.",
+                    d!.nosummaryyet,
                     style: TextStyle(
                       fontSize: 16,
                       fontStyle: FontStyle.italic,
@@ -162,10 +176,10 @@ Lütfen özeti bu yeni isteğe göre oluştur. Kısa, öz ve bilgi odaklı yaz.
             const SizedBox(height: 32),
             TextField(
               controller: _controller,
-              decoration: const InputDecoration(
-                hintText: "Özete eklenecek isteğinizi yazın...",
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.tips_and_updates_outlined),
+              decoration: InputDecoration(
+                hintText: d.writeprompt,
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.tips_and_updates_outlined),
               ),
               minLines: 1,
               maxLines: 3,
@@ -182,7 +196,7 @@ Lütfen özeti bu yeni isteğe göre oluştur. Kısa, öz ve bilgi odaklı yaz.
                   ElevatedButton.icon(
                     onPressed: confirmAndSave,
                     icon: const Icon(Icons.save_alt),
-                    label: const Text("Kaydet"),
+                    label:  Text(d!.save),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.grey.shade300,
                       foregroundColor: Colors.black,
@@ -191,7 +205,7 @@ Lütfen özeti bu yeni isteğe göre oluştur. Kısa, öz ve bilgi odaklı yaz.
                   ElevatedButton.icon(
                     onPressed: regenerateSummaryWithUserInput,
                     icon: const Icon(Icons.edit_note_outlined),
-                    label: const Text("Geliştir"),
+                    label:  Text(d.update),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,
                       foregroundColor: Colors.white,
@@ -203,19 +217,19 @@ Lütfen özeti bu yeni isteğe göre oluştur. Kısa, öz ve bilgi odaklı yaz.
                         final confirm = await showDialog<bool>(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title: const Text("Özeti silmek üzeresiniz"),
-                            content: const Text(
-                                "Bu işlem geri alınamaz. Özeti silmek istediğinize emin misiniz?"),
+                            title:  Text(d!.abouttodelete),
+                            content:  Text(
+                                d!.areyousuretodelete),
                             actions: [
                               TextButton(
                                 onPressed: () =>
                                     Navigator.of(context).pop(false),
-                                child: const Text("Vazgeç"),
+                                child:  Text(d!.cancel),
                               ),
                               TextButton(
                                 onPressed: () =>
                                     Navigator.of(context).pop(true),
-                                child: const Text("Sil",
+                                child:  Text(d!.delete,
                                     style: TextStyle(color: Colors.red)),
                               ),
                             ],
@@ -229,13 +243,13 @@ Lütfen özeti bu yeni isteğe göre oluştur. Kısa, öz ve bilgi odaklı yaz.
                           });
 
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Özet silindi.")),
+                             SnackBar(content: Text(d!.summarydeleted)),
                           );
                         }
                       }
                     },
                     icon: const Icon(Icons.delete_outline),
-                    label: const Text("Sil"),
+                    label:  Text(d!.delete),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.redAccent,
                       foregroundColor: Colors.white,

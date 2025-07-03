@@ -18,7 +18,7 @@ class Utility {
       elevation: 3,
       backgroundColor: Colors.blueAccent,
       title: Text(
-        "Zoom Project",
+        "Smart Zoom",
         style: TextStyle(
           fontSize: titleFontSize,
           fontWeight: FontWeight.w600,

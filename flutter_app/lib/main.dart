@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/firebase_options.dart';
 import 'package:flutter_app/providers/auth_provider.dart';
 import 'package:flutter_app/providers/locale_provider.dart';
-import 'package:flutter_app/services/secure_storage_service.dart' as SecureStorageService;
+import 'package:flutter_app/services/secure_storage_service.dart'
+    as SecureStorageService;
 import 'package:flutter_app/services/zoom_recording_helper.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,15 +38,14 @@ Future<void> handleIncomingLinks(WidgetRef ref, BuildContext context) async {
     });
   }
 }
-Future<void> _processZoomUri(Uri uri, WidgetRef ref, BuildContext context) async {
+
+String? _pendingAccessToken;
+String? _pendingRefreshToken;
+Future<void> _processZoomUri(
+    Uri uri, WidgetRef ref, BuildContext context) async {
   if (uri.scheme == 'zoomai') {
-    final jwt = uri.queryParameters['token'];
     final accessToken = uri.queryParameters['access_token'];
     final refreshToken = uri.queryParameters['refresh_token'];
-
-    debugPrint('🪪 JWT: $jwt');
-    debugPrint('🔐 Access Token: $accessToken');
-    debugPrint('🔁 Refresh Token: $refreshToken');
 
     if (accessToken != null) {
       await SecureStorageService.saveAccessToken(accessToken);
@@ -53,17 +53,20 @@ Future<void> _processZoomUri(Uri uri, WidgetRef ref, BuildContext context) async
         await SecureStorageService.saveRefreshToken(refreshToken);
       }
 
-      await ref.read(authProvider.notifier).loginWithToken(accessToken);
-      ref.read(routerProvider).go('/home');
-    } else {
-      debugPrint('❌ Access token eksik');
+      await ref
+          .read(authProvider.notifier)
+          .loginWithToken(accessToken, refreshToken: refreshToken);
+
+      if (context.mounted) {
+        ref.read(routerProvider).go('/home');
+      } else {
+        // UI henüz hazır değil, token'ları sakla
+        _pendingAccessToken = accessToken;
+        _pendingRefreshToken = refreshToken;
+      }
     }
   }
 }
-
-
-
-
 
 void main() async {
   watchZoomFolder();
@@ -77,9 +80,8 @@ void main() async {
 
 class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
-  
+
   @override
-  
   ConsumerState<MyApp> createState() => _MyAppState();
 }
 
@@ -87,9 +89,21 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   bool _listenerAttached = false;
 
   @override
-  
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (_pendingAccessToken != null) {
+        print("🔁 Pending deep link access token bulundu, yönlendiriliyor...");
+        await ref.read(authProvider.notifier).loginWithToken(
+              _pendingAccessToken!,
+              refreshToken: _pendingRefreshToken,
+            );
+        ref.read(routerProvider).go('/home');
+        _pendingAccessToken = null;
+        _pendingRefreshToken = null;
+      }
+    });
+
     WidgetsBinding.instance.addObserver(this);
 
     // İlk açılışta test bildirimi
@@ -104,7 +118,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   void _attachLinkListenerOnce() {
     if (!_listenerAttached) {
       debugPrint('🧲 AppLinks listener attached (init)');
-      handleIncomingLinks(ref,context);
+      handleIncomingLinks(ref, context);
       _listenerAttached = true;
     }
   }
@@ -113,7 +127,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       debugPrint('🚀 App resumed – checking deep links again');
-      handleIncomingLinks(ref,context); // Yeniden bağla
+      handleIncomingLinks(ref, context); // Yeniden bağla
     }
   }
 
@@ -130,7 +144,6 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-
       locale: locale ?? WidgetsBinding.instance.platformDispatcher.locale,
       localizationsDelegates: const [
         AppLocalizations.delegate,

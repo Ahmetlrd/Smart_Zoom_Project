@@ -39,13 +39,43 @@ class _HomePageState extends ConsumerState<HomePage> {
   SummaryPreference summaryPreference = SummaryPreference.once;
   bool _hasNotified = false;
 
-  @override
-  void initState() {
-    super.initState();
-    if (Platform.isMacOS || Platform.isWindows) {
-      setWindowMinSize(const Size(800, 600));
-    }
+ @override
+void initState() {
+  super.initState();
+
+  if (Platform.isMacOS || Platform.isWindows) {
+    setWindowMinSize(const Size(800, 600));
   }
+
+  // Login sonrası klasör seçimi ve kontrolü (ilk seferlik)
+  Future.microtask(() async {
+    final zoomPath = await ZoomPermissionService.getValidZoomPathOrReselectIfNeeded();
+
+    if (zoomPath == null && mounted) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text("Zoom klasörü gerekli"),
+          content: const Text(
+            "Toplantı ses kayıtlarını işleyebilmek için Zoom klasörüne erişim verilmesi gerekiyor. "
+            "Lütfen klasörü manuel olarak seçin. Bu işlem sadece bir kez yapılacaktır.",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("Tamam"),
+            ),
+          ],
+        ),
+      );
+    } else {
+      print("✅ Zoom klasörü erişilebilir: $zoomPath");
+      // Buradan sonra klasör izleme başlatılabilir:
+      // watchZoomFolder(zoomPath); ← eğer parametre alacak şekilde düzenlenmişse
+    }
+  });
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -72,8 +102,8 @@ class _HomePageState extends ConsumerState<HomePage> {
 
             if (isJoined && Platform.isMacOS && !_hasNotified) {
               NotificationService.show(
-                title: "Toplantıya Katıldınız",
-                body: "Özet çıkarmak ister misiniz?",
+                title: d!.joinedmeeting,
+                body: d!.wannapsummarize,
               );
               _hasNotified = true;
             }

@@ -7,7 +7,6 @@ import 'package:flutter_app/features/home/nlp.dart';
 import 'package:flutter_app/features/home/saved.dart';
 import 'package:flutter_app/features/home/meetinglist.dart';
 import 'package:flutter_app/features/home/settings.dart';
-import 'package:flutter_app/features/home/summary_prompt.dart';
 import 'package:flutter_app/features/home/userinfo.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -35,10 +34,7 @@ final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 
     // Define all the app routes
     routes: [
-      GoRoute(
-        path: '/summary_prompt',
-        builder: (context, state) => SummaryPromptPage(),
-      ),
+      
       // If user is logged in, go to HomePage; otherwise go to Login screen
       GoRoute(
         path: '/',

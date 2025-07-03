@@ -39,7 +39,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get participants => ' Katılımcılar: ';
 
   @override
-  String get transcription => ' Kopya';
+  String get transcription => 'Transkript';
 
   @override
   String get summary => ' Özet(AI)';
@@ -58,4 +58,81 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get pleaselogin => 'Lütfen giriş yapınız';
+
+  @override
+  String get close => 'Kapat';
+
+  @override
+  String get delete => 'Sil';
+
+  @override
+  String get update => 'Güncelle';
+
+  @override
+  String get save => 'Kaydet';
+
+  @override
+  String get nosummaryyet => 'Henüz bir toplantı özeti oluşturulmadı.';
+
+  @override
+  String get firstnotification => 'uygulama ilk açıldı test bildirimi';
+
+  @override
+  String get testnotification => 'Bildirim izni çalışıyor!';
+
+  @override
+  String get wannasave => 'Kaydetmek istiyor musunuz?';
+
+  @override
+  String get savetofirestore =>
+      'Bu özeti Firestore\'a kaydedeceksiniz. Devam edilsin mi?';
+
+  @override
+  String get savedsuccesfully => 'Özet başarıyla kaydedildi.';
+
+  @override
+  String get writeprompt => 'Özete eklenecek isteğinizi yazın...';
+
+  @override
+  String get abouttodelete => 'Özeti silmek üzeresiniz';
+
+  @override
+  String get areyousuretodelete =>
+      'Bu işlem geri alınamaz. Özeti silmek istediğinize emin misiniz?';
+
+  @override
+  String get cancel => 'Vazgeç';
+
+  @override
+  String get summarydeleted => 'Özet silindi.';
+
+  @override
+  String get wannadeletemeeting => 'Toplantıyı silmek istiyor musunuz?';
+
+  @override
+  String get areyousuretocont => 'Bu işlem geri alınamaz. Devam edilsin mi?';
+
+  @override
+  String get meetingdeleted => 'Toplantı silindi.';
+
+  @override
+  String get nosummaryfound => 'Özet bulunamadı.';
+
+  @override
+  String get notranscriptfound => 'Transkript bulunamadı.';
+
+  @override
+  String get nomeetingfound => 'Hiç toplantı kaydı bulunamadı.';
+
+  @override
+  String get joinedmeeting => 'Toplantıya Katıldınız';
+
+  @override
+  String get wannapsummarize => 'Özet çıkarmak ister misiniz?';
+
+  @override
+  String get summaryready => 'Zoom özeti hazır!';
+
+  @override
+  String get newmeetingsummarized => 'Yeni toplantı otomatik özetlendi.';
 }

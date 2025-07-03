@@ -16,5 +16,33 @@
   "moreinfo":"plus d'infos",
   "email":"Email",
   "accounttype":"Type de compte: ",
-  "pleaselogin":"Veuillez vous connecter"
+  "pleaselogin":"Veuillez vous connecter",
+  "close": "Fermer",
+  "delete": "Supprimer",
+  "update": "Mettre à jour",
+  "save": "Enregistrer",
+  "nosummaryyet": "Aucun résumé de réunion n'a encore été créé.",
+  "firstnotification": "l'application a été ouverte pour la première fois - notification de test",
+  "testnotification": "L'autorisation de notification fonctionne !",
+  "wannasave": "Voulez-vous enregistrer ?",
+  "savetofirestore": "Ce résumé sera enregistré dans Firestore. Continuer ?",
+  "savedsuccesfully": "Résumé enregistré avec succès.",
+  "writeprompt": "Écrivez votre demande à ajouter au résumé...",
+  "abouttodelete": "Vous êtes sur le point de supprimer le résumé",
+  "areyousuretodelete": "Cette action est irréversible. Êtes-vous sûr de vouloir supprimer ce résumé ?",
+  "cancel": "Annuler",
+  "summarydeleted": "Résumé supprimé.",
+  "wannadeletemeeting": "Voulez-vous supprimer la réunion ?",
+  "areyousuretocont": "Cette action est irréversible. Voulez-vous continuer ?",
+  "meetingdeleted": "Réunion supprimée.",
+  "nosummaryfound": "Aucun résumé trouvé.",
+  "notranscriptfound": "Aucune transcription trouvée.",
+  "nomeetingfound": "Aucun enregistrement de réunion trouvé.",
+  "joinedmeeting": "Vous avez rejoint la réunion",
+  "wannapsummarize": "Souhaitez-vous générer un résumé ?",
+  "summaryready": "Le résumé Zoom est prêt !",
+  "newmeetingsummarized": "La nouvelle réunion a été résumée automatiquement."
+
+
+
 }

@@ -203,6 +203,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please login'**
   String get pleaselogin;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @update.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get update;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @nosummaryyet.
+  ///
+  /// In en, this message translates to:
+  /// **'No meeting summary created yet.'**
+  String get nosummaryyet;
+
+  /// No description provided for @firstnotification.
+  ///
+  /// In en, this message translates to:
+  /// **'app opened first time test notification'**
+  String get firstnotification;
+
+  /// No description provided for @testnotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification permission works!'**
+  String get testnotification;
+
+  /// No description provided for @wannasave.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to save?'**
+  String get wannasave;
+
+  /// No description provided for @savetofirestore.
+  ///
+  /// In en, this message translates to:
+  /// **'You will save this summary to Firestore. Continue?'**
+  String get savetofirestore;
+
+  /// No description provided for @savedsuccesfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary saved successfully.'**
+  String get savedsuccesfully;
+
+  /// No description provided for @writeprompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your prompt to enhance the summary...'**
+  String get writeprompt;
+
+  /// No description provided for @abouttodelete.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re about to delete the summary'**
+  String get abouttodelete;
+
+  /// No description provided for @areyousuretodelete.
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be undone. Are you sure you want to delete the summary?'**
+  String get areyousuretodelete;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @summarydeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary deleted.'**
+  String get summarydeleted;
+
+  /// No description provided for @wannadeletemeeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to delete the meeting?'**
+  String get wannadeletemeeting;
+
+  /// No description provided for @areyousuretocont.
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be undone. Do you want to continue?'**
+  String get areyousuretocont;
+
+  /// No description provided for @meetingdeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Meeting deleted.'**
+  String get meetingdeleted;
+
+  /// No description provided for @nosummaryfound.
+  ///
+  /// In en, this message translates to:
+  /// **'No summary found.'**
+  String get nosummaryfound;
+
+  /// No description provided for @notranscriptfound.
+  ///
+  /// In en, this message translates to:
+  /// **'No transcript found.'**
+  String get notranscriptfound;
+
+  /// No description provided for @nomeetingfound.
+  ///
+  /// In en, this message translates to:
+  /// **'No meeting record found.'**
+  String get nomeetingfound;
+
+  /// No description provided for @joinedmeeting.
+  ///
+  /// In en, this message translates to:
+  /// **'You joined the meeting'**
+  String get joinedmeeting;
+
+  /// No description provided for @wannapsummarize.
+  ///
+  /// In en, this message translates to:
+  /// **'Would you like to generate a summary?'**
+  String get wannapsummarize;
+
+  /// No description provided for @summaryready.
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom summary is ready!'**
+  String get summaryready;
+
+  /// No description provided for @newmeetingsummarized.
+  ///
+  /// In en, this message translates to:
+  /// **'New meeting has been automatically summarized.'**
+  String get newmeetingsummarized;
 }
 
 class _AppLocalizationsDelegate

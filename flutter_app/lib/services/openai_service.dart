@@ -78,7 +78,6 @@ $text
     ..fields['response_format'] = 'verbose_json'
     ..files.add(await http.MultipartFile.fromPath('file', audioFile.path));
 
-  // 🔁 Eğer kullanıcı dili zorla vermek istiyorsa, uygula
   if (forceLanguage != null) {
     request.fields['language'] = forceLanguage;
   }

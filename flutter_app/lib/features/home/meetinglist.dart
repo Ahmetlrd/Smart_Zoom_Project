@@ -17,8 +17,8 @@ class Meetinglist extends ConsumerWidget {
 
     if (email == null) {
       context.go('/login');
-      return const Scaffold(
-        body: Center(child: Text("Lütfen giriş yapınız.")),
+      return  Scaffold(
+        body: Center(child: Text(d!.pleaselogin)),
       );
     }
 
@@ -40,7 +40,7 @@ class Meetinglist extends ConsumerWidget {
           final docs = snapshot.data?.docs ?? [];
 
           if (docs.isEmpty) {
-            return const Center(child: Text("Hiç toplantı kaydı bulunamadı."));
+            return  Center(child: Text(d!.nomeetingfound));
           }
 
           return ListView.builder(
@@ -49,35 +49,52 @@ class Meetinglist extends ConsumerWidget {
             itemBuilder: (context, index) {
               final doc = docs[index];
               final data = doc.data() as Map<String, dynamic>;
-              final title = (data.containsKey('title') && data['title'] is String) ? data['title'] : 'Toplantı';
-              final summary = (data.containsKey('text') && data['text'] is String) ? data['text'] : '';
-              final transcript = (data.containsKey('transcript') && data['transcript'] is String) ? data['transcript'] : '';
+              final title =
+                  (data.containsKey('title') && data['title'] is String)
+                      ? data['title']
+                      : 'Toplantı';
+              final summary =
+                  (data.containsKey('text') && data['text'] is String)
+                      ? data['text']
+                      : '';
+              final transcript = (data.containsKey('transcript') &&
+                      data['transcript'] is String)
+                  ? data['transcript']
+                  : '';
               final timestampStr = data['timestamp'];
-              final timestamp = DateTime.tryParse(timestampStr ?? '') ?? DateTime.now();
-              final formattedDate = "${timestamp.year}-${timestamp.month.toString().padLeft(2, '0')}-${timestamp.day.toString().padLeft(2, '0')}";
+              final timestamp =
+                  DateTime.tryParse(timestampStr ?? '') ?? DateTime.now();
+              final formattedDate =
+                  "${timestamp.year}-${timestamp.month.toString().padLeft(2, '0')}-${timestamp.day.toString().padLeft(2, '0')}";
               final relative = timeago.format(timestamp, locale: 'tr');
 
               return Card(
                 margin: const EdgeInsets.only(bottom: 16),
                 elevation: 3,
                 child: ExpansionTile(
-                  title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  title: Text(title,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
                   subtitle: Text("$formattedDate ($relative)"),
                   trailing: const Icon(Icons.folder),
                   children: [
                     ListTile(
                       leading: const Icon(Icons.article_outlined),
-                      title: const Text("Transkript"),
+                      title: Text(d!.transcription),
                       onTap: () {
                         showDialog(
                           context: context,
                           builder: (BuildContext dialogContext) => AlertDialog(
-                            title: const Text("Transkript"),
-                            content: SingleChildScrollView(child: Text(transcript.isNotEmpty ? transcript : "Transkript bulunamadı.")),
+                            title:  Text(d!.transcription),
+                            content: SingleChildScrollView(
+                                child: Text(transcript.isNotEmpty
+                                    ? transcript
+                                    : d!.notranscriptfound)),
                             actions: [
                               TextButton(
-                                onPressed: () => Navigator.of(dialogContext).pop(),
-                                child: const Text("Kapat"),
+                                onPressed: () =>
+                                    Navigator.of(dialogContext).pop(),
+                                child:  Text(d!.close),
+
                               ),
                             ],
                           ),
@@ -86,17 +103,21 @@ class Meetinglist extends ConsumerWidget {
                     ),
                     ListTile(
                       leading: const Icon(Icons.summarize_outlined),
-                      title: const Text("Özet"),
+                      title:  Text(d!.summary),
                       onTap: () {
                         showDialog(
                           context: context,
                           builder: (BuildContext dialogContext) => AlertDialog(
-                            title: const Text("Özet"),
-                            content: SingleChildScrollView(child: Text(summary.isNotEmpty ? summary : "Özet bulunamadı.")),
+                            title:  Text(d!.summary),
+                            content: SingleChildScrollView(
+                                child: Text(summary.isNotEmpty
+                                    ? summary
+                                    : d!.nosummaryfound)),
                             actions: [
                               TextButton(
-                                onPressed: () => Navigator.of(dialogContext).pop(),
-                                child: const Text("Kapat"),
+                                onPressed: () =>
+                                    Navigator.of(dialogContext).pop(),
+                                child:  Text(d!.close),
                               ),
                             ],
                           ),
@@ -111,17 +132,23 @@ class Meetinglist extends ConsumerWidget {
                           onPressed: () async {
                             final confirm = await showDialog<bool>(
                               context: context,
-                              builder: (BuildContext confirmContext) => AlertDialog(
-                                title: const Text("Toplantıyı silmek istiyor musunuz?"),
-                                content: const Text("Bu işlem geri alınamaz. Devam edilsin mi?"),
+                              builder: (BuildContext confirmContext) =>
+                                  AlertDialog(
+                                title:  Text(
+                                    d.wannadeletemeeting),
+                                content:  Text(
+                                    d.areyousuretocont),
                                 actions: [
                                   TextButton(
-                                    onPressed: () => Navigator.pop(confirmContext, false),
-                                    child: const Text("Vazgeç"),
+                                    onPressed: () =>
+                                        Navigator.pop(confirmContext, false),
+                                    child:  Text(d.cancel),
                                   ),
                                   TextButton(
-                                    onPressed: () => Navigator.pop(confirmContext, true),
-                                    child: const Text("Sil", style: TextStyle(color: Colors.red)),
+                                    onPressed: () =>
+                                        Navigator.pop(confirmContext, true),
+                                    child:  Text(d.delete,
+                                        style: TextStyle(color: Colors.red)),
                                   ),
                                 ],
                               ),
@@ -130,11 +157,13 @@ class Meetinglist extends ConsumerWidget {
                             if (confirm == true) {
                               await doc.reference.delete();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("Toplantı silindi.")),
+                                 SnackBar(
+                                    content: Text(d.meetingdeleted)),
                               );
                             }
                           },
-                          child: const Text("Sil", style: TextStyle(color: Colors.red)),
+                          child:  Text(d.delete,
+                              style: TextStyle(color: Colors.red)),
                         ),
                       ),
                     ),

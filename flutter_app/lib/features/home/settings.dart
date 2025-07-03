@@ -37,6 +37,8 @@ class _SettingsState extends ConsumerState<Settings> {
     final buttonWidth = screenWidth * 0.6;
     final spacing = screenHeight * 0.03;
 
+    final imageUrl = ref.read(authProvider.notifier).userInfo?['pic_url'];
+
     return Scaffold(
       appBar: Utility.buildAppBar(context),
       backgroundColor: const Color(0xFFF7F7FC),
@@ -61,10 +63,26 @@ class _SettingsState extends ConsumerState<Settings> {
                     children: [
                       CircleAvatar(
                         radius: 40,
-                        backgroundImage: isLoggedIn &&
-                                ref.read(authProvider.notifier).userInfo?['pic_url'] != null
-                            ? NetworkImage(ref.read(authProvider.notifier).userInfo!['pic_url'])
-                            : const AssetImage('pictures/avatar.png') as ImageProvider,
+                        backgroundColor: Colors.grey.shade200,
+                        child: ClipOval(
+                          child: imageUrl != null
+                              ? Image.network(
+                                  imageUrl,
+                                  width: 80,
+                                  height: 80,
+                                  fit: BoxFit.cover,
+                                  loadingBuilder: (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+                                  },
+                                )
+                              : Image.asset(
+                                  'pictures/avatar.png',
+                                  width: 80,
+                                  height: 80,
+                                  fit: BoxFit.cover,
+                                ),
+                        ),
                       ),
                       const SizedBox(width: 20),
                       Expanded(
