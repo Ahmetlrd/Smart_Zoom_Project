@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/firebase_options.dart';
 import 'package:flutter_app/providers/auth_provider.dart';
 import 'package:flutter_app/providers/locale_provider.dart';
+import 'package:flutter_app/services/macos_folder_service.dart';
 import 'package:flutter_app/services/secure_storage_service.dart'
     as SecureStorageService;
 import 'package:flutter_app/services/zoom_recording_helper.dart';
@@ -71,6 +72,19 @@ Future<void> _processZoomUri(
 void main() async {
   watchZoomFolder();
   WidgetsFlutterBinding.ensureInitialized();
+  await MacOSFolderService.getSavedFolder().then((path) async {
+    if (path == null) {
+      final selected = await MacOSFolderService.selectFolderAndSaveBookmark();
+      if (selected == null) {
+        print("⚠️ Kullanıcı klasör seçmedi.");
+      } else {
+        print("✅ Zoom klasörü seçildi: $selected");
+      }
+    } else {
+      print("📂 Zoom klasörü zaten kayıtlı: $path");
+    }
+  });
+
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp();
   await NotificationService.init();

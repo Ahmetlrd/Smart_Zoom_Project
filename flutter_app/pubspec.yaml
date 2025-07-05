@@ -35,7 +35,7 @@ dependencies:
   window_size: ^0.1.0 
   # URL launcher (open browser, maps, etc.)
   url_launcher: ^6.2.5
-
+  path_provider: ^2.0.0
   # Declarative navigation (GoRouter)
   go_router: ^15.1.2
 
