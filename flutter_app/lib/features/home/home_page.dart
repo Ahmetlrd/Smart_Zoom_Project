@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_app/features/home/utility.dart';
+import 'package:flutter_app/main.dart';
+import 'package:flutter_app/services/macos_folder_service.dart';
 import 'package:flutter_app/services/openai_service.dart';
-import 'package:flutter_app/services/secure_storage_service.dart'
-    as SecureStorageService;
+import 'package:flutter_app/services/secure_storage_service.dart' as SecureStorageService;
 import 'package:flutter_app/services/zoom_recording_helper.dart';
 import 'package:flutter_app/services/zoom_service.dart';
 import 'package:flutter_app/services/notifications_service.dart';
@@ -12,7 +13,9 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_app/gen_l10n/app_localizations.dart';
 import 'dart:io';
 import 'package:flutter_app/services/zoom_permission_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_size/window_size.dart';
+import 'package:flutter_app/providers/folder_provider.dart';
 
 enum SummaryPreference { always, once, never }
 
@@ -38,50 +41,72 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> {
   SummaryPreference summaryPreference = SummaryPreference.once;
   bool _hasNotified = false;
+  bool _checkingZoomFolder = false;
 
- @override
-void initState() {
-  super.initState();
+  @override
+  void initState() {
+    super.initState();
 
-  if (Platform.isMacOS || Platform.isWindows) {
-    setWindowMinSize(const Size(800, 600));
+    if (Platform.isMacOS || Platform.isWindows) {
+      setWindowMinSize(const Size(800, 600));
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkZoomFolderPermission();
+    });
   }
 
-  // Login sonrası klasör seçimi ve kontrolü (ilk seferlik)
-  Future.microtask(() async {
-    final zoomPath = await ZoomPermissionService.getValidZoomPathOrReselectIfNeeded();
+  Future<void> _checkZoomFolderPermission() async {
+    if (_checkingZoomFolder) return;
+    _checkingZoomFolder = true;
 
-    if (zoomPath == null && mounted) {
-      showDialog(
+    while (Platform.isMacOS && mounted) {
+      final folderPath = await MacOSFolderService.getSavedFolder();
+      final isValid = await ZoomPermissionService.validateZoomFolder(folderPath);
+
+      if (isValid) {
+        print("✅ Geçerli Zoom klasörü bulundu: $folderPath");
+        break;
+      }
+
+      final result = await showDialog<bool>(
         context: context,
+        barrierDismissible: false,
         builder: (_) => AlertDialog(
-          title: const Text("Zoom klasörü gerekli"),
+          title: const Text("Zoom Klasörü Gerekli"),
           content: const Text(
-            "Toplantı ses kayıtlarını işleyebilmek için Zoom klasörüne erişim verilmesi gerekiyor. "
-            "Lütfen klasörü manuel olarak seçin. Bu işlem sadece bir kez yapılacaktır.",
+            "Toplantı ses kayıtlarını analiz edebilmemiz için Zoom'un ses kayıtlarını tuttuğu klasöre erişmemiz gerekiyor.\n\n"
+            "Lütfen 'Zoom' adındaki klasörü seçin. Bu klasör içinde .m4a uzantılı ses dosyalarının bulunduğu alt klasörler yer almalıdır.",
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Tamam"),
+              child: const Text("Klasör Seç"),
+              onPressed: () => Navigator.pop(context, true),
             ),
           ],
         ),
       );
-    } else {
-      print("✅ Zoom klasörü erişilebilir: $zoomPath");
-      // Buradan sonra klasör izleme başlatılabilir:
-      // watchZoomFolder(zoomPath); ← eğer parametre alacak şekilde düzenlenmişse
-    }
-  });
-}
 
+      if (result != true) break;
+
+      final selected = await MacOSFolderService.selectFolderAndSaveBookmark();
+      final isNowValid = await ZoomPermissionService.validateZoomFolder(selected);
+
+      if (isNowValid) {
+        ref.invalidate(zoomFolderProvider);
+        break;
+      }
+
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+
+    _checkingZoomFolder = false;
+  }
 
   @override
   Widget build(BuildContext context) {
     final d = AppLocalizations.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
     final crossAxisCount = screenWidth < 600 ? 2 : 4;
 
     return FutureBuilder<String?>(
@@ -103,14 +128,13 @@ void initState() {
             if (isJoined && Platform.isMacOS && !_hasNotified) {
               NotificationService.show(
                 title: d!.joinedmeeting,
-                body: d!.wannapsummarize,
+                body: d.wannapsummarize,
               );
               _hasNotified = true;
             }
 
             return Scaffold(
-                    appBar: Utility.buildAppBar(context), // Adds a custom top app bar
-
+              appBar: Utility.buildAppBar(context),
               body: Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 1000),
@@ -131,25 +155,16 @@ void initState() {
                                 padding: const EdgeInsets.all(16.0),
                                 child: Column(
                                   children: [
-                                    const Text(
-                                      "Şu an toplantıdasın!",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    Text(
-                                      "Özet Tercihi: ${_preferenceLabel(summaryPreference)}",
-                                      style: const TextStyle(fontSize: 15),
-                                    ),
+                                    const Text("Şu an toplantıdasın!",
+                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                    Text("Özet Tercihi: ${_preferenceLabel(summaryPreference)}",
+                                        style: const TextStyle(fontSize: 15)),
                                     const SizedBox(height: 8),
                                     ElevatedButton.icon(
                                       onPressed: () => _showSummaryOptions(context),
                                       icon: const Icon(Icons.edit),
                                       label: const Text("Tercihi Değiştir"),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.blueAccent,
-                                      ),
+                                      style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),
                                     ),
                                   ],
                                 ),
@@ -163,70 +178,12 @@ void initState() {
                             mainAxisSpacing: 24,
                             childAspectRatio: 0.9,
                             children: [
-                              _buildCard(
-                                icon: Icons.calendar_today,
-                                label: d!.meetinglist,
-                                onTap: () => context.push('/meetinglist'),
-                              ),
-                              _buildCard(
-                                icon: Icons.connect_without_contact,
-                                label: d.meetingdetails,
-                                onTap: () => context.push('/meetingdetailpage'),
-                              ),
-                              _buildCard(
-                                icon: Icons.auto_awesome,
-                                label: d.nlpsummary,
-                                onTap: () => context.push('/nlp'),
-                              ),
-                              _buildCard(
-                                icon: Icons.note,
-                                label: d.saved,
-                                onTap: () => context.push('/saved'),
-                              ),
+                              _buildCard(icon: Icons.calendar_today, label: d!.meetinglist, onTap: () => context.push('/meetinglist')),
+                              _buildCard(icon: Icons.connect_without_contact, label: d.meetingdetails, onTap: () => context.push('/meetingdetailpage')),
+                              _buildCard(icon: Icons.auto_awesome, label: d.nlpsummary, onTap: () => context.push('/nlp')),
+                              _buildCard(icon: Icons.note, label: d.saved, onTap: () => context.push('/saved')),
                             ],
                           ),
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.person, color: Colors.grey),
-                              tooltip: "Fetch User Info",
-                              onPressed: () async {
-                                final token = await SecureStorageService.readAccessToken();
-                                final userData = await ZoomService.fetchUserInfoWithToken(token!);
-                                print("Kullanıcı Bilgisi:");
-                                print(userData);
-                              },
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.play_circle, color: Colors.grey),
-                              tooltip: "Zoom (otomatik path) ile özetle",
-                              onPressed: runDirectZoomSummaryFlow,
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.folder_open, color: Colors.grey),
-                              tooltip: "Zoom ses klasörünü gör",
-                              onPressed: () async {
-                                final zoomPath = await ZoomPermissionService.getValidZoomPathOrReselectIfNeeded();
-                                if (zoomPath == null) {
-                                  print("⚠️ Zoom klasörününe erişim sağlanamadı.");
-                                  return;
-                                }
-                                final files = Directory(zoomPath)
-                                    .listSync()
-                                    .whereType<File>()
-                                    .where((f) => f.path.endsWith('.m4a'))
-                                    .toList();
-                                if (files.isEmpty) {
-                                  print("❌ Hiç .m4a dosyası bulunamadı.");
-                                } else {
-                                  print("✅ İlk ses dosyası: ${files.first.path}");
-                                }
-                              },
-                            ),
-                          ],
                         ),
                       ],
                     ),
@@ -287,17 +244,11 @@ void initState() {
     );
   }
 
-  Widget _buildCard({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
+  Widget _buildCard({required IconData icon, required String label, required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
       child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         elevation: 4,
         child: Center(
           child: Column(
@@ -306,11 +257,7 @@ void initState() {
             children: [
               Icon(icon, size: 48, color: Colors.blue),
               const SizedBox(height: 12),
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16),
-              ),
+              Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16)),
             ],
           ),
         ),

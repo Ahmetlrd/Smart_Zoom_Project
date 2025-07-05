@@ -17,17 +17,20 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_app/services/notifications_service.dart';
 import 'package:flutter/services.dart';
 import 'routes.dart';
+import 'package:flutter_app/services/macos_folder_service.dart';
 
+final zoomFolderProvider = FutureProvider<String?>((ref) async {
+  if (!Platform.isMacOS) return null;
+  return await MacOSFolderService.getSavedFolder();
+});
 Future<void> handleIncomingLinks(WidgetRef ref, BuildContext context) async {
   final appLinks = AppLinks();
 
-  // AppLinks ile gelen bağlantılar
   appLinks.uriLinkStream.listen((Uri? uri) async {
     debugPrint("🔗 URI from stream: $uri");
     if (uri != null) await _processZoomUri(uri, ref, context);
   });
 
-  // macOS için MethodChannel üzerinden gelen linkler
   if (Platform.isMacOS) {
     const MethodChannel('app.channel.shared.data')
         .setMethodCallHandler((call) async {
@@ -42,6 +45,7 @@ Future<void> handleIncomingLinks(WidgetRef ref, BuildContext context) async {
 
 String? _pendingAccessToken;
 String? _pendingRefreshToken;
+
 Future<void> _processZoomUri(
     Uri uri, WidgetRef ref, BuildContext context) async {
   if (uri.scheme == 'zoomai') {
@@ -61,7 +65,6 @@ Future<void> _processZoomUri(
       if (context.mounted) {
         ref.read(routerProvider).go('/home');
       } else {
-        // UI henüz hazır değil, token'ları sakla
         _pendingAccessToken = accessToken;
         _pendingRefreshToken = refreshToken;
       }
@@ -70,20 +73,7 @@ Future<void> _processZoomUri(
 }
 
 void main() async {
-  watchZoomFolder();
   WidgetsFlutterBinding.ensureInitialized();
-  await MacOSFolderService.getSavedFolder().then((path) async {
-    if (path == null) {
-      final selected = await MacOSFolderService.selectFolderAndSaveBookmark();
-      if (selected == null) {
-        print("⚠️ Kullanıcı klasör seçmedi.");
-      } else {
-        print("✅ Zoom klasörü seçildi: $selected");
-      }
-    } else {
-      print("📂 Zoom klasörü zaten kayıtlı: $path");
-    }
-  });
 
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp();
@@ -103,31 +93,40 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   bool _listenerAttached = false;
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (_pendingAccessToken != null) {
-        print("🔁 Pending deep link access token bulundu, yönlendiriliyor...");
-        await ref.read(authProvider.notifier).loginWithToken(
-              _pendingAccessToken!,
-              refreshToken: _pendingRefreshToken,
-            );
-        ref.read(routerProvider).go('/home');
-        _pendingAccessToken = null;
-        _pendingRefreshToken = null;
-      }
-    });
+void initState() {
+  super.initState();
 
-    WidgetsBinding.instance.addObserver(this);
-
-    // İlk açılışta test bildirimi
-    NotificationService.show(
-      title: 'uygulama ilk açıldı test bildirimi',
-      body: 'Notification permission working!',
-    );
-
-    _attachLinkListenerOnce(); // İlk açılışta listener
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
+  if (_pendingAccessToken != null) {
+    print("🔁 Pending deep link access token bulundu, yönlendiriliyor...");
+    await ref.read(authProvider.notifier).loginWithToken(
+          _pendingAccessToken!,
+          refreshToken: _pendingRefreshToken,
+        );
+    ref.read(routerProvider).go('/home');
+    _pendingAccessToken = null;
+    _pendingRefreshToken = null;
   }
+
+  if (Platform.isMacOS) {
+    final path = await MacOSFolderService.getSavedFolder();
+    if (path == null) {
+      NotificationService.show(
+        title: 'Zoom klasörü izni gerekli',
+        body: 'İlk kullanım için Zoom klasörüne erişim izni vermelisiniz.',
+      );
+    } else {
+      print("📂 Zoom klasörü zaten kayıtlı: $path");
+      watchZoomFolder();
+    }
+  }
+});
+
+
+  WidgetsBinding.instance.addObserver(this);
+  _attachLinkListenerOnce();
+}
+
 
   void _attachLinkListenerOnce() {
     if (!_listenerAttached) {
@@ -141,7 +140,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       debugPrint('🚀 App resumed – checking deep links again');
-      handleIncomingLinks(ref, context); // Yeniden bağla
+      handleIncomingLinks(ref, context);
     }
   }
 

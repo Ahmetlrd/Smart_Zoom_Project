@@ -42,4 +42,27 @@ class ZoomPermissionService {
 
     return null;
   }
+  static Future<bool> validateZoomFolder(String? path) async {
+  if (path == null) return false;
+
+  final dir = Directory(path);
+  final folderName = dir.path.split(Platform.pathSeparator).last.toLowerCase();
+
+  if (folderName != 'zoom') return false;
+
+  try {
+    final subdirs = dir.listSync().whereType<Directory>();
+    for (final sub in subdirs) {
+      final files = sub.listSync().whereType<File>();
+      if (files.any((f) => f.path.endsWith('.m4a') || f.path.endsWith('.mp4'))) {
+        return true;
+      }
+    }
+  } catch (_) {
+    return false;
+  }
+
+  return false;
+}
+
 }
