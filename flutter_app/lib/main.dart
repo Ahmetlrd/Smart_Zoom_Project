@@ -117,7 +117,7 @@ void initState() {
       );
     } else {
       print("📂 Zoom klasörü zaten kayıtlı: $path");
-      watchZoomFolder();
+      watchZoomFolder(ref);
     }
   }
 });

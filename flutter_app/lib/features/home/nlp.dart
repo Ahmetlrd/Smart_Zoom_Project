@@ -5,9 +5,10 @@ import 'package:flutter_app/services/zoom_recording_helper.dart';
 import 'package:flutter_app/services/openai_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_app/providers/auth_provider.dart';
+import 'package:flutter_app/providers/summary_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-String? lastSavedSummary; // Local olarak en son kaydedilen özet
+String? lastSavedSummary;
 
 class Nlp extends ConsumerStatefulWidget {
   const Nlp({super.key});
@@ -17,9 +18,22 @@ class Nlp extends ConsumerStatefulWidget {
 }
 
 class _NlpState extends ConsumerState<Nlp> {
-  String? summary = latestSummary;
+  String? summary;
   final TextEditingController _controller = TextEditingController();
   bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    summary = latestSummary;
+
+    if (summary != null && summary!.trim().isNotEmpty) {
+      Future.microtask(() {
+        ref.read(summaryProvider.notifier).state = summary;
+        print("✅ summaryProvider güncellendi (initState): $summary");
+      });
+    }
+  }
 
   void regenerateSummaryWithUserInput() async {
     if (summary == null) return;
@@ -47,79 +61,81 @@ Lütfen özeti bu yeni isteğe göre oluştur. Kısa, öz ve bilgi odaklı yaz.
       latestSummary = summary;
       isLoading = false;
     });
+
+    ref.read(summaryProvider.notifier).state = summary;
+    print("✅ summaryProvider güncellendi (güncelle sonrası): $summary");
   }
 
- Future<void> confirmAndSave() async {
-  if (summary != null &&
-      summary != lastSavedSummary &&
-      summary != "null" &&
-      summary!.trim().isNotEmpty) {
-    
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) {
-        final d = AppLocalizations.of(dialogContext)!;
-        return AlertDialog(
-          title: Text(d.wannasave),
-          content: Text(d.savetofirestore),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: Text(d.cancel),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(true),
-              child: Text(d.save),
-            ),
-          ],
-        );
-      },
-    );
+  Future<void> confirmAndSave() async {
+    if (summary != null &&
+        summary != lastSavedSummary &&
+        summary != "null" &&
+        summary!.trim().isNotEmpty) {
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) {
+          final d = AppLocalizations.of(dialogContext)!;
+          return AlertDialog(
+            title: Text(d.wannasave),
+            content: Text(d.savetofirestore),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+                child: Text(d.cancel),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                child: Text(d.save),
+              ),
+            ],
+          );
+        },
+      );
 
-    if (confirm != true) return;
+      if (confirm != true) return;
 
-    final email = ref.read(authProvider.notifier).userInfo?['email'];
-    if (email == null) return;
+      final email = ref.read(authProvider.notifier).userInfo?['email'];
+      if (email == null) return;
 
-    String title = 'Başlıksız';
-    try {
-      final titleLine = summary!
-          .split('\n')
-          .firstWhere((line) => line.startsWith('Title:'), orElse: () => '');
-      if (titleLine.isNotEmpty) {
-        title = titleLine
-            .replaceFirst('Title:', '')
-            .replaceAll('"', '')
-            .trim();
+      String title = 'Başlıksız';
+      try {
+        final titleLine = summary!
+            .split('\n')
+            .firstWhere((line) => line.startsWith('Title:'), orElse: () => '');
+        if (titleLine.isNotEmpty) {
+          title =
+              titleLine.replaceFirst('Title:', '').replaceAll('"', '').trim();
+        }
+      } catch (e) {
+        debugPrint('⚠️ Başlık ayrıştırılamadı: $e');
       }
-    } catch (e) {
-      debugPrint('⚠️ Başlık ayrıştırılamadı: $e');
+
+      final docRef =
+          FirebaseFirestore.instance.collection('summaries').doc(email);
+      final historyRef = docRef.collection('history');
+
+      await historyRef.add({
+        'title': title,
+        'text': summary,
+        'transcript': latestTranscript,
+        'timestamp': DateTime.now().toIso8601String(),
+      });
+
+      setState(() {
+        lastSavedSummary = summary;
+        summary = null;
+        latestSummary = null;
+      });
+
+      ref.read(summaryProvider.notifier).state = null;
+      print("🧹 summaryProvider sıfırlandı (save)");
+
+      final d = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(d.savedsuccesfully)),
+      );
     }
-
-    final docRef = FirebaseFirestore.instance.collection('summaries').doc(email);
-    final historyRef = docRef.collection('history');
-
-    await historyRef.add({
-      'title': title,
-      'text': summary,
-      'transcript': latestTranscript,
-      'timestamp': DateTime.now().toIso8601String(),
-    });
-
-    setState(() {
-      lastSavedSummary = summary;
-      summary = null;
-      latestSummary = null;
-    });
-
-    final d = AppLocalizations.of(context)!;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(d.savedsuccesfully)),
-    );
   }
-}
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -133,9 +149,9 @@ Lütfen özeti bu yeni isteğe göre oluştur. Kısa, öz ve bilgi odaklı yaz.
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-             Text(
+            Text(
               d!.summary,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
             if (summary != null)
@@ -160,11 +176,11 @@ Lütfen özeti bu yeni isteğe göre oluştur. Kısa, öz ve bilgi odaklı yaz.
             else
               Column(
                 children: [
-                  Icon(Icons.info_outline, size: 60, color: Colors.grey),
-                  SizedBox(height: 20),
+                  const Icon(Icons.info_outline, size: 60, color: Colors.grey),
+                  const SizedBox(height: 20),
                   Text(
-                    d!.nosummaryyet,
-                    style: TextStyle(
+                    d.nosummaryyet,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontStyle: FontStyle.italic,
                       color: Colors.grey,
@@ -196,7 +212,7 @@ Lütfen özeti bu yeni isteğe göre oluştur. Kısa, öz ve bilgi odaklı yaz.
                   ElevatedButton.icon(
                     onPressed: confirmAndSave,
                     icon: const Icon(Icons.save_alt),
-                    label:  Text(d!.save),
+                    label: Text(d.save),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.grey.shade300,
                       foregroundColor: Colors.black,
@@ -205,7 +221,7 @@ Lütfen özeti bu yeni isteğe göre oluştur. Kısa, öz ve bilgi odaklı yaz.
                   ElevatedButton.icon(
                     onPressed: regenerateSummaryWithUserInput,
                     icon: const Icon(Icons.edit_note_outlined),
-                    label:  Text(d.update),
+                    label: Text(d.update),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,
                       foregroundColor: Colors.white,
@@ -217,39 +233,42 @@ Lütfen özeti bu yeni isteğe göre oluştur. Kısa, öz ve bilgi odaklı yaz.
                         final confirm = await showDialog<bool>(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title:  Text(d!.abouttodelete),
-                            content:  Text(
-                                d!.areyousuretodelete),
+                            title: Text(d.abouttodelete),
+                            content: Text(d.areyousuretodelete),
                             actions: [
                               TextButton(
                                 onPressed: () =>
                                     Navigator.of(context).pop(false),
-                                child:  Text(d!.cancel),
+                                child: Text(d.cancel),
                               ),
                               TextButton(
                                 onPressed: () =>
                                     Navigator.of(context).pop(true),
-                                child:  Text(d!.delete,
-                                    style: TextStyle(color: Colors.red)),
+                                child: Text(
+                                  d.delete,
+                                  style: const TextStyle(color: Colors.red),
+                                ),
                               ),
                             ],
-                          ),
+                         ),
                         );
-
+                        print("🧪 Silme onayı sonucu: $confirm");
                         if (confirm == true) {
                           setState(() {
                             summary = null;
                             latestSummary = null;
                           });
+                          ref.read(summaryProvider.notifier).state = null;
+                          print("🧹 summaryProvider sıfırlandı (delete)");
 
                           ScaffoldMessenger.of(context).showSnackBar(
-                             SnackBar(content: Text(d!.summarydeleted)),
+                            SnackBar(content: Text(d.summarydeleted)),
                           );
                         }
                       }
                     },
                     icon: const Icon(Icons.delete_outline),
-                    label:  Text(d!.delete),
+                    label: Text(d.delete),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.redAccent,
                       foregroundColor: Colors.white,
