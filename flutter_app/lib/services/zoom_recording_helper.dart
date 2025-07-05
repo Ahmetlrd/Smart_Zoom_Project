@@ -92,10 +92,17 @@ void watchZoomFolder() {
       // Dosyanın tamamen yazılmasını bekle
       await Future.delayed(Duration(seconds: 2));
 
-      await runDirectZoomSummaryFlow(); // Özet çıkar
+      // 🔔 Yeni eklenen adım: "özet hazırlanıyor" bildirimi
+      await NotificationService.show(
+        title: 'Özet hazırlanıyor',
+        body: 'Ses dosyası alındı, analiz başlıyor...',
+      );
 
-      // Bildirim gönder (mevcut sistemle)
-      NotificationService.show(
+      // Ardından özet çıkarma süreci başlasın
+      await runDirectZoomSummaryFlow();
+
+      // 🔔 Mevcut: Özet hazır bildirimi
+      await NotificationService.show(
         title: 'Zoom özeti hazır!',
         body: 'Yeni toplantı otomatik özetlendi.',
       );

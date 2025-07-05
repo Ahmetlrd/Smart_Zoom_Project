@@ -129,7 +129,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get joinedmeeting => 'You joined the meeting';
 
   @override
-  String get wannapsummarize => 'Would you like to generate a summary?';
+  String get wannapsummarize => 'Start recording to get a summary.';
 
   @override
   String get summaryready => 'Zoom summary is ready!';

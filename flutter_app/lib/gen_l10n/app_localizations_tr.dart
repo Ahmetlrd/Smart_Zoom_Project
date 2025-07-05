@@ -128,7 +128,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get joinedmeeting => 'Toplantıya Katıldınız';
 
   @override
-  String get wannapsummarize => 'Özet çıkarmak ister misiniz?';
+  String get wannapsummarize =>
+      'Toplantı sonunda özet alabilmek için kaydı başlatmayı unutmayın.';
 
   @override
   String get summaryready => 'Zoom özeti hazır!';

@@ -130,7 +130,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get joinedmeeting => 'Vous avez rejoint la réunion';
 
   @override
-  String get wannapsummarize => 'Souhaitez-vous générer un résumé ?';
+  String get wannapsummarize =>
+      'N’oubliez pas de lancer l’enregistrement pour recevoir un résumé à la fin de la réunion.';
 
   @override
   String get summaryready => 'Le résumé Zoom est prêt !';

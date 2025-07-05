@@ -39,7 +39,7 @@
   "notranscriptfound": "Aucune transcription trouvée.",
   "nomeetingfound": "Aucun enregistrement de réunion trouvé.",
   "joinedmeeting": "Vous avez rejoint la réunion",
-  "wannapsummarize": "Souhaitez-vous générer un résumé ?",
+  "wannapsummarize": "N’oubliez pas de lancer l’enregistrement pour recevoir un résumé à la fin de la réunion.",
   "summaryready": "Le résumé Zoom est prêt !",
   "newmeetingsummarized": "La nouvelle réunion a été résumée automatiquement."
 

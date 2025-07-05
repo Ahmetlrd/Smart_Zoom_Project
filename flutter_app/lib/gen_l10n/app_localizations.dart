@@ -339,7 +339,7 @@ abstract class AppLocalizations {
   /// No description provided for @wannapsummarize.
   ///
   /// In en, this message translates to:
-  /// **'Would you like to generate a summary?'**
+  /// **'Start recording to get a summary.'**
   String get wannapsummarize;
 
   /// No description provided for @summaryready.

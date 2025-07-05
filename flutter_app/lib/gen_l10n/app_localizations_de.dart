@@ -131,7 +131,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get joinedmeeting => 'Sie sind dem Meeting beigetreten';
 
   @override
-  String get wannapsummarize => 'Möchten Sie eine Zusammenfassung erstellen?';
+  String get wannapsummarize =>
+      'Zum Mitschnitt starten, um eine Zusammenfassung zu erhalten.';
 
   @override
   String get summaryready => 'Zoom-Zusammenfassung ist bereit!';

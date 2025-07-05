@@ -142,35 +142,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
                     child: Column(
                       children: [
-                        if (isJoined)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 12.0),
-                            child: Card(
-                              elevation: 6,
-                              color: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  children: [
-                                    const Text("Şu an toplantıdasın!",
-                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                                    Text("Özet Tercihi: ${_preferenceLabel(summaryPreference)}",
-                                        style: const TextStyle(fontSize: 15)),
-                                    const SizedBox(height: 8),
-                                    ElevatedButton.icon(
-                                      onPressed: () => _showSummaryOptions(context),
-                                      icon: const Icon(Icons.edit),
-                                      label: const Text("Tercihi Değiştir"),
-                                      style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
+                        
                         Expanded(
                           child: GridView.count(
                             crossAxisCount: crossAxisCount,
