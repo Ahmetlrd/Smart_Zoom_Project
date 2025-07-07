@@ -1,20 +1,20 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/features/home/utility.dart';
 import 'package:flutter_app/providers/auth_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_app/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 
 class Userinfo extends ConsumerWidget {
   const Userinfo({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isLoggedIn = ref.watch(authProvider);
     final userInfo = ref.read(authProvider.notifier).userInfo;
-    final d = AppLocalizations.of(context);
+    final isLoggedIn = ref.watch(authProvider);
+    final d = AppLocalizations.of(context)!;
 
-    if (userInfo == null) {
+    if (!isLoggedIn || userInfo == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         context.go('/login');
       });
@@ -25,7 +25,7 @@ class Userinfo extends ConsumerWidget {
     final screenWidth = size.width;
     final screenHeight = size.height;
     final spacing = screenHeight * 0.03;
-    final buttonWidth = screenWidth * 0.5;
+
     final userType = userInfo['type'];
     final userTypeText = userType == 2
         ? 'Zoom Pro'
@@ -34,99 +34,135 @@ class Userinfo extends ConsumerWidget {
             : 'Unknown';
 
     return Scaffold(
-      appBar: Utility.buildAppBar(context, disableSettings: true),
-      backgroundColor: const Color(0xFFF7F7FC),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                radius: 50,
-                backgroundImage: isLoggedIn && userInfo['pic_url'] != null
-                    ? NetworkImage(userInfo['pic_url'])
-                    : const AssetImage('pictures/avatar.png') as ImageProvider,
-                backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          // Arka plan
+          Container(
+            width: double.infinity,
+            height: screenHeight,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image:
+                    AssetImage("pictures/Blue Gradient Background Poster.png"),
+                fit: BoxFit.cover,
               ),
-              const SizedBox(height: 24),
-              Text(
-                "${userInfo['first_name']} ${userInfo['last_name']}",
-                style: const TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                d!.email,
-                style: const TextStyle(
-                  color: Colors.blue,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                userInfo['email'],
-                style: const TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 24),
-              Divider(thickness: 1.2, color: Colors.grey[300]),
-              const SizedBox(height: 24),
-              Text.rich(
-                TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "${d.accounttype}: ",
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue,
+            ),
+          ),
+          // İçerik kutusu
+          Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  width: screenWidth < 600 ? screenWidth * 0.95 : 550,
+                  padding: const EdgeInsets.all(32),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.85),
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
                       ),
-                    ),
-                    TextSpan(
-                      text: userTypeText,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black87,
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Align(
+                          alignment: Alignment.topLeft,
+                          child: IconButton(
+                            icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                                size: 22),
+                            color: Colors.grey.shade800,
+                            onPressed: () =>
+                                context.go('/settings'),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                      Image.asset('pictures/appicon_1.png', height: 60),
+                      const SizedBox(height: 16),
+                      Text(
+                        "User Profile",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blueGrey.shade900,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: spacing * 2),
-              if (isLoggedIn)
-                SizedBox(
-                  width: buttonWidth,
-                  height: screenHeight * 0.07,
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.redAccent,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                      const SizedBox(height: 24),
+                      CircleAvatar(
+                        radius: 48,
+                        backgroundImage: userInfo['pic_url'] != null
+                            ? NetworkImage(userInfo['pic_url'])
+                            : const AssetImage('pictures/avatar.png')
+                                as ImageProvider,
                       ),
-                    ),
-                    icon: const Icon(Icons.logout),
-                    onPressed: () async {
-                      await ref.read(authProvider.notifier).logout();
-                      context.go('/');
-                    },
-                    label: Text(
-                      d.logout,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                      const SizedBox(height: 16),
+                      Text(
+                        "${userInfo['first_name']} ${userInfo['last_name']}",
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: 8),
+                      Text(
+                        userInfo['email'],
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Divider(color: Colors.grey[300]),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.verified_user, color: Colors.blue),
+                          const SizedBox(width: 8),
+                          Text(
+                            "${d.accounttype} ",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            userTypeText,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: spacing * 1.5),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () async {
+                            await ref.read(authProvider.notifier).logout();
+                            context.go('/');
+                          },
+                          icon: const Icon(Icons.logout),
+                          label: Text(d.logout),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                 ),
-              SizedBox(height: spacing),
-            ],
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

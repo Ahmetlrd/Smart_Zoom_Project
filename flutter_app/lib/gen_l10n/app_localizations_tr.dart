@@ -69,7 +69,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get update => 'Güncelle';
 
   @override
-  String get save => 'Kaydet';
+  String get save => 'Kaydet ve Bitir';
 
   @override
   String get nosummaryyet => 'Henüz bir toplantı özeti oluşturulmadı.';
@@ -136,4 +136,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get newmeetingsummarized => 'Yeni toplantı otomatik özetlendi.';
+
+  @override
+  String get settings => 'Ayarlar';
 }

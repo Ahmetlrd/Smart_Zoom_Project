@@ -69,7 +69,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get update => 'Aktualisieren';
 
   @override
-  String get save => 'Speichern';
+  String get save => 'Speichern und Beenden';
 
   @override
   String get nosummaryyet => 'Es wurde noch keine Zusammenfassung erstellt.';
@@ -140,4 +140,7 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get newmeetingsummarized =>
       'Neues Meeting wurde automatisch zusammengefasst.';
+
+  @override
+  String get settings => 'Einstellungen';
 }

@@ -20,7 +20,7 @@
     "close": "Close",
     "delete": "Delete",
     "update": "Update",
-    "save": "Save",
+    "save": "Save and Finish",
     "nosummaryyet": "No meeting summary created yet.",
     "firstnotification": "app opened first time test notification",
     "testnotification": "Notification permission works!",
@@ -41,7 +41,10 @@
     "joinedmeeting": "You joined the meeting",
     "wannapsummarize": "Start recording to get a summary.",
     "summaryready": "Zoom summary is ready!",
-    "newmeetingsummarized": "New meeting has been automatically summarized."
+    "newmeetingsummarized": "New meeting has been automatically summarized.",
+    "settings":"Settings"
+
+
 
 
 

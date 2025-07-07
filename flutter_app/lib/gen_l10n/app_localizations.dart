@@ -225,7 +225,7 @@ abstract class AppLocalizations {
   /// No description provided for @save.
   ///
   /// In en, this message translates to:
-  /// **'Save'**
+  /// **'Save and Finish'**
   String get save;
 
   /// No description provided for @nosummaryyet.
@@ -353,6 +353,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'New meeting has been automatically summarized.'**
   String get newmeetingsummarized;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
 }
 
 class _AppLocalizationsDelegate

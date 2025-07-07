@@ -20,7 +20,7 @@
   "close": "Schließen",
   "delete": "Löschen",
   "update": "Aktualisieren",
-  "save": "Speichern",
+  "save": "Speichern und Beenden",
   "nosummaryyet": "Es wurde noch keine Zusammenfassung erstellt.",
   "firstnotification": "App zum ersten Mal geöffnet - Testbenachrichtigung",
   "testnotification": "Benachrichtigungsberechtigung funktioniert!",
@@ -41,7 +41,9 @@
   "joinedmeeting": "Sie sind dem Meeting beigetreten",
   "wannapsummarize": "Zum Mitschnitt starten, um eine Zusammenfassung zu erhalten.",
   "summaryready": "Zoom-Zusammenfassung ist bereit!",
-  "newmeetingsummarized": "Neues Meeting wurde automatisch zusammengefasst."
+  "newmeetingsummarized": "Neues Meeting wurde automatisch zusammengefasst.",
+  "settings":"Einstellungen"
+
 
 
 

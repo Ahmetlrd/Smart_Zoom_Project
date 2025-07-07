@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter_app/services/summary_saver.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_app/services/openai_service.dart';
 import 'package:flutter_app/services/notifications_service.dart';
@@ -7,65 +8,81 @@ import 'package:flutter_app/providers/summary_provider.dart';
 String? latestSummary;
 String? latestTranscript;
 
-Future<File?> findLatestZoomAudioFile() async {
+Future<List<File>> findAllZoomAudioFilesInLatestFolder() async {
   final zoomFolder = Directory('/Users/${Platform.environment['USER']}/Documents/Zoom');
   if (!await zoomFolder.exists()) {
     print("❌ Zoom klasörü bulunamadı.");
-    return null;
+    return [];
   }
 
   final subDirs = zoomFolder.listSync().whereType<Directory>().toList();
   if (subDirs.isEmpty) {
     print("❌ Zoom klasöründe alt klasör yok.");
-    return null;
+    return [];
   }
 
   subDirs.sort((a, b) => b.statSync().modified.compareTo(a.statSync().modified));
+  final latestDir = subDirs.first;
 
-  for (final dir in subDirs) {
-    final audioFiles = dir.listSync().whereType<File>().where((file) => file.path.toLowerCase().endsWith('.m4a')).toList();
-    if (audioFiles.isNotEmpty) {
-      print("🎯 Ses dosyası bulundu: ${audioFiles.first.path}");
-      return audioFiles.first;
-    }
-  }
+  final audioFiles = latestDir
+      .listSync()
+      .whereType<File>()
+      .where((file) => file.path.toLowerCase().endsWith('.m4a'))
+      .toList();
 
-  print("❌ Hiçbir .m4a dosyası bulunamadı.");
-  return null;
+  return audioFiles;
 }
 
 Future<void> runDirectZoomSummaryFlow(WidgetRef ref) async {
-  final file = await findLatestZoomAudioFile();
-  if (file == null || !await file.exists()) {
+  final files = await findAllZoomAudioFilesInLatestFolder();
+  if (files.isEmpty) {
     print("❌ Ses dosyası bulunamadı.");
     return;
   }
 
-  print("✅ Ses dosyası bulundu: ${file.path}");
+  print("✅ ${files.length} ses dosyası bulundu.");
   final service = OpenAIService();
 
-  print("🎧 Whisper’a gönderiliyor...");
-  final transcript = await service.transcribeAudio(file);
-  if (transcript == null) {
-    print("❌ Transkript başarısız.");
+  print("🎧 Tüm ses dosyaları Whisper’a gönderiliyor...");
+  final List<String> transcripts = [];
+
+  for (final file in files) {
+    final transcript = await service.transcribeAudio(file);
+    if (transcript != null) {
+      transcripts.add(transcript);
+    }
+  }
+
+  if (transcripts.isEmpty) {
+    print("❌ Hiçbir transkript oluşturulamadı.");
     return;
   }
 
-  print("📄 Transcript:\n$transcript");
+  final combinedTranscript = transcripts.join("\n\n");
+  print("📄 Birleştirilmiş Transcript:\n$combinedTranscript");
+
   print("🧠 GPT-4 ile özetleniyor...");
-  final summary = await service.summarizeText(transcript);
+  final summary = await service.summarizeText(combinedTranscript);
+
   if (summary == null) {
     print("❌ Özetleme başarısız.");
     return;
   }
 
-  latestTranscript = transcript;
+  latestTranscript = combinedTranscript;
   latestSummary = summary;
 
-  // 🧠 HomePage’i tetikleyecek!
+  await saveSummaryToFirestore(
+    ref: ref,
+    summary: summary,
+    transcript: latestTranscript,
+  );
+
   ref.read(summaryProvider.notifier).state = summary;
   print("✅ summaryProvider güncellendi: $summary");
 }
+
+bool isSummarizing = false;
 
 void watchZoomFolder(WidgetRef ref) {
   final zoomDir = Directory('/Users/${Platform.environment['USER']}/Documents/Zoom');
@@ -77,13 +94,19 @@ void watchZoomFolder(WidgetRef ref) {
 
   zoomDir.watch(recursive: true).listen((event) async {
     if (event.type == FileSystemEvent.create && event.path.toLowerCase().endsWith('.m4a')) {
+      if (isSummarizing) {
+        print("⏳ Özetleme zaten devam ediyor, yeni istek beklemeye alındı.");
+        return;
+      }
+
+      isSummarizing = true;
       print("🆕 Yeni .m4a dosyası algılandı: ${event.path}");
 
       await Future.delayed(const Duration(seconds: 2));
 
       await NotificationService.show(
         title: 'Özet hazırlanıyor',
-        body: 'Ses dosyası alındı, analiz başlıyor...',
+        body: 'Ses dosyaları alındı, analiz başlıyor...',
       );
 
       await runDirectZoomSummaryFlow(ref);
@@ -92,6 +115,8 @@ void watchZoomFolder(WidgetRef ref) {
         title: 'Zoom özeti hazır!',
         body: 'Yeni toplantı otomatik özetlendi.',
       );
+
+      isSummarizing = false;
     }
   });
 

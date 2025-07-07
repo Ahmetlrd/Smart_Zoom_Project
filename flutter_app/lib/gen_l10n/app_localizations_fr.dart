@@ -69,7 +69,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get update => 'Mettre à jour';
 
   @override
-  String get save => 'Enregistrer';
+  String get save => 'enregistrer et Terminer';
 
   @override
   String get nosummaryyet => 'Aucun résumé de réunion n\'a encore été créé.';
@@ -139,4 +139,7 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get newmeetingsummarized =>
       'La nouvelle réunion a été résumée automatiquement.';
+
+  @override
+  String get settings => 'Paramètres';
 }

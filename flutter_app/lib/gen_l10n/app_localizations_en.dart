@@ -69,7 +69,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get update => 'Update';
 
   @override
-  String get save => 'Save';
+  String get save => 'Save and Finish';
 
   @override
   String get nosummaryyet => 'No meeting summary created yet.';
@@ -137,4 +137,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get newmeetingsummarized =>
       'New meeting has been automatically summarized.';
+
+  @override
+  String get settings => 'Settings';
 }

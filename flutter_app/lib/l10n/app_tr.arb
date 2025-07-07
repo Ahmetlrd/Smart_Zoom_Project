@@ -21,7 +21,7 @@
     "close":"Kapat",
     "delete":"Sil",
     "update":"Güncelle",
-    "save":"Kaydet",
+    "save":"Kaydet ve Bitir",
     "nosummaryyet":"Henüz bir toplantı özeti oluşturulmadı.",
     "firstnotification":"uygulama ilk açıldı test bildirimi",
     "testnotification":"Bildirim izni çalışıyor!",
@@ -42,7 +42,8 @@
     "joinedmeeting":"Toplantıya Katıldınız",
     "wannapsummarize":"Toplantı sonunda özet alabilmek için kaydı başlatmayı unutmayın.",
     "summaryready":"Zoom özeti hazır!",
-    "newmeetingsummarized":"Yeni toplantı otomatik özetlendi."
+    "newmeetingsummarized":"Yeni toplantı otomatik özetlendi.",
+    "settings":"Ayarlar"
 
 
 

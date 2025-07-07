@@ -20,7 +20,7 @@ import 'package:flutter_app/splash.dart';
 final routerProvider = Provider<GoRouter>((ref) {
   // Check login status from the authProvider
   final isLoggedIn = ref.watch(authProvider);
-final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 
   return GoRouter(
     navigatorKey: navKey,
@@ -34,12 +34,20 @@ final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 
     // Define all the app routes
     routes: [
-      
       // If user is logged in, go to HomePage; otherwise go to Login screen
       GoRoute(
-        path: '/',
-        builder: (context, state) => const SplashScreen(),
-      ),
+  path: '/',
+  pageBuilder: (context, state) {
+    return CustomTransitionPage(
+      child: const SplashScreen(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        // Tüm geçişlerde aynı animasyon
+        return FadeTransition(opacity: animation, child: child);
+      },
+    );
+  },
+),
+
 
       // Define other static routes
 
@@ -80,7 +88,20 @@ final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
         ),
       ),
 
-      GoRoute(path: '/settings', builder: (context, state) => const Settings()),
+      GoRoute(
+        path: '/settings',
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            child: const Settings(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              // Tüm geçişlerde aynı animasyon
+              return FadeTransition(opacity: animation, child: child);
+            },
+          );
+        },
+      ),
+
       GoRoute(
         path: '/meetinglist',
         pageBuilder: (context, state) => CustomTransitionPage(
@@ -158,7 +179,7 @@ final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
       GoRoute(
         path: '/meetingdetailpage',
         pageBuilder: (context, state) => CustomTransitionPage(
-          child:  MeetingDetailPage(),
+          child: MeetingDetailPage(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return ScaleTransition(
               scale: Tween<double>(begin: 0.95, end: 1.0).animate(

@@ -23,17 +23,54 @@ class _NlpState extends ConsumerState<Nlp> {
   bool isLoading = false;
 
   @override
-  void initState() {
-    super.initState();
-    summary = latestSummary;
+void initState() {
+  super.initState();
+  summary = latestSummary;
 
-    if (summary != null && summary!.trim().isNotEmpty) {
-      Future.microtask(() {
-        ref.read(summaryProvider.notifier).state = summary;
-        print("✅ summaryProvider güncellendi (initState): $summary");
-      });
-    }
+  if (summary != null && summary!.trim().isNotEmpty) {
+    Future.microtask(() async {
+      ref.read(summaryProvider.notifier).state = summary;
+      print("✅ summaryProvider güncellendi (initState): $summary");
+
+      // ✅ Firestore'a otomatik kaydetme bloğu
+      if (summary != lastSavedSummary) {
+        final email = ref.read(authProvider.notifier).userInfo?['email'];
+        if (email != null) {
+          String title = 'Başlıksız';
+          try {
+            final titleLine = summary!
+                .split('\n')
+                .firstWhere((line) => line.startsWith('Title:'), orElse: () => '');
+            if (titleLine.isNotEmpty) {
+              title = titleLine.replaceFirst('Title:', '').replaceAll('"', '').trim();
+            }
+          } catch (e) {
+            debugPrint('⚠️ Başlık ayrıştırılamadı: $e');
+          }
+
+          final docRef = FirebaseFirestore.instance
+              .collection('summaries')
+              .doc(email)
+              .collection('history')
+              .doc('latest_summary'); // sabit ID ile yaz (opsiyonel)
+
+          await docRef.set({
+            'title': title,
+            'text': summary,
+            'transcript': latestTranscript,
+            'timestamp': DateTime.now().toIso8601String(),
+            'isNew': true,
+            'isReviewed': false,
+          });
+
+          lastSavedSummary = summary;
+          print('💾 NLP özeti otomatik kaydedildi');
+        }
+      }
+    });
   }
+}
+
 
   void regenerateSummaryWithUserInput() async {
     if (summary == null) return;
@@ -119,6 +156,7 @@ Lütfen özeti bu yeni isteğe göre oluştur. Kısa, öz ve bilgi odaklı yaz.
         'text': summary,
         'transcript': latestTranscript,
         'timestamp': DateTime.now().toIso8601String(),
+        'isReviewed': false, 
       });
 
       setState(() {

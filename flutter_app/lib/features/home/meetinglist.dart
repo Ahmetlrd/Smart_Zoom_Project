@@ -17,7 +17,7 @@ class Meetinglist extends ConsumerWidget {
 
     if (email == null) {
       context.go('/login');
-      return  Scaffold(
+      return Scaffold(
         body: Center(child: Text(d!.pleaselogin)),
       );
     }
@@ -40,7 +40,7 @@ class Meetinglist extends ConsumerWidget {
           final docs = snapshot.data?.docs ?? [];
 
           if (docs.isEmpty) {
-            return  Center(child: Text(d!.nomeetingfound));
+            return Center(child: Text(d!.nomeetingfound));
           }
 
           return ListView.builder(
@@ -72,8 +72,25 @@ class Meetinglist extends ConsumerWidget {
                 margin: const EdgeInsets.only(bottom: 16),
                 elevation: 3,
                 child: ExpansionTile(
-                  title: Text(title,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  title: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (data['isReviewed'] == false)
+                        const Padding(
+                          padding: EdgeInsets.only(left: 8.0),
+                          child: CircleAvatar(
+                            radius: 5,
+                            backgroundColor: Colors.red,
+                          ),
+                        ),
+                    ],
+                  ),
                   subtitle: Text("$formattedDate ($relative)"),
                   trailing: const Icon(Icons.folder),
                   children: [
@@ -84,7 +101,7 @@ class Meetinglist extends ConsumerWidget {
                         showDialog(
                           context: context,
                           builder: (BuildContext dialogContext) => AlertDialog(
-                            title:  Text(d!.transcription),
+                            title: Text(d!.transcription),
                             content: SingleChildScrollView(
                                 child: Text(transcript.isNotEmpty
                                     ? transcript
@@ -93,8 +110,7 @@ class Meetinglist extends ConsumerWidget {
                               TextButton(
                                 onPressed: () =>
                                     Navigator.of(dialogContext).pop(),
-                                child:  Text(d!.close),
-
+                                child: Text(d!.close),
                               ),
                             ],
                           ),
@@ -103,12 +119,12 @@ class Meetinglist extends ConsumerWidget {
                     ),
                     ListTile(
                       leading: const Icon(Icons.summarize_outlined),
-                      title:  Text(d!.summary),
+                      title: Text(d!.summary),
                       onTap: () {
                         showDialog(
                           context: context,
                           builder: (BuildContext dialogContext) => AlertDialog(
-                            title:  Text(d!.summary),
+                            title: Text(d!.summary),
                             content: SingleChildScrollView(
                                 child: Text(summary.isNotEmpty
                                     ? summary
@@ -117,7 +133,7 @@ class Meetinglist extends ConsumerWidget {
                               TextButton(
                                 onPressed: () =>
                                     Navigator.of(dialogContext).pop(),
-                                child:  Text(d!.close),
+                                child: Text(d!.close),
                               ),
                             ],
                           ),
@@ -134,20 +150,18 @@ class Meetinglist extends ConsumerWidget {
                               context: context,
                               builder: (BuildContext confirmContext) =>
                                   AlertDialog(
-                                title:  Text(
-                                    d.wannadeletemeeting),
-                                content:  Text(
-                                    d.areyousuretocont),
+                                title: Text(d.wannadeletemeeting),
+                                content: Text(d.areyousuretocont),
                                 actions: [
                                   TextButton(
                                     onPressed: () =>
                                         Navigator.pop(confirmContext, false),
-                                    child:  Text(d.cancel),
+                                    child: Text(d.cancel),
                                   ),
                                   TextButton(
                                     onPressed: () =>
                                         Navigator.pop(confirmContext, true),
-                                    child:  Text(d.delete,
+                                    child: Text(d.delete,
                                         style: TextStyle(color: Colors.red)),
                                   ),
                                 ],
@@ -156,13 +170,15 @@ class Meetinglist extends ConsumerWidget {
 
                             if (confirm == true) {
                               await doc.reference.delete();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                 SnackBar(
-                                    content: Text(d.meetingdeleted)),
-                              );
+
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(d.meetingdeleted)),
+                                );
+                              }
                             }
                           },
-                          child:  Text(d.delete,
+                          child: Text(d.delete,
                               style: TextStyle(color: Colors.red)),
                         ),
                       ),

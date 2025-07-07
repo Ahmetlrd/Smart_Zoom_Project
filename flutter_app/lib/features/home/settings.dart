@@ -1,11 +1,13 @@
+import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/features/home/utility.dart';
+import 'package:flutter_app/gen_l10n/app_localizations.dart';
 import 'package:flutter_app/providers/auth_provider.dart';
 import 'package:flutter_app/providers/locale_provider.dart';
+import 'package:flutter_app/services/notifications_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_app/gen_l10n/app_localizations.dart';
 
 class Settings extends ConsumerStatefulWidget {
   const Settings({super.key});
@@ -16,203 +18,245 @@ class Settings extends ConsumerStatefulWidget {
 
 class _SettingsState extends ConsumerState<Settings> {
   List<String> languages = ['English', 'Türkçe', 'German', 'French'];
-  String selectedLanguage = "English";
+  String selectedLanguage = 'English';
   bool switchControl = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedSettings();
+  }
+
+  Future<void> _loadSavedSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedLang = prefs.getString('selected_locale');
+    final notificationEnabled = prefs.getBool('notifications_enabled') ?? true;
+
+    setState(() => switchControl = notificationEnabled);
+
+    if (savedLang != null) {
+      selectedLanguage = _mapLocaleToLang(savedLang);
+      ref.read(localeProvider.notifier).setLocale(Locale(savedLang));
+    }
+  }
+
+  String _mapLocaleToLang(String code) {
+    switch (code) {
+      case 'tr':
+        return 'Türkçe';
+      case 'de':
+        return 'German';
+      case 'fr':
+        return 'French';
+      default:
+        return 'English';
+    }
+  }
+
+  String _mapLangToLocaleCode(String lang) {
+    switch (lang) {
+      case 'Türkçe':
+        return 'tr';
+      case 'German':
+        return 'de';
+      case 'French':
+        return 'fr';
+      default:
+        return 'en';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final isLoggedIn = ref.watch(authProvider);
-    final d = AppLocalizations.of(context);
+    final d = AppLocalizations.of(context)!;
     final locale = ref.watch(localeProvider);
-    selectedLanguage = _selectedLanguageFromLocale(locale);
+    selectedLanguage = _mapLocaleToLang(locale?.languageCode ?? 'en');
 
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
     final screenHeight = size.height;
-
-    final iconSize = screenWidth * 0.10;
-    final fontSize = screenWidth * 0.045;
-    final horizontalPadding = screenWidth * 0.08;
-    final dropdownWidth = screenWidth * 0.4;
-    final buttonWidth = screenWidth * 0.6;
-    final spacing = screenHeight * 0.03;
-
-    final imageUrl = ref.read(authProvider.notifier).userInfo?['pic_url'];
+    final user = ref.read(authProvider.notifier).userInfo;
 
     return Scaffold(
-      appBar: Utility.buildAppBar(context),
-      backgroundColor: const Color(0xFFF7F7FC),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // User Info Card
-            InkWell(
-              onTap: () => isLoggedIn
-                  ? context.push('/userinfo')
-                  : context.go('/'),
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                elevation: 4,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 40,
-                        backgroundColor: Colors.grey.shade200,
-                        child: ClipOval(
-                          child: imageUrl != null
-                              ? Image.network(
-                                  imageUrl,
-                                  width: 80,
-                                  height: 80,
-                                  fit: BoxFit.cover,
-                                  loadingBuilder: (context, child, loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return const Center(child: CircularProgressIndicator(strokeWidth: 2));
-                                  },
-                                )
-                              : Image.asset(
-                                  'pictures/avatar.png',
-                                  width: 80,
-                                  height: 80,
-                                  fit: BoxFit.cover,
-                                ),
-                        ),
+      body: Stack(
+        children: [
+          Container(
+            width: double.infinity,
+            height: screenHeight,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("pictures/Blue Gradient Background Poster.png"),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  width: screenWidth < 600 ? screenWidth * 0.95 : 600,
+                  padding: const EdgeInsets.all(32),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.8),
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
                       ),
-                      const SizedBox(width: 20),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              isLoggedIn
-                                  ? "${ref.read(authProvider.notifier).userInfo?['first_name'] ?? ''} ${ref.read(authProvider.notifier).userInfo?['last_name'] ?? ''}"
-                                  : d!.pleaselogin,
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
+                    ],
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: IconButton(
+                            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 22),
+                            color: Colors.grey.shade800,
+                            onPressed: () => context.go('/home'),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Image.asset('pictures/appicon_1.png', height: 64),
+                        const SizedBox(height: 16),
+                        Text(
+                          "Listen once. Focus on the meeting. Understand always.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey.shade800,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        if (isLoggedIn) ...[
+                          GestureDetector(
+                            onTap: () => context.push('/userinfo'),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                              margin: const EdgeInsets.only(bottom: 24),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.9),
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    blurRadius: 8,
+                                    offset: Offset(0, 4),
+                                  )
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 28,
+                                    backgroundImage: user?['pic_url'] != null
+                                        ? NetworkImage(user!['pic_url'])
+                                        : const AssetImage('pictures/avatar.png') as ImageProvider,
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "${user?['first_name'] ?? ''} ${user?['last_name'] ?? ''}",
+                                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                      ),
+                                      Text(
+                                        user?['email'] ?? '',
+                                        style: TextStyle(color: Colors.grey.shade700),
+                                      ),
+                                    ],
+                                  ),
+                                  const Spacer(),
+                                  const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                                ],
                               ),
                             ),
-                            const SizedBox(height: 6),
-                            Text(
-                              d!.moreinfo,
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: isLoggedIn ? Colors.blueAccent : Colors.grey,
-                                decoration: isLoggedIn ? TextDecoration.underline : TextDecoration.none,
+                          ),
+                        ],
+                        const SizedBox(height: 32),
+                        Row(
+                          children: [
+                            const Icon(Icons.language),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: DropdownButton<String>(
+                                value: selectedLanguage,
+                                isExpanded: true,
+                                underline: const SizedBox.shrink(),
+                                padding: const EdgeInsets.symmetric(horizontal: 12),
+                                borderRadius: BorderRadius.circular(8),
+                                dropdownColor: Colors.white,
+                                items: languages.map((lang) {
+                                  return DropdownMenuItem(
+                                    value: lang,
+                                    child: Text(lang),
+                                  );
+                                }).toList(),
+                                onChanged: (value) async {
+                                  setState(() => selectedLanguage = value!);
+                                  final langCode = _mapLangToLocaleCode(value!);
+                                  await ref.read(localeProvider.notifier).setLocale(Locale(langCode));
+                                  final prefs = await SharedPreferences.getInstance();
+                                  await prefs.setString('selected_locale', langCode);
+                                },
                               ),
                             ),
                           ],
                         ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: spacing * 1.5),
-
-            // Language Selection
-            Text(d.language,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                const Icon(Icons.language, size: 28),
-                const SizedBox(width: 16),
-                SizedBox(
-                  width: dropdownWidth,
-                  child: DropdownButton<String>(
-                    value: selectedLanguage,
-                    isExpanded: true,
-                    items: languages
-                        .map((lang) => DropdownMenuItem(
-                              value: lang,
-                              child: Text(lang),
-                            ))
-                        .toList(),
-                    onChanged: (value) async {
-                      setState(() => selectedLanguage = value!);
-
-                      if (value == "Türkçe") {
-                        await ref.read(localeProvider.notifier).setLocale(const Locale('tr'));
-                      } else if (value == "English") {
-                        await ref.read(localeProvider.notifier).setLocale(const Locale('en'));
-                      } else if (value == "German") {
-                        await ref.read(localeProvider.notifier).setLocale(const Locale('de'));
-                      } else if (value == "French") {
-                        await ref.read(localeProvider.notifier).setLocale(const Locale('fr'));
-                      }
-                    },
-                  ),
-                ),
-              ],
-            ),
-
-            SizedBox(height: spacing * 2),
-
-            // Notification Toggle
-            Text(d.notifications,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                const Icon(Icons.notifications, size: 28),
-                const SizedBox(width: 16),
-                Switch(
-                  value: switchControl,
-                  onChanged: (val) {
-                    setState(() => switchControl = val);
-                  },
-                ),
-              ],
-            ),
-
-            SizedBox(height: spacing * 2),
-
-            // Logout
-            if (isLoggedIn)
-              Center(
-                child: SizedBox(
-                  width: buttonWidth,
-                  height: screenHeight * 0.07,
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.redAccent,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    icon: const Icon(Icons.logout),
-                    onPressed: () async {
-                      await ref.read(authProvider.notifier).logout();
-                      context.go('/');
-                    },
-                    label: Text(
-                      d.logout,
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        const SizedBox(height: 24),
+                        Row(
+                          children: [
+                            const Icon(Icons.notifications),
+                            const SizedBox(width: 12),
+                            Text(d.notifications),
+                            const Spacer(),
+                            CupertinoSwitch(
+                              value: switchControl,
+                              onChanged: (val) async {
+                                setState(() => switchControl = val);
+                                await NotificationService.toggle(val);
+                              },
+                              activeColor: const Color(0xFF2563EB),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 32),
+                        if (isLoggedIn)
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton.icon(
+                              onPressed: () async {
+                                await ref.read(authProvider.notifier).logout();
+                                context.go('/');
+                              },
+                              icon: const Icon(Icons.logout),
+                              label: Text(d.logout),
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                backgroundColor: Colors.redAccent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ),
               ),
-          ],
-        ),
+            ),
+          ),
+        ],
       ),
     );
-  }
-
-  String _selectedLanguageFromLocale(Locale? locale) {
-    if (locale == null) return 'English';
-    if (locale.languageCode == 'tr') return 'Türkçe';
-    if (locale.languageCode == 'en') return 'English';
-    if (locale.languageCode == 'de') return 'German';
-    if (locale.languageCode == 'fr') return 'French';
-    return 'English';
   }
 }

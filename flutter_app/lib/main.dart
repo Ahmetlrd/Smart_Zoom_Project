@@ -74,6 +74,10 @@ Future<void> _processZoomUri(
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return const SizedBox.shrink();
+  };
+
 
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp();
