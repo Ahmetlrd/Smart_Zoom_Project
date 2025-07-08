@@ -1,5 +1,5 @@
+import 'package:flutter_app/services/firestore_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../services/firestore_service.dart';
 import 'auth_provider.dart';
 
 // FirestoreService provider to access Firestore methods

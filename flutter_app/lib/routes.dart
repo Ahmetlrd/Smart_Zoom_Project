@@ -138,7 +138,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           transitionDuration: const Duration(milliseconds: 400),
         ),
       ),
-      GoRoute(
+      /*GoRoute(
         path: '/nlp',
         pageBuilder: (context, state) => CustomTransitionPage(
           child: const Nlp(),
@@ -155,7 +155,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           },
           transitionDuration: const Duration(milliseconds: 400),
         ),
-      ),
+      ),*/
       GoRoute(
         path: '/userinfo',
         pageBuilder: (context, state) => CustomTransitionPage(

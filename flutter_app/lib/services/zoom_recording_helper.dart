@@ -1,9 +1,11 @@
 import 'dart:io';
-import 'package:flutter_app/services/summary_saver.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_app/services/openai_service.dart';
+import 'package:flutter_app/services/summary_saver.dart';
 import 'package:flutter_app/services/notifications_service.dart';
 import 'package:flutter_app/providers/summary_provider.dart';
+import 'package:flutter_app/providers/locale_provider.dart';
 
 String? latestSummary;
 String? latestTranscript;
@@ -43,14 +45,12 @@ Future<void> runDirectZoomSummaryFlow(WidgetRef ref) async {
   print("✅ ${files.length} ses dosyası bulundu.");
   final service = OpenAIService();
 
-  print("🎧 Tüm ses dosyaları Whisper’a gönderiliyor...");
+  print("🎧 Ses dosyaları Whisper’a gönderiliyor...");
   final List<String> transcripts = [];
 
   for (final file in files) {
     final transcript = await service.transcribeAudio(file);
-    if (transcript != null) {
-      transcripts.add(transcript);
-    }
+    if (transcript != null) transcripts.add(transcript);
   }
 
   if (transcripts.isEmpty) {
@@ -59,10 +59,13 @@ Future<void> runDirectZoomSummaryFlow(WidgetRef ref) async {
   }
 
   final combinedTranscript = transcripts.join("\n\n");
-  print("📄 Birleştirilmiş Transcript:\n$combinedTranscript");
+  print("📄 Birleştirilmiş transcript:\n$combinedTranscript");
+
+  final locale = ref.read(localeProvider) ?? const Locale('tr');
+  print("🌐 Aktif dil: ${locale.languageCode}");
 
   print("🧠 GPT-4 ile özetleniyor...");
-  final summary = await service.summarizeText(combinedTranscript);
+  final summary = await service.summarizeText(combinedTranscript, locale);
 
   if (summary == null) {
     print("❌ Özetleme başarısız.");
@@ -79,12 +82,12 @@ Future<void> runDirectZoomSummaryFlow(WidgetRef ref) async {
   );
 
   ref.read(summaryProvider.notifier).state = summary;
-  print("✅ summaryProvider güncellendi: $summary");
+  print("✅ summaryProvider güncellendi.");
 }
 
 bool isSummarizing = false;
 
-void watchZoomFolder(WidgetRef ref) {
+void watchZoomFolder(WidgetRef ref, Locale locale) {
   final zoomDir = Directory('/Users/${Platform.environment['USER']}/Documents/Zoom');
 
   if (!zoomDir.existsSync()) {
@@ -95,7 +98,7 @@ void watchZoomFolder(WidgetRef ref) {
   zoomDir.watch(recursive: true).listen((event) async {
     if (event.type == FileSystemEvent.create && event.path.toLowerCase().endsWith('.m4a')) {
       if (isSummarizing) {
-        print("⏳ Özetleme zaten devam ediyor, yeni istek beklemeye alındı.");
+        print("⏳ Özetleme zaten devam ediyor.");
         return;
       }
 

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/main.dart';
+import 'package:flutter_app/providers/locale_provider.dart';
 import 'package:flutter_app/providers/summary_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,11 +10,9 @@ import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:flutter_app/gen_l10n/app_localizations.dart';
 import 'package:flutter_app/providers/auth_provider.dart';
-import 'package:flutter_app/providers/folder_provider.dart';
 import 'package:flutter_app/services/openai_service.dart';
 import 'package:flutter_app/services/macos_folder_service.dart';
 import 'package:flutter_app/services/zoom_permission_service.dart';
-import 'package:flutter_app/services/secure_storage_service.dart';
 import 'package:window_size/window_size.dart';
 
 final searchQueryProvider = StateProvider<String>((ref) => '');
@@ -63,16 +62,19 @@ class _HomePageState extends ConsumerState<HomePage> {
       final result = await showDialog<bool>(
         context: context,
         barrierDismissible: false,
-        builder: (_) => AlertDialog(
-          title: const Text("Zoom Klasörü Gerekli"),
-          content: const Text(
-              "Lütfen Zoom klasörünü seçin. Bu klasör içinde .m4a dosyaları olmalıdır."),
-          actions: [
-            TextButton(
-                child: const Text("Klasör Seç"),
-                onPressed: () => Navigator.pop(context, true)),
-          ],
-        ),
+        builder: (dialogContext) {
+          final d = AppLocalizations.of(dialogContext)!;
+          return AlertDialog(
+            title: Text(d.needzoomfile),
+            content: Text(d.needzoomfileexp),
+            actions: [
+              TextButton(
+                child: Text(d.choosefile),
+                onPressed: () => Navigator.pop(dialogContext, true),
+              ),
+            ],
+          );
+        },
       );
 
       if (result != true) break;
@@ -91,8 +93,8 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final d = AppLocalizations.of(context)!;
+
     final email = ref.watch(authProvider.notifier).userInfo?['email'];
-    final selected = ref.watch(selectedMeetingProvider);
     final selectedTab = ref.watch(selectedTabProvider);
 
     return Scaffold(
@@ -127,7 +129,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(6)),
             ),
-            child: Text("Summary",
+            child: Text(d.summary,
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: selectedTab == 'summary'
@@ -145,7 +147,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(6)),
             ),
-            child: Text("Transcript",
+            child: Text(d.transcription,
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: selectedTab == 'transcript'
@@ -156,7 +158,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         ],
       ),
       body: email == null
-          ? const Center(child: Text("Giriş yapılmadı."))
+          ? Center(child: Text(d.couldnotlogin))
           : Row(
               children: [
                 Expanded(flex: 2, child: _buildMeetingList(email)),
@@ -170,6 +172,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget _buildMeetingList(String email) {
     final selected = ref.watch(selectedMeetingProvider);
     final searchQuery = ref.watch(searchQueryProvider);
+    final d = AppLocalizations.of(context)!;
 
     return Column(
       children: [
@@ -181,7 +184,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: "Toplantı başlığı ara...",
+                    hintText: d.searchformeeting,
                     prefixIcon: const Icon(Icons.search),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8)),
@@ -199,17 +202,16 @@ class _HomePageState extends ConsumerState<HomePage> {
                     final confirm = await showDialog<bool>(
                       context: context,
                       builder: (ctx) => AlertDialog(
-                        title: const Text("Toplantıyı sil"),
-                        content: const Text(
-                            "Bu toplantı kaydını silmek istediğinizden emin misiniz?"),
+                        title: Text(d.deletemeeting),
+                        content: Text(d.areyousuretodeletemeeting),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(ctx, false),
-                            child: const Text("İptal"),
+                            child: Text(d.cancel),
                           ),
                           TextButton(
                             onPressed: () => Navigator.pop(ctx, true),
-                            child: const Text("Sil",
+                            child: Text(d.delete,
                                 style: TextStyle(color: Colors.red)),
                           ),
                         ],
@@ -254,11 +256,15 @@ class _HomePageState extends ConsumerState<HomePage> {
                       DateTime.tryParse(timestampStr ?? '') ?? DateTime.now();
                   final formatted =
                       "${timestamp.year}-${timestamp.month.toString().padLeft(2, '0')}-${timestamp.day.toString().padLeft(2, '0')}";
-                  final ago = timeago.format(timestamp, locale: 'tr');
+                  final localeCode =
+                      ref.watch(localeProvider)?.languageCode ?? 'en';
+                  final ago = timeago.format(timestamp, locale: localeCode);
                   final isSelected = selected?.id == doc.id;
 
                   return ListTile(
-                    tileColor: isSelected ? const Color.fromARGB(255, 195, 224, 245) : null,
+                    tileColor: isSelected
+                        ? const Color.fromARGB(255, 195, 224, 245)
+                        : null,
                     title: Row(
                       children: [
                         Expanded(
@@ -290,8 +296,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final selected = ref.watch(selectedMeetingProvider);
     final selectedTab = ref.watch(selectedTabProvider);
 
-    if (selected == null)
-      return const Center(child: Text("Bir toplantı seçin."));
+    if (selected == null) return Center(child: Text(d.selectameeting));
 
     return StreamBuilder<DocumentSnapshot>(
       stream: selected.reference.snapshots(),
@@ -359,10 +364,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                 child: Column(
                   children: [
                     if (isLoading)
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.only(bottom: 8),
                         child: Center(
-                          child: Text("Generating...",
+                          child: Text(d.generating,
                               style: TextStyle(color: Colors.blueAccent)),
                         ),
                       ),
@@ -374,7 +379,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                             focusNode: _focusNode,
                             decoration: InputDecoration(
                               hintText:
-                                  isLoading ? 'Generating...' : d.writeprompt,
+                                  isLoading ? d.generating : d.writeprompt,
                               border: const OutlineInputBorder(),
                               prefixIcon:
                                   const Icon(Icons.tips_and_updates_outlined),
@@ -471,63 +476,39 @@ class _HomePageState extends ConsumerState<HomePage> {
 
     setState(() => isLoading = true);
 
-    final prompt = """
-Aşağıdaki Zoom toplantısı transkriptine göre yeni bir özet oluştur.
+    final locale = ref.read(localeProvider) ?? const Locale('tr');
+    final d = AppLocalizations.of(context)!;
+    final prompt = d.promptsecond(transcript, summary, _controller.text.trim());
 
-İlk olarak transkripti analiz ederek bir başlık üret. Bu başlık şu kurala uygun olmalı:
-- Sadece 1 satır
-- \"Title: \" ile başlamalı
-- Maksimum 5 kelime
-- Tırnak kullanılmamalı
-
-Sonrasında, başlık satırının altına toplantının içeriğini kullanıcı isteğine göre yeniden özetle. Bu özet:
-- Bilgi odaklı ve kısa olmalı
-- Gündemi ve önemli kararları içermeli
-- Kullanıcının talebine uygun olmalı
-
-TRANSKRİPT:
-$transcript
-
-ÖNCEKİ ÖZET:
-$summary
-
-KULLANICININ YENİ İSTEĞİ:
-\"${_controller.text}\"
-
-Çıktı formatın şuna benzemeli:
-
-Title: Pazarlama Toplantısı Özeti
-
-Görüşmede, yeni dijital stratejilerin...
-""";
+    print("🌍 Locale: ${locale.languageCode}");
+    print("🧪 Prompt:\n$prompt");
 
     final service = OpenAIService();
-    final newSummary = await service.summarizeText(prompt);
+    final newSummary = await service.summarizeText(prompt, locale);
 
     if (newSummary != null) {
-  String title = 'Başlıksız';
-  try {
-    final lines = newSummary.split('\n');
-    final titleLine = lines.firstWhere(
-      (line) => line.toLowerCase().contains('title:'),
-      orElse: () => '',
-    );
+      String title = 'Başlıksız';
+      try {
+        final lines = newSummary.split('\n');
+        final titleLine = lines.firstWhere(
+          (line) => line.toLowerCase().contains('title:'),
+          orElse: () => '',
+        );
 
-    if (titleLine.isNotEmpty) {
-      title = titleLine.split(':').sublist(1).join(':').trim();
-      title = title.replaceAll(RegExp(r'^["“”]+|["“”]+$'), '');
+        if (titleLine.isNotEmpty) {
+          title = titleLine.split(':').sublist(1).join(':').trim();
+          title = title.replaceAll(RegExp(r'^["“”]+|["“”]+$'), '');
+        }
+      } catch (e) {
+        print('⚠️ Başlık ayrıştırılamadı: $e');
+      }
+
+      await selected.reference.update({
+        'title': title,
+        'text': newSummary,
+        'isReviewed': false,
+      });
     }
-  } catch (e) {
-    print('⚠️ Başlık ayrıştırılamadı: $e');
-  }
-
-  await selected.reference.update({
-    'title': title,
-    'text': newSummary,
-    'isReviewed': false,
-  });
-}
-
 
     setState(() => isLoading = false);
     _controller.clear();

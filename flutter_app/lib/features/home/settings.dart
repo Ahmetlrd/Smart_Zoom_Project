@@ -86,7 +86,8 @@ class _SettingsState extends ConsumerState<Settings> {
             height: screenHeight,
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("pictures/Blue Gradient Background Poster.png"),
+                image:
+                    AssetImage("pictures/Blue Gradient Background Poster.png"),
                 fit: BoxFit.cover,
               ),
             ),
@@ -111,35 +112,61 @@ class _SettingsState extends ConsumerState<Settings> {
                     ],
                   ),
                   child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: IconButton(
-                            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 22),
-                            color: Colors.grey.shade800,
-                            onPressed: () => context.go('/home'),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Image.asset('pictures/appicon_1.png', height: 64),
-                        const SizedBox(height: 16),
-                        Text(
-                          "Listen once. Focus on the meeting. Understand always.",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey.shade800,
-                          ),
-                        ),
+  child: Column(
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+     Stack(
+  alignment: Alignment.center,
+  children: [
+    Align(
+      alignment: Alignment.centerLeft,
+      child: IconButton(
+        icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 22),
+        color: Colors.grey.shade800,
+        onPressed: () => context.go('/home'),
+      ),
+    ),
+    Center(
+      child: Text(
+        d.settings,
+        style: TextStyle(
+          fontSize: 30,
+          fontWeight: FontWeight.w700,
+          color: Colors.grey.shade800,
+          letterSpacing: 0.5,
+        ),
+      ),
+    ),
+  ],
+),
+
+      const SizedBox(height: 12),
+      Center(
+        child: Column(
+          children: [
+            Image.asset('pictures/appicon_1.png', height: 64),
+            const SizedBox(height: 12),
+            Text(
+              "Listen once. Focus on the meeting. Understand always.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey.shade800,
+              ),
+            ),
+          ],
+        ),
+      ),
+
                         const SizedBox(height: 24),
                         if (isLoggedIn) ...[
                           GestureDetector(
                             onTap: () => context.push('/userinfo'),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 16, horizontal: 20),
                               margin: const EdgeInsets.only(bottom: 24),
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.9),
@@ -158,24 +185,31 @@ class _SettingsState extends ConsumerState<Settings> {
                                     radius: 28,
                                     backgroundImage: user?['pic_url'] != null
                                         ? NetworkImage(user!['pic_url'])
-                                        : const AssetImage('pictures/avatar.png') as ImageProvider,
+                                        : const AssetImage(
+                                                'pictures/avatar.png')
+                                            as ImageProvider,
                                   ),
                                   const SizedBox(width: 16),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "${user?['first_name'] ?? ''} ${user?['last_name'] ?? ''}",
-                                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                        style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600),
                                       ),
                                       Text(
                                         user?['email'] ?? '',
-                                        style: TextStyle(color: Colors.grey.shade700),
+                                        style: TextStyle(
+                                            color: Colors.grey.shade700),
                                       ),
                                     ],
                                   ),
                                   const Spacer(),
-                                  const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                                  const Icon(Icons.arrow_forward_ios,
+                                      size: 16, color: Colors.grey),
                                 ],
                               ),
                             ),
@@ -191,7 +225,8 @@ class _SettingsState extends ConsumerState<Settings> {
                                 value: selectedLanguage,
                                 isExpanded: true,
                                 underline: const SizedBox.shrink(),
-                                padding: const EdgeInsets.symmetric(horizontal: 12),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 12),
                                 borderRadius: BorderRadius.circular(8),
                                 dropdownColor: Colors.white,
                                 items: languages.map((lang) {
@@ -203,9 +238,13 @@ class _SettingsState extends ConsumerState<Settings> {
                                 onChanged: (value) async {
                                   setState(() => selectedLanguage = value!);
                                   final langCode = _mapLangToLocaleCode(value!);
-                                  await ref.read(localeProvider.notifier).setLocale(Locale(langCode));
-                                  final prefs = await SharedPreferences.getInstance();
-                                  await prefs.setString('selected_locale', langCode);
+                                  await ref
+                                      .read(localeProvider.notifier)
+                                      .setLocale(Locale(langCode));
+                                  final prefs =
+                                      await SharedPreferences.getInstance();
+                                  await prefs.setString(
+                                      'selected_locale', langCode);
                                 },
                               ),
                             ),
@@ -240,7 +279,8 @@ class _SettingsState extends ConsumerState<Settings> {
                               icon: const Icon(Icons.logout),
                               label: Text(d.logout),
                               style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
                                 backgroundColor: Colors.redAccent,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),

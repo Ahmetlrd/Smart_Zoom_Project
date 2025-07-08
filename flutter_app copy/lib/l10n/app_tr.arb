@@ -1,0 +1,62 @@
+{
+    "@@locale": "tr",
+    "login":"Zoom ile giriş yap",
+    "welcometext":"Uygulamaya Hoşgeldiniz",
+    "language":"Dil:",
+    "notifications":"Bildirimler:",
+    "meetinglist": "Toplantı Listesi",
+    "meetingdetails":"Toplantı detayları",
+    "nlpsummary":"NLP özeti",
+    "saved":"Kayıtlı özetler",
+    "logout":"Çıkış yap",
+    "participants": " Katılımcılar: ",
+    "transcription":" Kopya",
+    "summary":" Özet(AI)",
+    "notes":" Notlar",
+    "moreinfo":"Daha fazla bilgi",
+    "email":"E-posta",
+    "accounttype":"Hesap türü: ",
+    "pleaselogin":"Lütfen giriş yapınız",
+    "transcription":"Transkript",
+    "close":"Kapat",
+    "delete":"Sil",
+    "update":"Güncelle",
+    "save":"Kaydet",
+    "nosummaryyet":"Henüz bir toplantı özeti oluşturulmadı.",
+    "firstnotification":"uygulama ilk açıldı test bildirimi",
+    "testnotification":"Bildirim izni çalışıyor!",
+    "wannasave":"Kaydetmek istiyor musunuz?",
+    "savetofirestore":"Bu özeti Firestore'a kaydedeceksiniz. Devam edilsin mi?",
+    "savedsuccesfully":"Özet başarıyla kaydedildi.",
+    "writeprompt":"Özete eklenecek isteğinizi yazın...",
+    "abouttodelete":"Özeti silmek üzeresiniz",
+    "areyousuretodelete":"Bu işlem geri alınamaz. Özeti silmek istediğinize emin misiniz?",
+    "cancel":"Vazgeç",
+    "summarydeleted":"Özet silindi.",
+    "wannadeletemeeting":"Toplantıyı silmek istiyor musunuz?",
+    "areyousuretocont":"Bu işlem geri alınamaz. Devam edilsin mi?",
+    "meetingdeleted":"Toplantı silindi.",
+    "nosummaryfound":"Özet bulunamadı.",
+    "notranscriptfound":"Transkript bulunamadı.",
+    "nomeetingfound":"Hiç toplantı kaydı bulunamadı.",
+    "joinedmeeting":"Toplantıya Katıldınız",
+    "wannapsummarize":"Toplantı sonunda özet alabilmek için kaydı başlatmayı unutmayın.",
+    "summaryready":"Zoom özeti hazır!",
+    "newmeetingsummarized":"Yeni toplantı otomatik özetlendi."
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}

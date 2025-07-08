@@ -140,4 +140,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settings => 'Settings';
+
+  @override
+  String get loginonzoom => 'Please log in with your Zoom account.';
+
+  @override
+  String get needzoomfile => 'Zoom Folder Required';
+
+  @override
+  String get needzoomfileexp =>
+      'Please select the Zoom folder. This folder should contain .m4a files.';
+
+  @override
+  String get choosefile => 'Choose Folder';
+
+  @override
+  String get couldnotlogin => 'Login failed.';
+
+  @override
+  String get searchformeeting => 'Search meeting title...';
+
+  @override
+  String get deletemeeting => 'Delete meeting';
+
+  @override
+  String get areyousuretodeletemeeting =>
+      'Are you sure you want to delete this meeting record?';
+
+  @override
+  String get selectameeting => 'Select a meeting.';
+
+  @override
+  String get generating => 'Generating...';
+
+  @override
+  String promptsecond(Object transcript, Object summary, Object userRequest) {
+    return 'Using the following Zoom meeting transcripts, create a new, meaningful summary.\n\nThere are multiple transcript segments from different audio files. Treat them as a single conversation.\n\n1. Analyze the transcript and generate a clear and meaningful title, no more than 5 words. Return it only in this format:\nTitle: Your Title Here (without quotes)\n\n2. Below the title, write a professional, information-focused summary. This summary should include:\n- The meeting\'s purpose and main agenda\n- Who spoke (include names if available)\n- Topics, issues, and ideas discussed\n- Decisions made and conclusions\n- Action items (who, when, what)\n- Notable statements or highlights\n\nIf some parts are short or missing, summarize only what\'s given. Do not invent or repeat information.\n\nPREVIOUS GPT SUMMARY:\n$summary\n\nUSER\'S NEW REQUEST:\n\"$userRequest\"\n\nTRANSCRIPT:\n$transcript';
+  }
+
+  @override
+  String promptfirst(Object text) {
+    return 'Your task has two parts:\n\n1. **Generate a meeting title**: Analyze the transcript below and generate a concise, meaningful title of no more than 5 words. Return it in this exact format:\nTitle: Your Title Here\n\n2. **Generate a meeting summary**: The transcript below consists of segments from multiple audio recordings of a Zoom meeting. Each line or paragraph may represent a different part of the discussion. Your task is to combine these parts into a coherent and clear summary.\n\nThe summary should allow the reader to understand the meeting\'s key content without having attended. Write in a professional, academic tone using clear, simple English.\n\nYour summary must address:\n- The meeting\'s purpose and main agenda\n- Speaker(s) involved (mention names if available)\n- Key points, discussions, issues, and ideas\n- Decisions made and conclusions reached\n- Action items (who will do what and when)\n- Noteworthy statements or highlights\n\nSome parts may be short or incomplete. Do not mention missing info—summarize only what\'s present.\n\n> Note: Although the transcript may be split into segments, treat them as one continuous meeting.\n\nTRANSCRIPT:\n$text';
+  }
+
+  @override
+  String get userinfo => 'User Information';
 }

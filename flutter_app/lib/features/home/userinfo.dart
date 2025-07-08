@@ -69,30 +69,37 @@ class Userinfo extends ConsumerWidget {
                     ],
                   ),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Align(
-                          alignment: Alignment.topLeft,
-                          child: IconButton(
-                            icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                                size: 22),
-                            color: Colors.grey.shade800,
-                            onPressed: () =>
-                                context.go('/settings'),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                      Image.asset('pictures/appicon_1.png', height: 60),
-                      const SizedBox(height: 16),
-                      Text(
-                        "User Profile",
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueGrey.shade900,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
+  mainAxisSize: MainAxisSize.min,
+  children: [
+    Stack(
+      alignment: Alignment.center,
+      children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 22),
+            color: Colors.grey.shade800,
+            onPressed: () => context.go('/settings'),
+          ),
+        ),
+        Center(
+          child: Text(
+            d.userinfo, 
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.w700,
+              color: Colors.grey.shade800,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 16),
+    Image.asset('pictures/appicon_1.png', height: 60),
+    const SizedBox(height: 16),
+    const SizedBox(height: 24),
+
                       CircleAvatar(
                         radius: 48,
                         backgroundImage: userInfo['pic_url'] != null

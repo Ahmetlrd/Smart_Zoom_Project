@@ -102,263 +102,341 @@ abstract class AppLocalizations {
     Locale('tr')
   ];
 
-  /// No description provided for @login.
+  /// Button text for Zoom login
   ///
   /// In en, this message translates to:
   /// **'Login with Zoom'**
   String get login;
 
-  /// No description provided for @welcometext.
+  /// Welcome message displayed on app startup
   ///
   /// In en, this message translates to:
   /// **'WELCOME TO THE APPLICATION'**
   String get welcometext;
 
-  /// No description provided for @language.
+  /// Label for language selection
   ///
   /// In en, this message translates to:
   /// **'Language:'**
   String get language;
 
-  /// No description provided for @notifications.
+  /// Label for notification settings
   ///
   /// In en, this message translates to:
   /// **'Notifications:'**
   String get notifications;
 
-  /// No description provided for @meetinglist.
+  /// Title for the meeting list screen
   ///
   /// In en, this message translates to:
   /// **'Meeting List'**
   String get meetinglist;
 
-  /// No description provided for @meetingdetails.
+  /// Title for the meeting details screen
   ///
   /// In en, this message translates to:
   /// **'Meeting Details'**
   String get meetingdetails;
 
-  /// No description provided for @nlpsummary.
+  /// Title for NLP-generated summary section
   ///
   /// In en, this message translates to:
   /// **'NLP Summary'**
   String get nlpsummary;
 
-  /// No description provided for @saved.
+  /// Title for saved summaries section
   ///
   /// In en, this message translates to:
   /// **'Saved Summaries'**
   String get saved;
 
-  /// No description provided for @logout.
+  /// Button text for logging out
   ///
   /// In en, this message translates to:
   /// **'Logout'**
   String get logout;
 
-  /// No description provided for @participants.
+  /// Label for participant count
   ///
   /// In en, this message translates to:
   /// **' Participants: '**
   String get participants;
 
-  /// No description provided for @transcription.
+  /// Label for transcription section
   ///
   /// In en, this message translates to:
   /// **' Transcription'**
   String get transcription;
 
-  /// No description provided for @summary.
+  /// Label for AI-generated summary
   ///
   /// In en, this message translates to:
   /// **' Summary (AI)'**
   String get summary;
 
-  /// No description provided for @notes.
+  /// Label for notes section
   ///
   /// In en, this message translates to:
   /// **' Notes'**
   String get notes;
 
-  /// No description provided for @moreinfo.
+  /// Link text for additional information
   ///
   /// In en, this message translates to:
   /// **'More info'**
   String get moreinfo;
 
-  /// No description provided for @email.
+  /// Label for email field
   ///
   /// In en, this message translates to:
   /// **'Email'**
   String get email;
 
-  /// No description provided for @accounttype.
+  /// Label for account type information
   ///
   /// In en, this message translates to:
   /// **'Account Type: '**
   String get accounttype;
 
-  /// No description provided for @pleaselogin.
+  /// Message prompting user to log in
   ///
   /// In en, this message translates to:
   /// **'Please login'**
   String get pleaselogin;
 
-  /// No description provided for @close.
+  /// Button text to close a dialog
   ///
   /// In en, this message translates to:
   /// **'Close'**
   String get close;
 
-  /// No description provided for @delete.
+  /// Button text to delete an item
   ///
   /// In en, this message translates to:
   /// **'Delete'**
   String get delete;
 
-  /// No description provided for @update.
+  /// Button text to update an item
   ///
   /// In en, this message translates to:
   /// **'Update'**
   String get update;
 
-  /// No description provided for @save.
+  /// Button text to save and finish
   ///
   /// In en, this message translates to:
   /// **'Save and Finish'**
   String get save;
 
-  /// No description provided for @nosummaryyet.
+  /// Message when no summary exists
   ///
   /// In en, this message translates to:
   /// **'No meeting summary created yet.'**
   String get nosummaryyet;
 
-  /// No description provided for @firstnotification.
+  /// First test notification message
   ///
   /// In en, this message translates to:
   /// **'app opened first time test notification'**
   String get firstnotification;
 
-  /// No description provided for @testnotification.
+  /// Message confirming notification permission
   ///
   /// In en, this message translates to:
   /// **'Notification permission works!'**
   String get testnotification;
 
-  /// No description provided for @wannasave.
+  /// Confirmation message for saving
   ///
   /// In en, this message translates to:
   /// **'Do you want to save?'**
   String get wannasave;
 
-  /// No description provided for @savetofirestore.
+  /// Confirmation message for saving to Firestore
   ///
   /// In en, this message translates to:
   /// **'You will save this summary to Firestore. Continue?'**
   String get savetofirestore;
 
-  /// No description provided for @savedsuccesfully.
+  /// Success message after saving
   ///
   /// In en, this message translates to:
   /// **'Summary saved successfully.'**
   String get savedsuccesfully;
 
-  /// No description provided for @writeprompt.
+  /// Instruction for writing a prompt
   ///
   /// In en, this message translates to:
   /// **'Write your prompt to enhance the summary...'**
   String get writeprompt;
 
-  /// No description provided for @abouttodelete.
+  /// Warning message before deletion
   ///
   /// In en, this message translates to:
   /// **'You\'re about to delete the summary'**
   String get abouttodelete;
 
-  /// No description provided for @areyousuretodelete.
+  /// Confirmation message for summary deletion
   ///
   /// In en, this message translates to:
   /// **'This action cannot be undone. Are you sure you want to delete the summary?'**
   String get areyousuretodelete;
 
-  /// No description provided for @cancel.
+  /// Button text to cancel an action
   ///
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cancel;
 
-  /// No description provided for @summarydeleted.
+  /// Message after successful deletion
   ///
   /// In en, this message translates to:
   /// **'Summary deleted.'**
   String get summarydeleted;
 
-  /// No description provided for @wannadeletemeeting.
+  /// Confirmation message for meeting deletion
   ///
   /// In en, this message translates to:
   /// **'Do you want to delete the meeting?'**
   String get wannadeletemeeting;
 
-  /// No description provided for @areyousuretocont.
+  /// General confirmation message for irreversible actions
   ///
   /// In en, this message translates to:
   /// **'This action cannot be undone. Do you want to continue?'**
   String get areyousuretocont;
 
-  /// No description provided for @meetingdeleted.
+  /// Message after meeting deletion
   ///
   /// In en, this message translates to:
   /// **'Meeting deleted.'**
   String get meetingdeleted;
 
-  /// No description provided for @nosummaryfound.
+  /// Message when no summary is found
   ///
   /// In en, this message translates to:
   /// **'No summary found.'**
   String get nosummaryfound;
 
-  /// No description provided for @notranscriptfound.
+  /// Message when no transcript is found
   ///
   /// In en, this message translates to:
   /// **'No transcript found.'**
   String get notranscriptfound;
 
-  /// No description provided for @nomeetingfound.
+  /// Message when no meeting record is found
   ///
   /// In en, this message translates to:
   /// **'No meeting record found.'**
   String get nomeetingfound;
 
-  /// No description provided for @joinedmeeting.
+  /// Notification when user joins a meeting
   ///
   /// In en, this message translates to:
   /// **'You joined the meeting'**
   String get joinedmeeting;
 
-  /// No description provided for @wannapsummarize.
+  /// Instruction to start recording for summary
   ///
   /// In en, this message translates to:
   /// **'Start recording to get a summary.'**
   String get wannapsummarize;
 
-  /// No description provided for @summaryready.
+  /// Notification when summary is ready
   ///
   /// In en, this message translates to:
   /// **'Zoom summary is ready!'**
   String get summaryready;
 
-  /// No description provided for @newmeetingsummarized.
+  /// Notification for auto-summarized meeting
   ///
   /// In en, this message translates to:
   /// **'New meeting has been automatically summarized.'**
   String get newmeetingsummarized;
 
-  /// No description provided for @settings.
+  /// Title for settings screen
   ///
   /// In en, this message translates to:
   /// **'Settings'**
   String get settings;
+
+  /// Instruction for Zoom login
+  ///
+  /// In en, this message translates to:
+  /// **'Please log in with your Zoom account.'**
+  String get loginonzoom;
+
+  /// Message indicating Zoom folder is needed
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom Folder Required'**
+  String get needzoomfile;
+
+  /// Explanation for Zoom folder requirement
+  ///
+  /// In en, this message translates to:
+  /// **'Please select the Zoom folder. This folder should contain .m4a files.'**
+  String get needzoomfileexp;
+
+  /// Button text to choose a folder
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Folder'**
+  String get choosefile;
+
+  /// Message for login failure
+  ///
+  /// In en, this message translates to:
+  /// **'Login failed.'**
+  String get couldnotlogin;
+
+  /// Placeholder for meeting search input
+  ///
+  /// In en, this message translates to:
+  /// **'Search meeting title...'**
+  String get searchformeeting;
+
+  /// Button text to delete a meeting
+  ///
+  /// In en, this message translates to:
+  /// **'Delete meeting'**
+  String get deletemeeting;
+
+  /// Confirmation message for meeting deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this meeting record?'**
+  String get areyousuretodeletemeeting;
+
+  /// Instruction to select a meeting
+  ///
+  /// In en, this message translates to:
+  /// **'Select a meeting.'**
+  String get selectameeting;
+
+  /// Message during content generation
+  ///
+  /// In en, this message translates to:
+  /// **'Generating...'**
+  String get generating;
+
+  /// Second summary generation prompt sent to GPT
+  ///
+  /// In en, this message translates to:
+  /// **'Using the following Zoom meeting transcripts, create a new, meaningful summary.\n\nThere are multiple transcript segments from different audio files. Treat them as a single conversation.\n\n1. Analyze the transcript and generate a clear and meaningful title, no more than 5 words. Return it only in this format:\nTitle: Your Title Here (without quotes)\n\n2. Below the title, write a professional, information-focused summary. This summary should include:\n- The meeting\'s purpose and main agenda\n- Who spoke (include names if available)\n- Topics, issues, and ideas discussed\n- Decisions made and conclusions\n- Action items (who, when, what)\n- Notable statements or highlights\n\nIf some parts are short or missing, summarize only what\'s given. Do not invent or repeat information.\n\nPREVIOUS GPT SUMMARY:\n{summary}\n\nUSER\'S NEW REQUEST:\n\"{userRequest}\"\n\nTRANSCRIPT:\n{transcript}'**
+  String promptsecond(Object transcript, Object summary, Object userRequest);
+
+  /// The initial prompt sent to GPT to summarize the full transcript.
+  ///
+  /// In en, this message translates to:
+  /// **'Your task has two parts:\n\n1. **Generate a meeting title**: Analyze the transcript below and generate a concise, meaningful title of no more than 5 words. Return it in this exact format:\nTitle: Your Title Here\n\n2. **Generate a meeting summary**: The transcript below consists of segments from multiple audio recordings of a Zoom meeting. Each line or paragraph may represent a different part of the discussion. Your task is to combine these parts into a coherent and clear summary.\n\nThe summary should allow the reader to understand the meeting\'s key content without having attended. Write in a professional, academic tone using clear, simple English.\n\nYour summary must address:\n- The meeting\'s purpose and main agenda\n- Speaker(s) involved (mention names if available)\n- Key points, discussions, issues, and ideas\n- Decisions made and conclusions reached\n- Action items (who will do what and when)\n- Noteworthy statements or highlights\n\nSome parts may be short or incomplete. Do not mention missing info—summarize only what\'s present.\n\n> Note: Although the transcript may be split into segments, treat them as one continuous meeting.\n\nTRANSCRIPT:\n{text}'**
+  String promptfirst(Object text);
+
+  /// Label for user profile or identity info section.
+  ///
+  /// In en, this message translates to:
+  /// **'User Information'**
+  String get userinfo;
 }
 
 class _AppLocalizationsDelegate

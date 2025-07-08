@@ -1,63 +1,238 @@
 {
-    "@@locale": "tr",
-    "login":"Zoom ile giriş yap",
-    "welcometext":"Uygulamaya Hoşgeldiniz",
-    "language":"Dil:",
-    "notifications":"Bildirimler:",
-    "meetinglist": "Toplantı Listesi",
-    "meetingdetails":"Toplantı detayları",
-    "nlpsummary":"NLP özeti",
-    "saved":"Kayıtlı özetler",
-    "logout":"Çıkış yap",
-    "participants": " Katılımcılar: ",
-    "transcription":" Kopya",
-    "summary":" Özet(AI)",
-    "notes":" Notlar",
-    "moreinfo":"Daha fazla bilgi",
-    "email":"E-posta",
-    "accounttype":"Hesap türü: ",
-    "pleaselogin":"Lütfen giriş yapınız",
-    "transcription":"Transkript",
-    "close":"Kapat",
-    "delete":"Sil",
-    "update":"Güncelle",
-    "save":"Kaydet ve Bitir",
-    "nosummaryyet":"Henüz bir toplantı özeti oluşturulmadı.",
-    "firstnotification":"uygulama ilk açıldı test bildirimi",
-    "testnotification":"Bildirim izni çalışıyor!",
-    "wannasave":"Kaydetmek istiyor musunuz?",
-    "savetofirestore":"Bu özeti Firestore'a kaydedeceksiniz. Devam edilsin mi?",
-    "savedsuccesfully":"Özet başarıyla kaydedildi.",
-    "writeprompt":"Özete eklenecek isteğinizi yazın...",
-    "abouttodelete":"Özeti silmek üzeresiniz",
-    "areyousuretodelete":"Bu işlem geri alınamaz. Özeti silmek istediğinize emin misiniz?",
-    "cancel":"Vazgeç",
-    "summarydeleted":"Özet silindi.",
-    "wannadeletemeeting":"Toplantıyı silmek istiyor musunuz?",
-    "areyousuretocont":"Bu işlem geri alınamaz. Devam edilsin mi?",
-    "meetingdeleted":"Toplantı silindi.",
-    "nosummaryfound":"Özet bulunamadı.",
-    "notranscriptfound":"Transkript bulunamadı.",
-    "nomeetingfound":"Hiç toplantı kaydı bulunamadı.",
-    "joinedmeeting":"Toplantıya Katıldınız",
-    "wannapsummarize":"Toplantı sonunda özet alabilmek için kaydı başlatmayı unutmayın.",
-    "summaryready":"Zoom özeti hazır!",
-    "newmeetingsummarized":"Yeni toplantı otomatik özetlendi.",
-    "settings":"Ayarlar"
+  "@@locale": "tr",
+  "login": "Zoom ile giriş yap",
+  "@login": {
+    "description": "Zoom ile giriş yap butonunun metni"
+  },
+  "welcometext": "Uygulamaya Hoşgeldiniz",
+  "@welcometext": {
+    "description": "Uygulama başlangıcında gösterilen hoş geldiniz mesajı"
+  },
+  "language": "Dil:",
+  "@language": {
+    "description": "Dil seçim etiketi"
+  },
+  "notifications": "Bildirimler:",
+  "@notifications": {
+    "description": "Bildirim ayarları etiketi"
+  },
+  "meetinglist": "Toplantı Listesi",
+  "@meetinglist": {
+    "description": "Toplantı listesi ekranının başlığı"
+  },
+  "meetingdetails": "Toplantı detayları",
+  "@meetingdetails": {
+    "description": "Toplantı detayları ekranının başlığı"
+  },
+  "nlpsummary": "NLP özeti",
+  "@nlpsummary": {
+    "description": "NLP ile oluşturulan özet bölümünün başlığı"
+  },
+  "saved": "Kayıtlı özetler",
+  "@saved": {
+    "description": "Kayıtlı özetler bölümünün başlığı"
+  },
+  "logout": "Çıkış yap",
+  "@logout": {
+    "description": "Çıkış yap butonunun metni"
+  },
+  "participants": " Katılımcılar: ",
+  "@participants": {
+    "description": "Katılımcı sayısı etiketi"
+  },
+  "transcription": "Transkript",
+  "@transcription": {
+    "description": "Transkript bölümünün etiketi"
+  },
+  "summary": " Özet(AI)",
+  "@summary": {
+    "description": "Yapay zeka ile oluşturulan özet etiketi"
+  },
+  "notes": " Notlar",
+  "@notes": {
+    "description": "Notlar bölümünün etiketi"
+  },
+  "moreinfo": "Daha fazla bilgi",
+  "@moreinfo": {
+    "description": "Ek bilgi için link metni"
+  },
+  "email": "E-posta",
+  "@email": {
+    "description": "E-posta alanı etiketi"
+  },
+  "accounttype": "Hesap türü: ",
+  "@accounttype": {
+    "description": "Hesap türü bilgisi etiketi"
+  },
+  "pleaselogin": "Lütfen giriş yapınız",
+  "@pleaselogin": {
+    "description": "Kullanıcıyı giriş yapmaya yönlendiren mesaj"
+  },
+  "close": "Kapat",
+  "@close": {
+    "description": "Diyalogu kapatma butonunun metni"
+  },
+  "delete": "Sil",
+  "@delete": {
+    "description": "Bir öğeyi silmek için buton metni"
+  },
+  "update": "Güncelle",
+  "@update": {
+    "description": "Bir öğeyi güncellemek için buton metni"
+  },
+  "save": "Kaydet ve Bitir",
+  "@save": {
+    "description": "Kaydet ve bitir butonunun metni"
+  },
+  "nosummaryyet": "Henüz bir toplantı özeti oluşturulmadı.",
+  "@nosummaryyet": {
+    "description": "Henüz özet oluşturulmamışsa gösterilen mesaj"
+  },
+  "firstnotification": "uygulama ilk açıldı test bildirimi",
+  "@firstnotification": {
+    "description": "İlk test bildirimi mesajı"
+  },
+  "testnotification": "Bildirim izni çalışıyor!",
+  "@testnotification": {
+    "description": "Bildirim izninin çalıştığını doğrulayan mesaj"
+  },
+  "wannasave": "Kaydetmek istiyor musunuz?",
+  "@wannasave": {
+    "description": "Kaydetme işlemi için onay mesajı"
+  },
+  "savetofirestore": "Bu özeti Firestore'a kaydedeceksiniz. Devam edilsin mi?",
+  "@savetofirestore": {
+    "description": "Firestore'a kaydetme onayı mesajı"
+  },
+  "savedsuccesfully": "Özet başarıyla kaydedildi.",
+  "@savedsuccesfully": {
+    "description": "Kaydetme işleminin başarılı olduğunu bildiren mesaj"
+  },
+  "writeprompt": "Özete eklenecek isteğinizi yazın...",
+  "@writeprompt": {
+    "description": "Özet için istek yazma talimatı"
+  },
+  "abouttodelete": "Özeti silmek üzeresiniz",
+  "@abouttodelete": {
+    "description": "Silme işlemi öncesi uyarı mesajı"
+  },
+  "areyousuretodelete": "Bu işlem geri alınamaz. Özeti silmek istediğinize emin misiniz?",
+  "@areyousuretodelete": {
+    "description": "Özet silme işlemi için onay mesajı"
+  },
+  "cancel": "Vazgeç",
+  "@cancel": {
+    "description": "Bir işlemi iptal etmek için buton metni"
+  },
+  "summarydeleted": "Özet silindi.",
+  "@summarydeleted": {
+    "description": "Özet silme işleminin başarılı olduğunu bildiren mesaj"
+  },
+  "wannadeletemeeting": "Toplantıyı silmek istiyor musunuz?",
+  "@wannadeletemeeting": {
+    "description": "Toplantı silme işlemi için onay mesajı"
+  },
+  "areyousuretocont": "Bu işlem geri alınamaz. Devam edilsin mi?",
+  "@areyousuretocont": {
+    "description": "Geri alınamaz bir işlem için genel onay mesajı"
+  },
+  "meetingdeleted": "Toplantı silindi.",
+  "@meetingdeleted": {
+    "description": "Toplantı silme işleminin başarılı olduğunu bildiren mesaj"
+  },
+  "nosummaryfound": "Özet bulunamadı.",
+  "@nosummaryfound": {
+    "description": "Özet bulunamadığında gösterilen mesaj"
+  },
+  "notranscriptfound": "Transkript bulunamadı.",
+  "@notranscriptfound": {
+    "description": "Transkript bulunamadığında gösterilen mesaj"
+  },
+  "nomeetingfound": "Hiç toplantı kaydı bulunamadı.",
+  "@nomeetingfound": {
+    "description": "Toplantı kaydı bulunamadığında gösterilen mesaj"
+  },
+  "joinedmeeting": "Toplantıya Katıldınız",
+  "@joinedmeeting": {
+    "description": "Kullanıcının toplantıya katıldığını bildiren mesaj"
+  },
+  "wannapsummarize": "Toplantı sonunda özet alabilmek için kaydı başlatmayı unutmayın.",
+  "@wannapsummarize": {
+    "description": "Özet almak için kayıt başlatma talimatı"
+  },
+  "summaryready": "Zoom özeti hazır!",
+  "@summaryready": {
+    "description": "Özet hazır olduğunda gösterilen bildirim"
+  },
+  "newmeetingsummarized": "Yeni toplantı otomatik özetlendi.",
+  "@newmeetingsummarized": {
+    "description": "Yeni toplantının otomatik özetlendiğini bildiren mesaj"
+  },
+  "settings": "Ayarlar",
+  "@settings": {
+    "description": "Ayarlar ekranının başlığı"
+  },
+  "loginonzoom": "Zoom hesabınız üzerinden giriş yapınız.",
+  "@loginonzoom": {
+    "description": "Zoom ile giriş yapma talimatı"
+  },
+  "needzoomfile": "Zoom Klasörü Gerekli",
+  "@needzoomfile": {
+    "description": "Zoom klasörünün gerekli olduğunu bildiren mesaj"
+  },
+  "needzoomfileexp": "Lütfen Zoom klasörünü seçin. Bu klasör içinde .m4a dosyaları olmalıdır.",
+  "@needzoomfileexp": {
+    "description": "Zoom klasörü seçimi için açıklama"
+  },
+  "choosefile": "Klasör Seç",
+  "@choosefile": {
+    "description": "Klasör seçme butonunun metni"
+  },
+  "couldnotlogin": "Giriş yapılmadı.",
+  "@couldnotlogin": {
+    "description": "Giriş başarısız olduğunda gösterilen mesaj"
+  },
+  "searchformeeting": "Toplantı başlığı ara...",
+  "@searchformeeting": {
+    "description": "Toplantı arama çubuğu için yer tutucu"
+  },
+  "deletemeeting": "Toplantıyı sil",
+  "@deletemeeting": {
+    "description": "Toplantı silme butonunun metni"
+  },
+  "userinfo": "Kullanıcı Bilgisi",
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  "areyousuretodeletemeeting": "Bu toplantı kaydını silmek istediğinizden emin misiniz?",
+  "@areyousuretodeletemeeting": {
+    "description": "Toplantı kaydı silme onayı mesajı"
+  },
+  "areyousuretodeletemeeting": "Bu toplantı kaydını silmek istediğinizden emin misiniz?",
+  "@areyousuretodeletemeeting": {
+    "description": "Toplantı kaydı silme onayı mesajı"
+  },
+  "selectameeting": "Bir toplantı seçin.",
+  "@selectameeting": {
+    "description": "Toplantı seçme talimatı"
+  },
+  "generating": "Oluşturuluyor...",
+  "@generating": {
+    "description": "İçerik oluşturulurken gösterilen mesaj"
+  },
+  "promptsecond": "Aşağıdaki Zoom toplantısı transkriptlerinden yeni ve anlamlı bir özet oluştur.\n\nToplantıya ait birden fazla ses kaydından alınmış transkript parçaları bulunmaktadır. Bunları bir bütün olarak değerlendir.\n\n1. Transkripti analiz ederek en fazla 5 kelimeden oluşan, açık ve anlamlı bir başlık üret. Bu başlığı yalnızca şu formatta ver:\nTitle: Başlık Buraya (tırnak kullanma)\n\n2. Ardından, başlık satırının altına profesyonel ve bilgi odaklı bir özet yaz. Bu özet:\n- Toplantının amacı ve ana gündemini\n- Konuşan kişi veya kişileri (isim varsa belirt)\n- Tartışılan konular, sorunlar, fikirler\n- Alınan kararlar ve sonuçlar\n- Eylem maddeleri (kim, ne zaman, ne yapacak)\n- Öne çıkan ifadeleri veya önemli vurguları\nkapsamalıdır.\n\nKısa veya eksik kısımlar varsa, yalnızca verilen içerik üzerinden en iyi özetlemeyi yap. Bilgi uydurma veya tekrar etme.\n\nÖNCEKİ GPT ÖZETİ:\n{summary}\n\nKULLANICININ YENİ İSTEĞİ:\n\"{userRequest}\"\n\nTRANSKRİPT:\n{transcript}",
+  "@promptsecond": {
+    "description": "Kullanıcının daha önce aldığı özet üzerinden yeni isteğiyle GPT'ye gönderilen ikinci özetleme prompt'u. Birden fazla ses kaydı transkripti içerebilir.",
+    "placeholders": {
+      "transcript": { "type": "Object" },
+      "summary": { "type": "Object" },
+      "userRequest": { "type": "Object" }
+    }
+  },
+  "promptfirst": "Senin görevin iki bölümlü olacak:\n\n1. **Toplantı başlığı** üret: Aşağıdaki transkripti analiz ederek en fazla 5 kelimeden oluşan, net ve anlamlı bir başlık oluştur. Bu başlığı yalnızca şu formatta döndür:\nTitle: Başlık Buraya\n\n2. **Toplantı özeti** üret: Aşağıda bir Zoom toplantısına ait birden fazla ses kaydından oluşturulmuş transkriptler bulunmaktadır. Her satır veya paragraf, farklı bir konuşma bölümünü temsil edebilir. Konular bazen dağınık gelebilir; bu yüzden parçaları anlamlı şekilde birleştirerek bütüncül ve anlaşılır bir özet oluşturman beklenmektedir.\n\nKullanıcının bu özeti okuduğunda toplantıya hiç katılmamış olsa bile tüm önemli içerikleri anlayabilmesi gerekir. Özeti profesyonel ve akademik bir üslupla, sade ve açık bir Türkçe ile oluştur.\n\nAşağıdaki başlıkları mutlaka değerlendir:\n- Toplantının amacı ve ana gündemi\n- Konuşan kişi(ler) kimdi? (isim varsa belirt)\n- Görüşülen önemli konular, sorunlar, fikirler\n- Alınan kararlar ve varılan sonuçlar\n- Eylem maddeleri (kim, ne zaman, ne yapacak)\n- Dikkat çeken ifadeler veya önemli vurgular\n\nBazı parçalar eksik veya kısa olabilir. Ancak sen tüm parçaları bir araya getirerek en anlamlı yapıyı kurmaya çalış. Bilgi eksikse bunu belirtmeden sadece mevcut içerikten faydalan.\n\n> Not: Transkript parçalara bölünmüş olsa da tüm metinleri birleştirerek tek bir toplantının özeti olarak yaz.\n\nTRANSKRİPT:\n{text}",
+  "@promptfirst": {
+    "description": "GPT’ye ilk kez gönderilen tam transkript özetleme prompt’u.",
+    "placeholders": {
+      "text": { "type": "Object" }
+    }
+  }
 
 }

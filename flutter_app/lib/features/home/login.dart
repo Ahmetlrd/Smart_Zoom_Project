@@ -43,7 +43,6 @@ class _LoginState extends ConsumerState<Login> {
     if (Platform.isMacOS || Platform.isWindows) {
       setWindowMinSize(const Size(800, 600));
     }
-
     _loadSavedLanguageAndNotificationSetting();
     _attemptAutoLogin();
     _listenForZoomRedirect();
@@ -69,7 +68,8 @@ class _LoginState extends ConsumerState<Login> {
     final refreshToken = await readRefreshToken();
     final savedToken = await readAccessToken();
 
-    if (savedToken != null && await ZoomService.isAccessTokenValid(savedToken)) {
+    if (savedToken != null &&
+        await ZoomService.isAccessTokenValid(savedToken)) {
       ref.read(authProvider.notifier).loginWithToken(savedToken);
       context.go('/home');
       return;
@@ -86,71 +86,95 @@ class _LoginState extends ConsumerState<Login> {
   }
 
   void _listenForZoomRedirect() {
-    if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
-      _appLinks = AppLinks();
-      _sub = _appLinks.uriLinkStream.listen((Uri? uri) async {
-        if (uri == null || uri.scheme != "zoomai") return;
+    _appLinks = AppLinks();
+_sub = _appLinks.uriLinkStream.listen((Uri? uri) async {
+  if (uri == null || uri.scheme != "zoomai") return;
 
-        final jwtToken = uri.queryParameters['token'];
-        final accessToken = uri.queryParameters['access_token'];
-        final refreshToken = uri.queryParameters['refresh_token'];
+  final jwtToken = uri.queryParameters['token'];
+  final accessToken = uri.queryParameters['access_token'];
+  final refreshToken = uri.queryParameters['refresh_token'];
 
-        if (jwtToken != null && accessToken != null && refreshToken != null) {
-          await saveJwtToken(jwtToken);
-          await saveAccessToken(accessToken);
-          await saveRefreshToken(refreshToken);
+  if (jwtToken != null && accessToken != null && refreshToken != null) {
+    await saveJwtToken(jwtToken);
+    await saveAccessToken(accessToken);
+    await saveRefreshToken(refreshToken);
 
-          final firebaseUser = FirebaseAuth.instance.currentUser;
-          if (firebaseUser == null) {
-            try {
-              await FirebaseAuth.instance.signInAnonymously();
-            } catch (e) {
-              print("Firebase anonymous sign-in failed: $e");
-              return;
-            }
-          }
-
-          final userInfo = await ZoomService.fetchUserInfoWithToken(accessToken);
-          final userEmail = userInfo?['email'];
-          final timezone = userInfo?['timezone'] ?? 'UTC';
-          final hostId = userInfo?['id'];
-
-          if (userEmail != null) {
-            final fcmToken = await FirebaseMessaging.instance.getToken();
-            await NotificationService.sendPlatformToBackend(userEmail);
-
-            await FirestoreService().saveTokens(
-              userEmail: userEmail,
-              accessToken: accessToken,
-              refreshToken: refreshToken,
-              accessExpiry: DateTime.now().add(Duration(hours: 1)),
-              refreshExpiry: DateTime.now().add(Duration(days: 30)),
-              fcmToken: fcmToken,
-              timezone: timezone,
-              hostId: hostId,
-            );
-
-            ref.read(authProvider.notifier).loginWithToken(accessToken);
-            if (mounted) context.go('/home');
-          }
-        }
-      });
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+    if (firebaseUser == null) {
+      try {
+        await FirebaseAuth.instance.signInAnonymously();
+      } catch (e) {
+        print("❌ Firebase anonymous sign-in failed: $e");
+        return;
+      }
     }
+
+    final userInfo = await ZoomService.fetchUserInfoWithToken(accessToken);
+    final userEmail = userInfo?['email'];
+    final timezone = userInfo?['timezone'] ?? 'UTC';
+    final hostId = userInfo?['id'];
+
+    if (userEmail != null) {
+      String? fcmToken;
+
+      try {
+        if (Platform.isIOS || Platform.isMacOS) {
+          final apns = await FirebaseMessaging.instance.getAPNSToken();
+          if (apns != null) {
+            fcmToken = await FirebaseMessaging.instance.getToken();
+          } else {
+          }
+        } else {
+          fcmToken = await FirebaseMessaging.instance.getToken();
+        }
+      } catch (e) {
+      }
+
+      try {
+        await NotificationService.sendPlatformToBackend(userEmail);
+      } catch (e) {
+      }
+
+      await FirestoreService().saveTokens(
+        userEmail: userEmail,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        accessExpiry: DateTime.now().add(Duration(hours: 1)),
+        refreshExpiry: DateTime.now().add(Duration(days: 30)),
+        fcmToken: fcmToken,
+        timezone: timezone,
+        hostId: hostId,
+      );
+
+      if (!mounted) return;
+      ref.read(authProvider.notifier).loginWithToken(accessToken);
+      context.go('/home');
+    } else {
+      print("❌ userEmail null geldi, Firestore'a yazılamaz.");
+    }
+  }
+});
+
   }
 
   String _mapLocaleToLang(String code) {
     switch (code) {
-      case 'tr': return 'Türkçe';
-      case 'de': return 'German';
-      case 'fr': return 'French';
-      default: return 'English';
+      case 'tr':
+        return 'Türkçe';
+      case 'de':
+        return 'German';
+      case 'fr':
+        return 'French';
+      default:
+        return 'English';
     }
   }
 
   void _launchZoomLogin() async {
     const zoomLoginUrl = 'http://75.101.195.165:8000/auth/login';
     if (await canLaunchUrl(Uri.parse(zoomLoginUrl))) {
-      await launchUrl(Uri.parse(zoomLoginUrl), mode: LaunchMode.externalApplication);
+      await launchUrl(Uri.parse(zoomLoginUrl),
+          mode: LaunchMode.externalApplication);
     }
   }
 
@@ -176,7 +200,8 @@ class _LoginState extends ConsumerState<Login> {
             height: double.infinity,
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("pictures/Blue Gradient Background Poster.png"),
+                image:
+                    AssetImage("pictures/Blue Gradient Background Poster.png"),
                 fit: BoxFit.cover,
               ),
             ),
@@ -205,7 +230,8 @@ class _LoginState extends ConsumerState<Login> {
                     children: [
                       Pulse(
                         duration: const Duration(seconds: 2),
-                        child: Image.asset('pictures/appicon_1.png', height: 100),
+                        child:
+                            Image.asset('pictures/appicon_1.png', height: 100),
                       ),
                       const SizedBox(height: 24),
                       FadeIn(
@@ -223,7 +249,7 @@ class _LoginState extends ConsumerState<Login> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        "Zoom hesabınız üzerinden giriş yapınız.",
+                        d.loginonzoom,
                         style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                       ),
                       const SizedBox(height: 24),
@@ -242,10 +268,12 @@ class _LoginState extends ConsumerState<Login> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.login, size: 20, color: Colors.white),
+                              const Icon(Icons.login,
+                                  size: 20, color: Colors.white),
                               const SizedBox(width: 8),
                               Text(d.login,
-                                  style: const TextStyle(fontSize: 16, color: Colors.white)),
+                                  style: const TextStyle(
+                                      fontSize: 16, color: Colors.white)),
                             ],
                           ),
                         ),
@@ -260,23 +288,29 @@ class _LoginState extends ConsumerState<Login> {
                               value: selectedLanguage,
                               isExpanded: true,
                               underline: const SizedBox.shrink(),
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
                               borderRadius: BorderRadius.circular(8),
                               dropdownColor: Colors.white,
-                              style: const TextStyle(color: Colors.black, fontSize: 14),
+                              style: const TextStyle(
+                                  color: Colors.black, fontSize: 14),
                               items: languages
                                   .map((lang) => DropdownMenuItem(
                                         value: lang,
                                         child: Text(lang,
-                                            style: const TextStyle(fontWeight: FontWeight.w500)),
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.w500)),
                                       ))
                                   .toList(),
                               onChanged: (value) async {
                                 setState(() => selectedLanguage = value!);
-                                final prefs = await SharedPreferences.getInstance();
+                                final prefs =
+                                    await SharedPreferences.getInstance();
                                 final code = _mapLocaleToCode(value!);
                                 await prefs.setString('selected_locale', code);
-                                await ref.read(localeProvider.notifier).setLocale(Locale(code));
+                                await ref
+                                    .read(localeProvider.notifier)
+                                    .setLocale(Locale(code));
                               },
                             ),
                           ),
@@ -312,10 +346,14 @@ class _LoginState extends ConsumerState<Login> {
 
   String _mapLocaleToCode(String lang) {
     switch (lang) {
-      case 'Türkçe': return 'tr';
-      case 'German': return 'de';
-      case 'French': return 'fr';
-      default: return 'en';
+      case 'Türkçe':
+        return 'tr';
+      case 'German':
+        return 'de';
+      case 'French':
+        return 'fr';
+      default:
+        return 'en';
     }
   }
 }

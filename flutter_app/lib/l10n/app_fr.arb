@@ -1,50 +1,233 @@
 {
-    "@@locale": "fr",
+  "@@locale": "fr",
   "login": "Se connecter avec Zoom",
+  "@login": {
+    "description": "Texte du bouton pour la connexion Zoom"
+  },
   "welcometext": "BIENVENUE DANS L'APPLICATION",
+  "@welcometext": {
+    "description": "Message de bienvenue affiché au démarrage de l'application"
+  },
   "language": "Langue :",
+  "@language": {
+    "description": "Étiquette pour la sélection de la langue"
+  },
   "notifications": "Notifications :",
+  "@notifications": {
+    "description": "Étiquette pour les paramètres de notification"
+  },
   "meetinglist": "Liste des réunions",
+  "@meetinglist": {
+    "description": "Titre pour l'écran de la liste des réunions"
+  },
   "meetingdetails": "Détails de la réunion",
+  "@meetingdetails": {
+    "description": "Titre pour l'écran des détails de la réunion"
+  },
   "nlpsummary": "Résumé NLP",
+  "@nlpsummary": {
+    "description": "Titre pour la section du résumé généré par NLP"
+  },
   "saved": "Résumés enregistrés",
+  "@saved": {
+    "description": "Titre pour la section des résumés enregistrés"
+  },
   "logout": "Déconnexion",
+  "@logout": {
+    "description": "Texte du bouton pour la déconnexion"
+  },
   "participants": " Participants :",
+  "@participants": {
+    "description": "Étiquette pour le nombre de participants"
+  },
   "transcription": " Transcription",
+  "@transcription": {
+    "description": "Étiquette pour la section de transcription"
+  },
   "summary": " Résumé (IA)",
+  "@summary": {
+    "description": "Étiquette pour le résumé généré par IA"
+  },
   "notes": " Notes",
-  "moreinfo":"plus d'infos",
-  "email":"Email",
-  "accounttype":"Type de compte: ",
-  "pleaselogin":"Veuillez vous connecter",
+  "@notes": {
+    "description": "Étiquette pour la section des notes"
+  },
+  "moreinfo": "plus d'infos",
+  "@moreinfo": {
+    "description": "Texte du lien pour plus d'informations"
+  },
+  "email": "Email",
+  "@email": {
+    "description": "Étiquette pour le champ email"
+  },
+  "accounttype": "Type de compte: ",
+  "@accounttype": {
+    "description": "Étiquette pour les informations sur le type de compte"
+  },
+  "pleaselogin": "Veuillez vous connecter",
+  "@pleaselogin": {
+    "description": "Message invitant l'utilisateur à se connecter"
+  },
   "close": "Fermer",
+  "@close": {
+    "description": "Texte du bouton pour fermer un dialogue"
+  },
   "delete": "Supprimer",
+  "@delete": {
+    "description": "Texte du bouton pour supprimer un élément"
+  },
   "update": "Mettre à jour",
+  "@update": {
+    "description": "Texte du bouton pour mettre à jour un élément"
+  },
   "save": "enregistrer et Terminer",
+  "@save": {
+    "description": "Texte du bouton pour enregistrer et terminer"
+  },
   "nosummaryyet": "Aucun résumé de réunion n'a encore été créé.",
+  "@nosummaryyet": {
+    "description": "Message lorsqu'aucun résumé n'existe encore"
+  },
   "firstnotification": "l'application a été ouverte pour la première fois - notification de test",
+  "@firstnotification": {
+    "description": "Première notification de test"
+  },
   "testnotification": "L'autorisation de notification fonctionne !",
+  "@testnotification": {
+    "description": "Message confirmant que l'autorisation de notification fonctionne"
+  },
   "wannasave": "Voulez-vous enregistrer ?",
+  "@wannasave": {
+    "description": "Message de confirmation pour l'enregistrement"
+  },
   "savetofirestore": "Ce résumé sera enregistré dans Firestore. Continuer ?",
+  "@savetofirestore": {
+    "description": "Message de confirmation pour l'enregistrement dans Firestore"
+  },
   "savedsuccesfully": "Résumé enregistré avec succès.",
+  "@savedsuccesfully": {
+    "description": "Message de succès après l'enregistrement"
+  },
   "writeprompt": "Écrivez votre demande à ajouter au résumé...",
+  "@writeprompt": {
+    "description": "Instruction pour écrire une demande"
+  },
   "abouttodelete": "Vous êtes sur le point de supprimer le résumé",
+  "@abouttodelete": {
+    "description": "Message d'avertissement avant la suppression"
+  },
   "areyousuretodelete": "Cette action est irréversible. Êtes-vous sûr de vouloir supprimer ce résumé ?",
+  "@areyousuretodelete": {
+    "description": "Message de confirmation pour la suppression du résumé"
+  },
   "cancel": "Annuler",
+  "@cancel": {
+    "description": "Texte du bouton pour annuler une action"
+  },
   "summarydeleted": "Résumé supprimé.",
+  "@summarydeleted": {
+    "description": "Message après la suppression réussie"
+  },
   "wannadeletemeeting": "Voulez-vous supprimer la réunion ?",
+  "@wannadeletemeeting": {
+    "description": "Message de confirmation pour la suppression de la réunion"
+  },
   "areyousuretocont": "Cette action est irréversible. Voulez-vous continuer ?",
+  "@areyousuretocont": {
+    "description": "Message de confirmation général pour une action irréversible"
+  },
   "meetingdeleted": "Réunion supprimée.",
+  "@meetingdeleted": {
+    "description": "Message après la suppression de la réunion"
+  },
   "nosummaryfound": "Aucun résumé trouvé.",
+  "@nosummaryfound": {
+    "description": "Message lorsqu'aucun résumé n'est trouvé"
+  },
   "notranscriptfound": "Aucune transcription trouvée.",
+  "@notranscriptfound": {
+    "description": "Message lorsqu'aucune transcription n'est trouvée"
+  },
   "nomeetingfound": "Aucun enregistrement de réunion trouvé.",
+  "@nomeetingfound": {
+    "description": "Message lorsqu'aucun enregistrement de réunion n'est trouvé"
+  },
   "joinedmeeting": "Vous avez rejoint la réunion",
+  "@joinedmeeting": {
+    "description": "Notification lorsque l'utilisateur rejoint une réunion"
+  },
   "wannapsummarize": "N’oubliez pas de lancer l’enregistrement pour recevoir un résumé à la fin de la réunion.",
+  "@wannapsummarize": {
+    "description": "Instruction pour lancer l'enregistrement afin d'obtenir un résumé"
+  },
   "summaryready": "Le résumé Zoom est prêt !",
+  "@summaryready": {
+    "description": "Notification lorsque le résumé est prêt"
+  },
   "newmeetingsummarized": "La nouvelle réunion a été résumée automatiquement.",
-  "settings":"Paramètres"
+  "@newmeetingsummarized": {
+    "description": "Notification pour une réunion automatiquement résumée"
+  },
+  "settings": "Paramètres",
+  "@settings": {
+    "description": "Titre pour l'écran des paramètres"
+  },
+  "loginonzoom": "Veuillez vous connecter avec votre compte Zoom.",
+  "@loginonzoom": {
+    "description": "Instruction pour la connexion avec un compte Zoom"
+  },
+  "needzoomfile": "Dossier Zoom requis",
+  "@needzoomfile": {
+    "description": "Message indiquant qu'un dossier Zoom est requis"
+  },
+  "needzoomfileexp": "Veuillez sélectionner le dossier Zoom. Ce dossier doit contenir des fichiers .m4a.",
+  "@needzoomfileexp": {
+    "description": "Explication de la nécessité d'un dossier Zoom"
+  },
+  "choosefile": "Choisir un dossier",
+  "@choosefile": {
+    "description": "Texte du bouton pour choisir un dossier"
+  },
+  "couldnotlogin": "Échec de la connexion.",
+  "@couldnotlogin": {
+    "description": "Message en cas d'échec de la connexion"
+  },
+  "searchformeeting": "Rechercher un titre de réunion...",
+  "@searchformeeting": {
+    "description": "Placeholder pour la barre de recherche de réunion"
+  },
+  "deletemeeting": "Supprimer la réunion",
+  "@deletemeeting": {
+    "description": "Texte du bouton pour supprimer une réunion"
+  },
+  "areyousuretodeletemeeting": "Êtes-vous sûr de vouloir supprimer cet enregistrement de réunion ?",
+  "@areyousuretodeletemeeting": {
+    "description": "Message de confirmation pour la suppression d'un enregistrement de réunion"
+  },
+  "selectameeting": "Sélectionnez une réunion.",
+  "@selectameeting": {
+    "description": "Instruction pour sélectionner une réunion"
+  },
+  "generating": "Génération...",
+  "@generating": {
+    "description": "Message pendant la génération de contenu"
+  },
+  "promptsecond": "Utilisez les transcriptions suivantes d'une réunion Zoom pour générer un nouveau résumé pertinent.\n\nPlusieurs segments de transcription proviennent de différents fichiers audio. Considérez-les comme une seule conversation.\n\n1. Analysez la transcription et générez un titre clair et significatif, de 5 mots maximum. Retournez-le uniquement dans ce format :\nTitle: Votre titre ici (sans guillemets)\n\n2. Sous le titre, écrivez un résumé professionnel et centré sur l'information. Le résumé doit inclure :\n- L’objectif et l’ordre du jour principal\n- Les intervenants (précisez les noms si disponibles)\n- Les sujets, problèmes et idées abordés\n- Les décisions prises et conclusions\n- Les actions à entreprendre (qui, quand, quoi)\n- Les citations marquantes ou points importants\n\nSi certaines parties sont courtes ou manquantes, résumez uniquement les informations fournies. N’inventez rien et n’ajoutez pas de contenu inutile.\n\nRÉSUMÉ GPT PRÉCÉDENT :\n{summary}\n\nNOUVELLE DEMANDE DE L’UTILISATEUR :\n\"{userRequest}\"\n\nTRANSCRIPTION :\n{transcript}",
+  "@promptsecond": {
+    "description": "Deuxième invite de génération de résumé envoyée à GPT",
+    "placeholders": {
+      "transcript": { "type": "Object" },
+      "summary": { "type": "Object" },
+      "userRequest": { "type": "Object" }
+    }
+  },
+  "userinfo": "Informations utilisateur",
 
-
-
-
+  "promptfirst": "Votre tâche comporte deux volets :\n\n1. **Générer un titre de réunion** : Analysez la transcription ci-dessous et créez un titre concis et pertinent ne dépassant pas 5 mots. Retournez-le dans ce format exact :\nTitle: Titre ici\n\n2. **Générer un résumé de réunion** : La transcription ci-dessous provient de plusieurs enregistrements audio d'une réunion Zoom. Chaque paragraphe peut représenter une partie différente de la discussion. Assemblez ces parties en un résumé clair et cohérent.\n\nCe résumé doit permettre au lecteur de comprendre les points clés de la réunion sans y avoir assisté. Adoptez un ton professionnel et académique, en français clair et simple.\n\nLe résumé doit inclure :\n- L’objectif et l’ordre du jour principal\n- Les intervenants (noms si disponibles)\n- Les sujets importants, problèmes ou idées abordés\n- Les décisions prises et les conclusions tirées\n- Les actions à entreprendre (qui, quoi, quand)\n- Les phrases marquantes ou points saillants\n\nCertains passages peuvent être incomplets. Ne mentionnez pas les absences d’informations ; concentrez-vous sur ce qui est fourni.\n\n> Remarque : Bien que la transcription soit segmentée, elle doit être traitée comme une seule réunion.\n\nTRANSCRIPTION :\n{text}",
+  "@promptfirst": {
+    "description": "Le premier prompt envoyé à GPT pour résumer un transcript complet.",
+    "placeholders": {
+      "text": { "type": "Object" }
+    }
+  }
 }

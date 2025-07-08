@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:flutter_app/features/home/utility.dart';
 import 'package:flutter_app/gen_l10n/app_localizations.dart';
 import 'package:flutter_app/services/zoom_recording_helper.dart';
@@ -320,3 +320,4 @@ Lütfen özeti bu yeni isteğe göre oluştur. Kısa, öz ve bilgi odaklı yaz.
     );
   }
 }
+*/

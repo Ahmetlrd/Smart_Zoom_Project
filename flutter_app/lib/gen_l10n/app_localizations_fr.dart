@@ -142,4 +142,49 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settings => 'Paramètres';
+
+  @override
+  String get loginonzoom => 'Veuillez vous connecter avec votre compte Zoom.';
+
+  @override
+  String get needzoomfile => 'Dossier Zoom requis';
+
+  @override
+  String get needzoomfileexp =>
+      'Veuillez sélectionner le dossier Zoom. Ce dossier doit contenir des fichiers .m4a.';
+
+  @override
+  String get choosefile => 'Choisir un dossier';
+
+  @override
+  String get couldnotlogin => 'Échec de la connexion.';
+
+  @override
+  String get searchformeeting => 'Rechercher un titre de réunion...';
+
+  @override
+  String get deletemeeting => 'Supprimer la réunion';
+
+  @override
+  String get areyousuretodeletemeeting =>
+      'Êtes-vous sûr de vouloir supprimer cet enregistrement de réunion ?';
+
+  @override
+  String get selectameeting => 'Sélectionnez une réunion.';
+
+  @override
+  String get generating => 'Génération...';
+
+  @override
+  String promptsecond(Object transcript, Object summary, Object userRequest) {
+    return 'Utilisez les transcriptions suivantes d\'une réunion Zoom pour générer un nouveau résumé pertinent.\n\nPlusieurs segments de transcription proviennent de différents fichiers audio. Considérez-les comme une seule conversation.\n\n1. Analysez la transcription et générez un titre clair et significatif, de 5 mots maximum. Retournez-le uniquement dans ce format :\nTitle: Votre titre ici (sans guillemets)\n\n2. Sous le titre, écrivez un résumé professionnel et centré sur l\'information. Le résumé doit inclure :\n- L’objectif et l’ordre du jour principal\n- Les intervenants (précisez les noms si disponibles)\n- Les sujets, problèmes et idées abordés\n- Les décisions prises et conclusions\n- Les actions à entreprendre (qui, quand, quoi)\n- Les citations marquantes ou points importants\n\nSi certaines parties sont courtes ou manquantes, résumez uniquement les informations fournies. N’inventez rien et n’ajoutez pas de contenu inutile.\n\nRÉSUMÉ GPT PRÉCÉDENT :\n$summary\n\nNOUVELLE DEMANDE DE L’UTILISATEUR :\n\"$userRequest\"\n\nTRANSCRIPTION :\n$transcript';
+  }
+
+  @override
+  String promptfirst(Object text) {
+    return 'Votre tâche comporte deux volets :\n\n1. **Générer un titre de réunion** : Analysez la transcription ci-dessous et créez un titre concis et pertinent ne dépassant pas 5 mots. Retournez-le dans ce format exact :\nTitle: Titre ici\n\n2. **Générer un résumé de réunion** : La transcription ci-dessous provient de plusieurs enregistrements audio d\'une réunion Zoom. Chaque paragraphe peut représenter une partie différente de la discussion. Assemblez ces parties en un résumé clair et cohérent.\n\nCe résumé doit permettre au lecteur de comprendre les points clés de la réunion sans y avoir assisté. Adoptez un ton professionnel et académique, en français clair et simple.\n\nLe résumé doit inclure :\n- L’objectif et l’ordre du jour principal\n- Les intervenants (noms si disponibles)\n- Les sujets importants, problèmes ou idées abordés\n- Les décisions prises et les conclusions tirées\n- Les actions à entreprendre (qui, quoi, quand)\n- Les phrases marquantes ou points saillants\n\nCertains passages peuvent être incomplets. Ne mentionnez pas les absences d’informations ; concentrez-vous sur ce qui est fourni.\n\n> Remarque : Bien que la transcription soit segmentée, elle doit être traitée comme une seule réunion.\n\nTRANSCRIPTION :\n$text';
+  }
+
+  @override
+  String get userinfo => 'Informations utilisateur';
 }

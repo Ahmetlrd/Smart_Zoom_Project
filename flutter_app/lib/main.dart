@@ -16,13 +16,14 @@ import 'package:flutter_app/gen_l10n/app_localizations.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_app/services/notifications_service.dart';
 import 'package:flutter/services.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import 'routes.dart';
-import 'package:flutter_app/services/macos_folder_service.dart';
 
 final zoomFolderProvider = FutureProvider<String?>((ref) async {
   if (!Platform.isMacOS) return null;
   return await MacOSFolderService.getSavedFolder();
 });
+
 Future<void> handleIncomingLinks(WidgetRef ref, BuildContext context) async {
   final appLinks = AppLinks();
 
@@ -74,10 +75,13 @@ Future<void> _processZoomUri(
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  timeago.setLocaleMessages('tr', timeago.TrMessages());
+  timeago.setLocaleMessages('en', timeago.EnMessages());
+  timeago.setLocaleMessages('de', timeago.DeMessages());
+  timeago.setLocaleMessages('fr', timeago.FrMessages());
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return const SizedBox.shrink();
   };
-
 
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp();
@@ -97,40 +101,40 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   bool _listenerAttached = false;
 
   @override
-void initState() {
-  super.initState();
+  void initState() {
+    super.initState();
 
-  WidgetsBinding.instance.addPostFrameCallback((_) async {
-  if (_pendingAccessToken != null) {
-    print("🔁 Pending deep link access token bulundu, yönlendiriliyor...");
-    await ref.read(authProvider.notifier).loginWithToken(
-          _pendingAccessToken!,
-          refreshToken: _pendingRefreshToken,
-        );
-    ref.read(routerProvider).go('/home');
-    _pendingAccessToken = null;
-    _pendingRefreshToken = null;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (_pendingAccessToken != null) {
+        print("🔁 Pending deep link access token bulundu, yönlendiriliyor...");
+        await ref.read(authProvider.notifier).loginWithToken(
+              _pendingAccessToken!,
+              refreshToken: _pendingRefreshToken,
+            );
+        ref.read(routerProvider).go('/home');
+        _pendingAccessToken = null;
+        _pendingRefreshToken = null;
+      }
+
+      // ✅ Yeni: Zoom klasörü varsa izlemeyi başlat
+      if (Platform.isMacOS) {
+        final path = await MacOSFolderService.getSavedFolder();
+        if (path == null) {
+          NotificationService.show(
+            title: 'Zoom klasörü izni gerekli',
+            body: 'İlk kullanım için Zoom klasörüne erişim izni vermelisiniz.',
+          );
+        } else {
+          print("📂 Zoom klasörü zaten kayıtlı: $path");
+          final locale = ref.read(localeProvider) ?? const Locale('tr');
+          watchZoomFolder(ref, locale); // ✅ Locale ile çağırıldı
+        }
+      }
+    });
+
+    WidgetsBinding.instance.addObserver(this);
+    _attachLinkListenerOnce();
   }
-
-  if (Platform.isMacOS) {
-    final path = await MacOSFolderService.getSavedFolder();
-    if (path == null) {
-      NotificationService.show(
-        title: 'Zoom klasörü izni gerekli',
-        body: 'İlk kullanım için Zoom klasörüne erişim izni vermelisiniz.',
-      );
-    } else {
-      print("📂 Zoom klasörü zaten kayıtlı: $path");
-      watchZoomFolder(ref);
-    }
-  }
-});
-
-
-  WidgetsBinding.instance.addObserver(this);
-  _attachLinkListenerOnce();
-}
-
 
   void _attachLinkListenerOnce() {
     if (!_listenerAttached) {
