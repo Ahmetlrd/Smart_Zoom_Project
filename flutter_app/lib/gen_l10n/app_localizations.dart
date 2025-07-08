@@ -437,6 +437,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'User Information'**
   String get userinfo;
+
+  /// No description provided for @notification_preparing_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary is being prepared'**
+  String get notification_preparing_title;
+
+  /// No description provided for @notification_preparing_body.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio files received, analysis is starting...'**
+  String get notification_preparing_body;
+
+  /// No description provided for @notification_ready_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom Summary Ready!'**
+  String get notification_ready_title;
+
+  /// No description provided for @notification_ready_body.
+  ///
+  /// In en, this message translates to:
+  /// **'New meeting has been automatically summarized.'**
+  String get notification_ready_body;
 }
 
 class _AppLocalizationsDelegate

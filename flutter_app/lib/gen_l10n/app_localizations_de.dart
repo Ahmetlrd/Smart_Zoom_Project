@@ -188,4 +188,18 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get userinfo => 'Benutzerinformationen';
+
+  @override
+  String get notification_preparing_title => 'Zusammenfassung wird erstellt';
+
+  @override
+  String get notification_preparing_body =>
+      'Audiodateien empfangen, Analyse beginnt...';
+
+  @override
+  String get notification_ready_title => 'Zoom-Zusammenfassung fertig!';
+
+  @override
+  String get notification_ready_body =>
+      'Neues Meeting wurde automatisch zusammengefasst.';
 }

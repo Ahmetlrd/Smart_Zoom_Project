@@ -187,4 +187,18 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get userinfo => 'Informations utilisateur';
+
+  @override
+  String get notification_preparing_title => 'Résumé en cours';
+
+  @override
+  String get notification_preparing_body =>
+      'Les fichiers audio ont été reçus, analyse en cours...';
+
+  @override
+  String get notification_ready_title => 'Résumé Zoom prêt !';
+
+  @override
+  String get notification_ready_body =>
+      'La nouvelle réunion a été résumée automatiquement.';
 }

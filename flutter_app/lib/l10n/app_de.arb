@@ -229,5 +229,10 @@
     "placeholders": {
       "text": { "type": "Object" }
     }
-  }
+  },
+  "notification_preparing_title": "Zusammenfassung wird erstellt",
+"notification_preparing_body": "Audiodateien empfangen, Analyse beginnt...",
+"notification_ready_title": "Zoom-Zusammenfassung fertig!",
+"notification_ready_body": "Neues Meeting wurde automatisch zusammengefasst."
+
 }

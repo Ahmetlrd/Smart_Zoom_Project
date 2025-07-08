@@ -185,4 +185,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get userinfo => 'User Information';
+
+  @override
+  String get notification_preparing_title => 'Summary is being prepared';
+
+  @override
+  String get notification_preparing_body =>
+      'Audio files received, analysis is starting...';
+
+  @override
+  String get notification_ready_title => 'Zoom Summary Ready!';
+
+  @override
+  String get notification_ready_body =>
+      'New meeting has been automatically summarized.';
 }

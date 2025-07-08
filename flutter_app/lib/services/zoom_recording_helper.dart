@@ -107,16 +107,47 @@ void watchZoomFolder(WidgetRef ref, Locale locale) {
 
       await Future.delayed(const Duration(seconds: 2));
 
+      final lang = locale.languageCode;
+      print("🌍 Bildirimler şu dilde gösterilecek: ${locale.languageCode}");
+
+      final preparingTitle = {
+        'tr': 'Özet hazırlanıyor',
+        'en': 'Summary is being prepared',
+        'fr': 'Résumé en préparation',
+        'de': 'Zusammenfassung wird vorbereitet',
+      }[lang] ?? 'Summary is being prepared';
+
+      final preparingBody = {
+        'tr': 'Ses dosyaları alındı, analiz başlıyor...',
+        'en': 'Audio files received, analysis starting...',
+        'fr': 'Fichiers audio reçus, analyse en cours...',
+        'de': 'Audiodateien empfangen, Analyse beginnt...',
+      }[lang] ?? 'Audio files received, analysis starting...';
+
       await NotificationService.show(
-        title: 'Özet hazırlanıyor',
-        body: 'Ses dosyaları alındı, analiz başlıyor...',
+        title: preparingTitle,
+        body: preparingBody,
       );
 
       await runDirectZoomSummaryFlow(ref);
 
+      final readyTitle = {
+        'tr': 'Zoom özeti hazır!',
+        'en': 'Zoom Summary Ready!',
+        'fr': 'Résumé Zoom prêt !',
+        'de': 'Zoom-Zusammenfassung fertig!',
+      }[lang] ?? 'Zoom Summary Ready!';
+
+      final readyBody = {
+        'tr': 'Yeni toplantı otomatik özetlendi.',
+        'en': 'New meeting has been summarized automatically.',
+        'fr': 'Nouvelle réunion résumée automatiquement.',
+        'de': 'Neues Meeting wurde automatisch zusammengefasst.',
+      }[lang] ?? 'New meeting has been summarized automatically.';
+
       await NotificationService.show(
-        title: 'Zoom özeti hazır!',
-        body: 'Yeni toplantı otomatik özetlendi.',
+        title: readyTitle,
+        body: readyBody,
       );
 
       isSummarizing = false;

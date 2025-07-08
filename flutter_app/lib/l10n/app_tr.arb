@@ -233,6 +233,11 @@
     "placeholders": {
       "text": { "type": "Object" }
     }
-  }
+  },
+  "notification_preparing_title": "Özet hazırlanıyor",
+"notification_preparing_body": "Ses dosyaları alındı, analiz başlıyor...",
+"notification_ready_title": "Zoom özeti hazır!",
+"notification_ready_body": "Yeni toplantı otomatik özetlendi."
+
 
 }

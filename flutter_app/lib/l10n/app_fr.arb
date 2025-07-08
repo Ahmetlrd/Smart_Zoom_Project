@@ -229,5 +229,10 @@
     "placeholders": {
       "text": { "type": "Object" }
     }
-  }
+  },
+  "notification_preparing_title": "Résumé en cours",
+"notification_preparing_body": "Les fichiers audio ont été reçus, analyse en cours...",
+"notification_ready_title": "Résumé Zoom prêt !",
+"notification_ready_body": "La nouvelle réunion a été résumée automatiquement."
+
 }

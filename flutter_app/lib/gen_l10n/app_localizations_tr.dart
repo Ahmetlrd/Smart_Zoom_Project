@@ -184,4 +184,17 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get userinfo => 'Kullanıcı Bilgisi';
+
+  @override
+  String get notification_preparing_title => 'Özet hazırlanıyor';
+
+  @override
+  String get notification_preparing_body =>
+      'Ses dosyaları alındı, analiz başlıyor...';
+
+  @override
+  String get notification_ready_title => 'Zoom özeti hazır!';
+
+  @override
+  String get notification_ready_body => 'Yeni toplantı otomatik özetlendi.';
 }

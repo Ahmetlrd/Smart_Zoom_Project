@@ -231,6 +231,11 @@
   "userinfo": "User Information",
 "@userinfo": {
   "description": "Label for user profile or identity info section."
-}
+},
+"notification_preparing_title": "Summary is being prepared",
+"notification_preparing_body": "Audio files received, analysis is starting...",
+"notification_ready_title": "Zoom Summary Ready!",
+"notification_ready_body": "New meeting has been automatically summarized."
+
 
 }
