@@ -327,7 +327,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   .first
                                   .replaceFirst("Title:", "")
                                   .trim()
-                              : 'Başlıksız',
+                              : 'Untitled',
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
@@ -487,7 +487,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final newSummary = await service.summarizeText(prompt, locale);
 
     if (newSummary != null) {
-      String title = 'Başlıksız';
+      String title = 'Untitled';
       try {
         final lines = newSummary.split('\n');
         final titleLine = lines.firstWhere(

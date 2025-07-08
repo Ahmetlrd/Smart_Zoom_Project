@@ -12,7 +12,7 @@ Future<void> saveSummaryToFirestore({
   final email = ref.read(authProvider.notifier).userInfo?['email'];
   if (email == null || summary.trim().isEmpty) return;
 
- String title = 'Başlıksız';
+ String title = 'Untitled';
 try {
   final lines = summary.split('\n');
   final titleLine = lines.firstWhere(
