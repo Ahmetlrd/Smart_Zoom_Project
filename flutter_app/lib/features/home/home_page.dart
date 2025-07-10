@@ -98,6 +98,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final selectedTab = ref.watch(selectedTabProvider);
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.blueAccent,
         leadingWidth: 108,
@@ -334,7 +335,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        Text(
+                        SelectableText(
                           summary.contains('\n')
                               ? summary
                                   .substring(summary.indexOf('\n') + 1)
@@ -343,7 +344,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           style: const TextStyle(fontSize: 16, height: 1.5),
                         ),
                       ] else
-                        Text(
+                        SelectableText(
                           transcript,
                           style: const TextStyle(fontSize: 16, height: 1.5),
                         ),
