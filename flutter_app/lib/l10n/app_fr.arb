@@ -100,7 +100,7 @@
   "@wannasave": {
     "description": "Message de confirmation pour l'enregistrement"
   },
-  "savetofirestore": "Ce résumé sera enregistré dans Firestore. Continuer ?",
+  "savetofirestore": "Ce résumé sera sauvegardé. Continuer ?",
   "@savetofirestore": {
     "description": "Message de confirmation pour l'enregistrement dans Firestore"
   },

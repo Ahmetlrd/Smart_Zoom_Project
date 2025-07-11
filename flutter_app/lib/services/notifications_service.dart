@@ -3,6 +3,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+@pragma('vm:entry-point')
+void notificationTapBackground(NotificationResponse details) {
+  print("🔕 (BG) Bildirime tıklandı: ${details.payload}");
+}
 
 class NotificationService {
   static final _notifications = FlutterLocalNotificationsPlugin();
@@ -47,15 +51,13 @@ class NotificationService {
     );
 
     await _notifications.initialize(
-      initSettings,
-      onDidReceiveNotificationResponse: (details) {
-        print("🔔 Bildirime tıklandı: ${details.payload}");
-        // Bildirime tıklanınca yapılacak işlemler
-      },
-      onDidReceiveBackgroundNotificationResponse: (details) {
-        print("🔕 (BG) Bildirime tıklandı: ${details.payload}");
-      },
-    );
+  initSettings,
+  onDidReceiveNotificationResponse: (details) {
+    print("🔔 Bildirime tıklandı: ${details.payload}");
+  },
+  onDidReceiveBackgroundNotificationResponse: notificationTapBackground, // ✅ düzeltildi
+);
+
 
     // 🔔 Firebase mesajlarını dinle (mobil/macOS için)
     if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {

@@ -1,12 +1,8 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.megalabsai.smartzoom">
 
-    <!-- INTERNET zaten tamam -->
     <uses-permission android:name="android.permission.INTERNET" />
-
-    <!-- 🔥 Local notification için gerekli -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
-    <!-- Opsiyonel (ileride scheduled notification için) -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
 
@@ -15,6 +11,13 @@
         android:label="Smart Zoom"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data
+            android:name="io.flutter.embedding.android.NormalTheme"
+            android:resource="@style/NormalTheme"/>
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2"/>
 
         <activity
             android:name=".MainActivity"
@@ -26,18 +29,11 @@
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
 
-            <meta-data
-              android:name="io.flutter.embedding.android.NormalTheme"
-              android:resource="@style/NormalTheme"
-            />
-
-            <!-- App launcher intent -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
-            <!-- Zoom OAuth deeplink callback -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -46,39 +42,24 @@
                     android:scheme="zoomai"
                     android:host="auth-callback" />
             </intent-filter>
-
         </activity>
-
-        <meta-data
-            android:name="flutterEmbedding"
-            android:value="2" />
-
     </application>
 
-    <!-- Package Visibility için queries (API 30 ve sonrası için şart) -->
     <queries>
-        <!-- Flutter'ın process_text kısmını aynen bırakıyoruz -->
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
-
-        <!-- 🔥 HTTP açabilen uygulamalar görünür olur -->
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="http" />
         </intent>
-
-        <!-- 🔥 HTTPS açabilen uygulamalar görünür olur -->
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="https" />
         </intent>
-
-        <!-- 🔥 Eğer inAppBrowserView (custom tabs) kontrol ediyorsan gerekli -->
         <intent>
             <action android:name="android.support.customtabs.action.CustomTabsService" />
         </intent>
     </queries>
-
 </manifest>

@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyA9KjybS2t2A2h8DN36zUU-8vrTFOuAPjs</string>
+	<string>AIzaSyBUNc7LI0nego-54U1JZ_AtejFTwogmeFg</string>
 	<key>GCM_SENDER_ID</key>
-	<string>998224638542</string>
+	<string>273083669594</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.flutterApp</string>
+	<string>com.megalabsai.smartzoom</string>
 	<key>PROJECT_ID</key>
-	<string>smartzoom-project</string>
+	<string>smartzoom-project-d72ed</string>
 	<key>STORAGE_BUCKET</key>
-	<string>smartzoom-project.firebasestorage.app</string>
+	<string>smartzoom-project-d72ed.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:998224638542:ios:e7db8790931d7e7e42891f</string>
+	<string>1:273083669594:ios:087f47bfb65142b9f70c63</string>
 </dict>
 </plist>

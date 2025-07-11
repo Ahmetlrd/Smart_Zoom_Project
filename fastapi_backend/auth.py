@@ -5,12 +5,14 @@ import httpx
 import os
 from jose import jwt
 from dotenv import load_dotenv
+load_dotenv(dotenv_path=".env")
 
 load_dotenv()
 
 router = APIRouter()
 
 CLIENT_ID = os.getenv("CLIENT_ID")  # Zoom OAuth client ID
+print(CLIENT_ID)
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")  # Zoom OAuth client secret
 REDIRECT_URI = os.getenv("REDIRECT_URI")  # Redirect URI defined in Zoom App
 JWT_SECRET = "zoom-secret"  # Secret for encoding JWT tokens
@@ -27,6 +29,8 @@ def login():
         f"https://zoom.us/oauth/authorize?response_type=code"
         f"&client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}"
     )
+    print("ZOOM LOGIN URL:", zoom_auth_url)
+
     return RedirectResponse(zoom_auth_url)
 
 # Callback endpoint Zoom redirects to after user authorization

@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "998224638542",
-    "project_id": "smartzoom-project",
-    "storage_bucket": "smartzoom-project.firebasestorage.app"
+    "project_number": "273083669594",
+    "project_id": "smartzoom-project-d72ed",
+    "storage_bucket": "smartzoom-project-d72ed.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:998224638542:android:1634bb3b0cb2b5d142891f",
+        "mobilesdk_app_id": "1:273083669594:android:d5542613eb51ececf70c63",
         "android_client_info": {
-          "package_name": "com.ahmetcavusoglu2.flutter_app"
+          "package_name": "com.megalabsai.smartzoom"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAkZnnP9BNhRnb29N08r4_bzFg2GixsWl4"
+          "current_key": "AIzaSyAIXVsi1Qko3zJ2qXKL-n0umPNhzA-IQ9w"
         }
       ],
       "services": {

@@ -41,12 +41,12 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyA9KjybS2t2A2h8DN36zUU-8vrTFOuAPjs',
-    appId: '1:998224638542:ios:e7db8790931d7e7e42891f',
+    apiKey: 'xxx',
+    appId: '1:998224638542:macos:abcdef123456', 
     messagingSenderId: '998224638542',
     projectId: 'smartzoom-project',
-    storageBucket: 'smartzoom-project.firebasestorage.app',
-    iosBundleId: 'com.megalabsai.smartzoom',
+    storageBucket: 'smartzoom-project.appspot.com',
+    iosBundleId: 'com.megalabsai.smartzoom.macos',
   );
 
   static const FirebaseOptions web = FirebaseOptions(
@@ -83,5 +83,4 @@ class DefaultFirebaseOptions {
     authDomain: 'smartzoom-project.firebaseapp.com',
     storageBucket: 'smartzoom-project.firebasestorage.app',
   );
-
 }

@@ -100,7 +100,7 @@
   "@wannasave": {
     "description": "Bestätigungsnachricht zum Speichern"
   },
-  "savetofirestore": "Diese Zusammenfassung wird in Firestore gespeichert. Fortfahren?",
+  "savetofirestore": "Diese Zusammenfassung wird gespeichert. Fortfahren?",
   "@savetofirestore": {
     "description": "Bestätigungsnachricht zum Speichern in Firestore"
   },

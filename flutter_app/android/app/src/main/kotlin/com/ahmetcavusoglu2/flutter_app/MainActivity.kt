@@ -1,4 +1,4 @@
-package com.ahmetcavusoglu2.flutter_app
+package com.megalabsai.smartzoom
 
 import io.flutter.embedding.android.FlutterActivity
 

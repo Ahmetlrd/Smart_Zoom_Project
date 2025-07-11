@@ -100,7 +100,7 @@
   "@wannasave": {
     "description": "Confirmation message for saving"
   },
-  "savetofirestore": "You will save this summary to Firestore. Continue?",
+  "savetofirestore": "You will save this summary. Continue?",
   "@savetofirestore": {
     "description": "Confirmation message for saving to Firestore"
   },

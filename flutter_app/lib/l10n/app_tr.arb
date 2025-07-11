@@ -100,7 +100,7 @@
   "@wannasave": {
     "description": "Kaydetme işlemi için onay mesajı"
   },
-  "savetofirestore": "Bu özeti Firestore'a kaydedeceksiniz. Devam edilsin mi?",
+  "savetofirestore": "Bu özeti kaydedeceksiniz. Devam edilsin mi?",
   "@savetofirestore": {
     "description": "Firestore'a kaydetme onayı mesajı"
   },
