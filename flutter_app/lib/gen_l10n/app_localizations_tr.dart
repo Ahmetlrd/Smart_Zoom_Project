@@ -84,8 +84,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get wannasave => 'Kaydetmek istiyor musunuz?';
 
   @override
-  String get savetofirestore =>
-      'Bu özeti Firestore\'a kaydedeceksiniz. Devam edilsin mi?';
+  String get savetofirestore => 'Bu özeti kaydedeceksiniz. Devam edilsin mi?';
 
   @override
   String get savedsuccesfully => 'Özet başarıyla kaydedildi.';

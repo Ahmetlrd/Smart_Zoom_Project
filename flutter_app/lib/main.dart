@@ -127,7 +127,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
         } else {
           print("📂 Zoom klasörü zaten kayıtlı: $path");
           final locale = ref.read(localeProvider) ?? const Locale('tr');
-          watchZoomFolder(ref, locale); // ✅ Locale ile çağırıldı
+          watchZoomFolder(ref, locale);
         }
       }
     });

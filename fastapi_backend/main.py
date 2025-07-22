@@ -16,7 +16,7 @@ app.include_router(auth_router)
 @app.get("/", response_class=HTMLResponse)
 async def homepage():
     return """
-    <!DOCTYPE html>
+     <!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -95,4 +95,5 @@ async def homepage():
         </script>
     </body>
     </html>
+
     """

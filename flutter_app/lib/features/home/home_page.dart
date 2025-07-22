@@ -29,6 +29,8 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> {
   bool _checkingZoomFolder = false;
   bool isLoading = false;
+  bool _showError = false;
+
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   final TextEditingController _searchController = TextEditingController();
@@ -36,16 +38,30 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   void initState() {
     super.initState();
+
     _controller.addListener(() => setState(() {}));
     _searchController.addListener(() {
       ref.read(searchQueryProvider.notifier).state =
           _searchController.text.trim().toLowerCase();
     });
+
     if (Platform.isMacOS || Platform.isWindows) {
       setWindowMinSize(const Size(1000, 600));
     }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkZoomFolderPermission();
+    });
+
+    _startErrorTimer();
+  }
+
+  void _startErrorTimer() {
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted &&
+          ref.read(authProvider.notifier).userInfo?['email'] == null) {
+        setState(() => _showError = true);
+      }
     });
   }
 
@@ -90,6 +106,31 @@ class _HomePageState extends ConsumerState<HomePage> {
     _checkingZoomFolder = false;
   }
 
+  Future<void> _tryAgain() async {
+    setState(() {
+      _showError = false;
+    });
+
+    final auth = ref.read(authProvider.notifier);
+
+    // Eğer kullanıcı bilgisini tekrar çekmek için ekstra işlem varsa buraya ekle
+
+    await Future.delayed(const Duration(seconds: 1)); // Küçük bekleme
+
+    final email = auth.userInfo?['email'];
+
+    if (email == null) {
+      if (!mounted) return;
+      context.go('/login'); // Email yoksa login sayfasına gönder
+    } else {
+      if (mounted) {
+        setState(() {
+          _showError = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final d = AppLocalizations.of(context)!;
@@ -97,6 +138,33 @@ class _HomePageState extends ConsumerState<HomePage> {
     final email = ref.watch(authProvider.notifier).userInfo?['email'];
     final selectedTab = ref.watch(selectedTabProvider);
 
+    if (email == null && !_showError) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (email == null && _showError) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                d.couldnotlogin,
+                style: const TextStyle(fontSize: 18),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: _tryAgain,
+                icon: const Icon(Icons.refresh),
+                label: Text("Try Again"),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -446,16 +514,38 @@ class _HomePageState extends ConsumerState<HomePage> {
 
                             if (confirm != true) return;
 
-                            final newSummary = ref.read(summaryProvider);
+                            final docSnap = await selected.reference.get();
+
+                            if (!docSnap.exists) {
+                              print('🚨 Belge bulunamadı!');
+                              return;
+                            }
+
+                            final data = docSnap.data() as Map<String, dynamic>;
+                            final summary = data['text'] ?? '';
+
+                            if (summary.trim().isEmpty) {
+                              print('🚨 Özet boş!');
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text(
+                                        'Özet bulunamadı, önce özet oluştur.')),
+                              );
+                              return;
+                            }
+
                             await selected.reference.update({
-                              'text': newSummary,
                               'isReviewed': true,
                             });
+
                             ref.invalidate(selectedMeetingProvider);
+
+                            print(
+                                '✅ Özet onaylandı ve isReviewed:true olarak işaretlendi');
                           },
                           icon: const Icon(Icons.save_alt),
                           label: Text(d.save),
-                        ),
+                        )
                       ],
                     ),
                   ],

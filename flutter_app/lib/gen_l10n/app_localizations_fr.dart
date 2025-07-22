@@ -85,8 +85,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get wannasave => 'Voulez-vous enregistrer ?';
 
   @override
-  String get savetofirestore =>
-      'Ce résumé sera enregistré dans Firestore. Continuer ?';
+  String get savetofirestore => 'Ce résumé sera sauvegardé. Continuer ?';
 
   @override
   String get savedsuccesfully => 'Résumé enregistré avec succès.';

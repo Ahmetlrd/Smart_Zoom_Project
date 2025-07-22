@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter_app/providers/auth_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/services/openai_service.dart';
@@ -11,7 +12,8 @@ String? latestSummary;
 String? latestTranscript;
 
 Future<List<File>> findAllZoomAudioFilesInLatestFolder() async {
-  final zoomFolder = Directory('/Users/${Platform.environment['USER']}/Documents/Zoom');
+  final zoomFolder =
+      Directory('/Users/${Platform.environment['USER']}/Documents/Zoom');
   if (!await zoomFolder.exists()) {
     print("❌ Zoom klasörü bulunamadı.");
     return [];
@@ -23,7 +25,8 @@ Future<List<File>> findAllZoomAudioFilesInLatestFolder() async {
     return [];
   }
 
-  subDirs.sort((a, b) => b.statSync().modified.compareTo(a.statSync().modified));
+  subDirs
+      .sort((a, b) => b.statSync().modified.compareTo(a.statSync().modified));
   final latestDir = subDirs.first;
 
   final audioFiles = latestDir
@@ -87,72 +90,80 @@ Future<void> runDirectZoomSummaryFlow(WidgetRef ref) async {
 
 bool isSummarizing = false;
 
-void watchZoomFolder(WidgetRef ref, Locale locale) {
-  final zoomDir = Directory('/Users/${Platform.environment['USER']}/Documents/Zoom');
+Future<void> watchZoomFolder(WidgetRef ref, Locale locale) async {
+  final userEmail = ref.read(authProvider.notifier).userInfo?['email'];
+ 
+    final zoomDir =
+        Directory('/Users/${Platform.environment['USER']}/Documents/Zoom');
 
-  if (!zoomDir.existsSync()) {
-    print("❌ Zoom klasörü bulunamadı.");
-    return;
-  }
-
-  zoomDir.watch(recursive: true).listen((event) async {
-    if (event.type == FileSystemEvent.create && event.path.toLowerCase().endsWith('.m4a')) {
-      if (isSummarizing) {
-        print("⏳ Özetleme zaten devam ediyor.");
-        return;
-      }
-
-      isSummarizing = true;
-      print("🆕 Yeni .m4a dosyası algılandı: ${event.path}");
-
-      await Future.delayed(const Duration(seconds: 2));
-
-      final lang = locale.languageCode;
-      print("🌍 Bildirimler şu dilde gösterilecek: ${locale.languageCode}");
-
-      final preparingTitle = {
-        'tr': 'Özet hazırlanıyor',
-        'en': 'Summary is being prepared',
-        'fr': 'Résumé en préparation',
-        'de': 'Zusammenfassung wird vorbereitet',
-      }[lang] ?? 'Summary is being prepared';
-
-      final preparingBody = {
-        'tr': 'Ses dosyaları alındı, analiz başlıyor...',
-        'en': 'Audio files received, analysis starting...',
-        'fr': 'Fichiers audio reçus, analyse en cours...',
-        'de': 'Audiodateien empfangen, Analyse beginnt...',
-      }[lang] ?? 'Audio files received, analysis starting...';
-
-      await NotificationService.show(
-        title: preparingTitle,
-        body: preparingBody,
-      );
-
-      await runDirectZoomSummaryFlow(ref);
-
-      final readyTitle = {
-        'tr': 'Zoom özeti hazır!',
-        'en': 'Zoom Summary Ready!',
-        'fr': 'Résumé Zoom prêt !',
-        'de': 'Zoom-Zusammenfassung fertig!',
-      }[lang] ?? 'Zoom Summary Ready!';
-
-      final readyBody = {
-        'tr': 'Yeni toplantı otomatik özetlendi.',
-        'en': 'New meeting has been summarized automatically.',
-        'fr': 'Nouvelle réunion résumée automatiquement.',
-        'de': 'Neues Meeting wurde automatisch zusammengefasst.',
-      }[lang] ?? 'New meeting has been summarized automatically.';
-
-      await NotificationService.show(
-        title: readyTitle,
-        body: readyBody,
-      );
-
-      isSummarizing = false;
+    if (!zoomDir.existsSync()) {
+      print("❌ Zoom klasörü bulunamadı.");
+      return;
     }
-  });
 
-  print("📡 Zoom klasörü izleniyor...");
-}
+    zoomDir.watch(recursive: true).listen((event) async {
+      if (event.type == FileSystemEvent.create &&
+          event.path.toLowerCase().endsWith('.m4a')) {
+        if (isSummarizing) {
+          print("⏳ Özetleme zaten devam ediyor.");
+          return;
+        }
+
+        isSummarizing = true;
+        print("🆕 Yeni .m4a dosyası algılandı: ${event.path}");
+
+        await Future.delayed(const Duration(seconds: 2));
+
+        final lang = locale.languageCode;
+        print("🌍 Bildirimler şu dilde gösterilecek: ${locale.languageCode}");
+
+        final preparingTitle = {
+              'tr': 'Özet hazırlanıyor',
+              'en': 'Summary is being prepared',
+              'fr': 'Résumé en préparation',
+              'de': 'Zusammenfassung wird vorbereitet',
+            }[lang] ??
+            'Summary is being prepared';
+
+        final preparingBody = {
+              'tr': 'Ses dosyaları alındı, analiz başlıyor...',
+              'en': 'Audio files received, analysis starting...',
+              'fr': 'Fichiers audio reçus, analyse en cours...',
+              'de': 'Audiodateien empfangen, Analyse beginnt...',
+            }[lang] ??
+            'Audio files received, analysis starting...';
+
+        await NotificationService.show(
+          title: preparingTitle,
+          body: preparingBody,
+        );
+
+        await runDirectZoomSummaryFlow(ref);
+
+        final readyTitle = {
+              'tr': 'Zoom özeti hazır!',
+              'en': 'Zoom Summary Ready!',
+              'fr': 'Résumé Zoom prêt !',
+              'de': 'Zoom-Zusammenfassung fertig!',
+            }[lang] ??
+            'Zoom Summary Ready!';
+
+        final readyBody = {
+              'tr': 'Yeni toplantı otomatik özetlendi.',
+              'en': 'New meeting has been summarized automatically.',
+              'fr': 'Nouvelle réunion résumée automatiquement.',
+              'de': 'Neues Meeting wurde automatisch zusammengefasst.',
+            }[lang] ??
+            'New meeting has been summarized automatically.';
+
+        await NotificationService.show(
+          title: readyTitle,
+          body: readyBody,
+        );
+
+        isSummarizing = false;
+      }
+    });
+
+    print("📡 Zoom klasörü izleniyor...");
+  }

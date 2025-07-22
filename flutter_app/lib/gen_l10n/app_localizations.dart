@@ -255,7 +255,7 @@ abstract class AppLocalizations {
   /// Confirmation message for saving to Firestore
   ///
   /// In en, this message translates to:
-  /// **'You will save this summary to Firestore. Continue?'**
+  /// **'You will save this summary. Continue?'**
   String get savetofirestore;
 
   /// Success message after saving

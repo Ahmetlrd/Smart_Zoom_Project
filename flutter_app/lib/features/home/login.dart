@@ -171,7 +171,7 @@ _sub = _appLinks.uriLinkStream.listen((Uri? uri) async {
   }
 
   void _launchZoomLogin() async {
-    const zoomLoginUrl = 'http://75.101.195.165:8000/auth/login';
+    const zoomLoginUrl = 'https://smartzoom.net/auth/login';
     if (await canLaunchUrl(Uri.parse(zoomLoginUrl))) {
       await launchUrl(Uri.parse(zoomLoginUrl),
           mode: LaunchMode.externalApplication);

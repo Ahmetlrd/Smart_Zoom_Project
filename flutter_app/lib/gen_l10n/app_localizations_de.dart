@@ -86,7 +86,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get savetofirestore =>
-      'Diese Zusammenfassung wird in Firestore gespeichert. Fortfahren?';
+      'Diese Zusammenfassung wird gespeichert. Fortfahren?';
 
   @override
   String get savedsuccesfully => 'Zusammenfassung erfolgreich gespeichert.';
