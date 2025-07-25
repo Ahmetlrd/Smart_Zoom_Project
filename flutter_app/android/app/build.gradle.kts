@@ -2,7 +2,7 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
-    id("com.google.gms.google-services") // ✅ Firebase için gerekli
+    id("com.google.gms.google-services") 
 }
 
 android {
@@ -27,7 +27,7 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
 
-        multiDexEnabled = true // ✅ Firebase için önerilir
+        multiDexEnabled = true 
     }
 
     buildTypes {
@@ -45,5 +45,5 @@ flutter {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
-    implementation("androidx.multidex:multidex:2.0.1") // ✅ Firebase için gerekli olabilir
+    implementation("androidx.multidex:multidex:2.0.1") 
 }

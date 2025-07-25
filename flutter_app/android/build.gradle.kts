@@ -3,18 +3,18 @@ import org.gradle.api.file.Directory
 
 buildscript {
     repositories {
-        google()           // ✅ GEREKLİ
+        google()        
         mavenCentral()
     }
 
     dependencies {
-        classpath("com.google.gms:google-services:4.4.0") // ✅ Firebase Plugin
+        classpath("com.google.gms:google-services:4.4.0") 
     }
 }
 
 allprojects {
     repositories {
-        google()           // ✅ GEREKLİ
+        google()           
         mavenCentral()
     }
 }

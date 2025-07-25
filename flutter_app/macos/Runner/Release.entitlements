@@ -12,8 +12,6 @@
   <true/>
   <key>com.apple.security.network.server</key>
   <true/>
-  <key>com.apple.security.notification-center</key>
-  <true/>
   <key>keychain-access-groups</key>
   <array>
     <string>S9K9ZPTZG3.com.megalabsai.smartzoom</string>

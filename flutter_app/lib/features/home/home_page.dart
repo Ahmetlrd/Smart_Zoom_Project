@@ -113,10 +113,8 @@ class _HomePageState extends ConsumerState<HomePage> {
 
     final auth = ref.read(authProvider.notifier);
 
-    // Eğer kullanıcı bilgisini tekrar çekmek için ekstra işlem varsa buraya ekle
 
-    await Future.delayed(const Duration(seconds: 1)); // Küçük bekleme
-
+    await Future.delayed(const Duration(seconds: 1));
     final email = auth.userInfo?['email'];
 
     if (email == null) {

@@ -6,14 +6,14 @@ import firebase_admin
 from firebase_admin import credentials, messaging, firestore
 from datetime import datetime
 
-# 🔐 Firebase Admin başlat
+# Initialize Firebase Admin
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred)
 
 app = FastAPI()
 router = APIRouter()
 
-# 🔗 Firestore bağlantısı
+# Firestore client
 db = firestore.client()
 
 def send_fcm(token: str, title: str, body: str, data: dict = {}):
@@ -24,9 +24,9 @@ def send_fcm(token: str, title: str, body: str, data: dict = {}):
     )
     try:
         response = messaging.send(message)
-        print(f"🔥 FCM gönderildi: {response}")
+        print(f"FCM sent: {response}")
     except Exception as e:
-        print(f"⛔ FCM gönderimi başarısız: {e}")
+        print(f"FCM sending failed: {e}")
 
 def handle_participant_joined(email: str, meeting_id: str):
     try:
@@ -35,16 +35,16 @@ def handle_participant_joined(email: str, meeting_id: str):
         doc = user_ref.get()
 
         if not doc.exists:
-            print(f"⛔ User not found in Firestore: {email} (doc_id: {doc_id})")
+            print(f"User not found in Firestore: {email} (doc_id: {doc_id})")
             return
 
         user_data = doc.to_dict()
-        print(f"📥 Firestore user data for {email}: {user_data}")
+        print(f"Firestore user data for {email}: {user_data}")
 
         platform = user_data.get("platform")
         fcm_token = user_data.get("fcmToken")
 
-        # 🔑 1. Firestore'da meeting status güncelle (her durumda)
+        # Update meeting status in Firestore
         user_ref.set({
             "meetingStatus": {
                 "isJoined": True,
@@ -52,39 +52,37 @@ def handle_participant_joined(email: str, meeting_id: str):
                 "joinedAt": datetime.utcnow().isoformat()
             }
         }, merge=True)
-        print(f"✅ [FS] MeetingStatus: isJoined=True -> {email}")
+        print(f"[Firestore] MeetingStatus: isJoined=True -> {email}")
 
-        # 🔔 FCM token varsa veya platform macOS değilse, bildirimi gönder
+        # Send FCM if token is available
         if fcm_token:
             send_fcm(
                 token=fcm_token,
-                title="Zoom Toplantısı Başladı",
-                body="Toplantıya katıldınız, özet çıkarmak ister misiniz?",
+                title="Zoom Meeting Started",
+                body="You have joined the meeting. Would you like to generate a summary?",
                 data={"action": "start_summary", "meeting_id": str(meeting_id)}
             )
         else:
-            print(f"ℹ️ Bildirim atlanıyor: FCM token yok veya platform macOS ({platform})")
+            print(f"Notification skipped: FCM token not available or platform is macOS ({platform})")
 
     except Exception as e:
-        print(f"⛔ Exception in background handler for {email}: {e}")
-
+        print(f"Exception in background handler for {email}: {e}")
 
 def handle_participant_left(email: str, meeting_id: str):
     try:
         doc_id = email.replace("@", "_").replace(".", "_")
         user_ref = db.collection("users").document(doc_id)
 
-        # 🔑 1. Firestore'da meeting status güncelle
+        # Update meeting status in Firestore
         user_ref.set({
             "meetingStatus": {
                 "isJoined": False,
                 "meetingId": str(meeting_id)
             }
         }, merge=True)
-        print(f"✅ [FS] MeetingStatus: isJoined=False -> {email}")
-        # (Bildirim göndermek istersen buraya send_fcm ekleyebilirsin)
+        print(f"[Firestore] MeetingStatus: isJoined=False -> {email}")
     except Exception as e:
-        print(f"⛔ Exception in background handler for {email}: {e}")
+        print(f"Exception in background handler for {email}: {e}")
 
 @router.post("/zoom/webhook")
 async def zoom_webhook(request: Request):
@@ -97,15 +95,15 @@ async def zoom_webhook(request: Request):
         payload = data.get("payload", {}).get("object", {})
         meeting_id = payload.get("id")
 
-        print(f"\n📩 Zoom Event Received: {event}")
+        print(f"Zoom Event Received: {event}")
         print(json.dumps(data, indent=2))
 
         if event == "meeting.started":
-            print(f"✅ Meeting started → ID: {meeting_id}")
+            print(f"Meeting started -> ID: {meeting_id}")
             return {"status": "meeting_started_logged"}
 
         elif event == "meeting.ended":
-            print(f"✅ Meeting ended → ID: {meeting_id}")
+            print(f"Meeting ended -> ID: {meeting_id}")
             return {"status": "meeting_ended_logged"}
 
         elif event == "meeting.participant_joined":
@@ -116,7 +114,7 @@ async def zoom_webhook(request: Request):
             if not email:
                 return JSONResponse(content={"error": "email missing"}, status_code=400)
 
-            print(f"👤 Participant joined: {email} in meeting {meeting_id}")
+            print(f"Participant joined: {email} in meeting {meeting_id}")
 
             threading.Thread(
                 target=handle_participant_joined,
@@ -131,7 +129,7 @@ async def zoom_webhook(request: Request):
                 or payload.get("email")
             )
             print(
-                f"👋 Participant left: {email or 'bilinmiyor'} in meeting {meeting_id}")
+                f"Participant left: {email or 'unknown'} in meeting {meeting_id}")
 
             threading.Thread(
                 target=handle_participant_left,
@@ -143,7 +141,7 @@ async def zoom_webhook(request: Request):
         return {"status": "unhandled_event"}
 
     except Exception as e:
-        print(f"⛔ Genel webhook hata: {e}")
+        print(f"General webhook error: {e}")
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 @router.post("/save-token")
@@ -163,13 +161,14 @@ async def save_token(request: Request):
             "fcmToken": token,
             "fcmUpdatedAt": firestore.SERVER_TIMESTAMP
         }, merge=True)
-        print(f"✅ FCM token kaydedildi: {email}")
+        print(f"FCM token saved: {email}")
         return {"status": "saved"}
     except Exception as e:
-        print(f"⛔ Firestore yazma hatası: {e}")
+        print(f"Firestore write error: {e}")
         return JSONResponse(content={"error": "write_failed"}, status_code=500)
 
 app.include_router(router)
+
 @router.post("/save-platform")
 async def save_platform(request: Request):
     body = await request.json()
@@ -187,8 +186,8 @@ async def save_platform(request: Request):
             "platform": platform,
             "platformUpdatedAt": firestore.SERVER_TIMESTAMP
         }, merge=True)
-        print(f"✅ Platform bilgisi kaydedildi: {email} → {platform}")
+        print(f"Platform info saved: {email} -> {platform}")
         return {"status": "saved"}
     except Exception as e:
-        print(f"⛔ Firestore yazma hatası (platform): {e}")
+        print(f"Firestore write error (platform): {e}")
         return JSONResponse(content={"error": "write_failed"}, status_code=500)
